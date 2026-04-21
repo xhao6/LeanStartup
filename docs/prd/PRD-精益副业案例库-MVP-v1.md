@@ -684,7 +684,7 @@ TabBar
 │    输出: resources/processed/{编号}/   │   │              │
 │    - 5维度评分 + 7字段提取 + 脱敏      │   │              │
 │           ↓                          │   │              │
-│ ④ 人工审核评分结果                     │   │              │
+│ ④ AI审核评分结果                     │   │              │
 │    确认或调整后标记 reviewed            │   │              │
 │           ↓                          │   │              │
 │ ⑤ 云函数同步到 NoSQL Case 集合        │ → │ ⑥ 写入 NoSQL │
@@ -703,7 +703,7 @@ TabBar
 
 ### 7.3 待实现部分
 
-- 本地 LLM 评分脚本（调用 CloudBase AI SDK hunyuan-2.0-instruct）
+- 本地 LLM 评分脚本（调用 minimax-2.7 模型）
 - 结构化 MD 生成（本地中间产物）
 - 云函数同步脚本（解析 MD → 写入 NoSQL）
 - 定时任务（generateDailyPick）
