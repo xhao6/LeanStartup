@@ -2197,3 +2197,32 @@ triggers:
 rtk git add -A
 git commit -m "chore: final backend setup and deployment config"
 ```
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 0 | — | — |
+| Codex Review | `/codex review` | Independent 2nd opinion | 2 | issues_found | claude subagent found 14 issues |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 2 | CLEAR | 12 issues, 0 critical gaps |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
+
+**OUTSIDE VOICE:** Claude subagent found 4 additional critical issues not caught by primary review: missing subscribe write function, no history pagination, fake progress merge, async push timeout.
+
+**VERDICT:** ENG CLEARED — 12 issues found and all resolved. Ready to implement.
+
+### Review Decisions (12 issues resolved)
+
+1. copy-shared.js: add hash drift detection
+2. subscribeMessage/syncCaseData: add internal call auth check
+3. generateDailyPick: limit dedup to last 30 days
+4. wechat-api.js: use global fetch (Node 18 built-in), remove node-fetch
+5. toggleCollection: keep doc().set() with risk comment
+6. date.js: use Intl API instead of manual offset
+7. All 7 cloud functions: add full unit tests
+8. subscribeMessage: batch processing (50/call, recursive)
+9. trackEvent: add subscribe event branch writing PushSubscription
+10. getDailyPick: add dual mode (single date + history pagination)
+11. toggleCollection: use spread merge for progress `{...old, ...new}`
+12. generateDailyPick: remove await on callFunction for async push
