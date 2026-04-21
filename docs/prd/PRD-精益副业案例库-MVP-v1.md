@@ -3,11 +3,11 @@
 | 字段 | 值 |
 |------|-----|
 | 产品名称 | 精益副业案例库 |
-| 版本 | MVP v1.0 |
+| 版本 | MVP v1.1 |
 | 日期 | 2026-04-21 |
 | 状态 | 待开发 |
 | 负责人 | Ava Bytewood |
-| 基于文档 | CEO Plan 2026-04-21, office-hours design doc |
+| 基于文档 | CEO Plan 2026-04-21, office-hours design doc, BEST-PRACTICES.md |
 
 ---
 
@@ -59,7 +59,7 @@
 
 **展示内容（每个卡片）**:
 - 案例标题（<=30字）
-- AI 总分（0-10，精确到小数点后一位）
+- AI 总分（0-10，整数）
 - 核心摘要（<=200字）
 - 来源公众号名称
 - 启动成本标签（如"零成本"、"500元内"）
@@ -75,9 +75,9 @@
 |------|------|
 | 当天无精选数据 | 回退到最近一个有效日的精选 |
 | 云函数查询超时 | 重试 1 次，失败显示"加载失败，下拉重试" |
-| 案例已被下架(archived) | 跳过该案例，补充下一个高分案例 |
+| 案例已被下架(archived) | 跳过该案例，当日精选可能不足 3 个（由定时任务保证完整性） |
 
-**数据来源**: 云函数 `getDailyPick`，查询 DailyPick 集合（按 date） → Case 集合（按 case_ids $in 查询）。
+**数据来源**: 云函数 `getDailyPick`，查询 DailyPick 集合（按 date）→ Case 集合（按 case_ids $in 查询）。若无当天数据，回退到最近一个有数据的日期。不做历史高分补充（补充逻辑仅在定时任务 generateDailyPick 中执行）。
 
 ---
 
@@ -190,11 +190,12 @@
 ```
 用户查看案例详情
   → 点击"开启明日提醒"按钮
-  → 调用 wx.requestSubscribeMessage()
+  → 调用 wx.requestSubscribeMessage() [前端授权弹窗]
   → 用户授权（或拒绝）
-  → 记录到 PushSubscription 集合
+  → 前端将授权结果（含 template_id）传给云函数
+  → 云函数记录到 PushSubscription 集合（openid + template_id + authorized_at）
   → 次日定时任务检测到新 DailyPick
-  → 云函数遍历 PushSubscription 调用 wx.requestSubscribeMessage 发送通知
+  → 云函数调用微信服务端 API subscribeMessage.send 发送通知 [服务端发送]
   → 用户打开通知 → 进入案例详情
   → 详情页再次引导授权（链式循环）
 ```
@@ -209,7 +210,8 @@
 | 场景 | 处理 |
 |------|------|
 | 用户拒绝授权 | 不再弹出，下次查看案例时自然引导 |
-| 推送发送失败 | 记录失败日志，不影响其他用户推送 |
+| 推送发送失败（API限频） | 批量发送时增加间隔（200ms/条），超出限额记录日志跳过 |
+| 推送发送失败（其他） | 记录失败日志，不影响其他用户推送 |
 | 用户卸载/长期未打开 | 推送无法送达，静默忽略 |
 
 ---
@@ -231,7 +233,7 @@
 - 小程序码通过云函数调用 `wxacode.get` 生成，缓存在云存储
 - 点击分享按钮 → 渲染 Canvas → canvasToTempFilePath → saveImageToPhotosAlbum
 
-**降级方案**: Canvas 不可用时，降级为 `onShareAppMessage` 原生小程序分享（转发给好友）。
+**降级方案**: Canvas 不可用时，降级为 `onShareAppMessage` 原生小程序分享（转发给好友）。渲染超时（>5秒）同样触发降级。
 
 **边界情况**:
 
@@ -240,9 +242,11 @@
 | Canvas API 不支持 | 降级为 onShareAppMessage 文字分享 |
 | 小程序码获取失败 | 卡片不显示小程序码，其余正常 |
 | 用户拒绝相册权限 | 提示"请在设置中允许保存图片" |
-| 卡片渲染超时 | 显示 loading，超过 5 秒提示"生成失败" |
+| 卡片渲染超时(>5秒) | 自动降级为原生分享 |
 
 ---
+
+### F8: 事件埋点
 
 ### F7: 操作步骤 Checklist
 
@@ -262,7 +266,7 @@
 
 ---
 
-### F8: 事件埋点
+**降级方案**: Canvas 不可用时，降级为 `onShareAppMessage` 原生小程序分享（转发给好友）。渲染超时（>5秒）同样触发降级。
 
 **描述**: 记录用户关键行为事件，用于试运营期间数据分析。
 
@@ -297,7 +301,61 @@
 | 历史榜单 | pages/history/index | 是 | 按日期倒序，分页加载 |
 | 个人中心 | pages/profile/index | 是 | 收藏列表+订阅状态 |
 
-### 3.2 导航结构
+### 3.2 项目目录结构
+
+```
+src/
+├── api/                     # API 层（数据访问）
+│   ├── core/                # 核心配置
+│   │   └── cloud.ts         # CloudBase SDK 实例 + 云函数调用封装
+│   └── modules/             # 业务 API 模块
+│       ├── daily.ts         # getDailyPick, getHistoryPicks
+│       ├── case.ts          # getCaseDetail
+│       ├── collection.ts    # getUserCollections, toggleCollection
+│       └── analytics.ts     # trackEvent
+├── components/              # 全局组件
+│   ├── case-card/           # 案例卡片（首页+历史复用）
+│   └── score-bar/           # 评分进度条
+├── composables/             # 组合式函数
+│   ├── useAuth.ts           # OpenID 静默登录
+│   └── useShareCard.ts      # Canvas 分享卡片生成
+├── pages/                   # 页面
+│   ├── index/               # 首页（今日精选）
+│   ├── case/                # 案例详情
+│   ├── history/             # 历史榜单
+│   └── profile/             # 个人中心
+├── store/                   # Pinia 状态管理
+│   ├── index.ts
+│   └── modules/
+│       ├── daily.ts         # 当日精选状态
+│       └── collection.ts    # 收藏列表状态
+├── types/                   # TypeScript 类型
+│   └── models.d.ts          # Case, DailyPick, UserCollection 等类型
+├── utils/                   # 工具函数
+│   ├── cloudbase.ts         # CloudBase 初始化 + OpenID 登录
+│   ├── format.ts            # 日期格式化（统一 YYYY-MM-DD HH:mm:ss）
+│   └── index.ts             # 通用工具函数
+├── App.vue
+├── main.ts
+└── theme.json               # 主题配置
+
+cloudfunctions/
+├── _shared/                 # 共享模块（需复制到各函数目录）
+│   ├── db.js                # 数据库初始化 + 公共查询
+│   ├── auth.js              # openid 提取 + 输入校验
+│   ├── wechat-api.js        # access_token 缓存 + 刷新
+│   └── response.js          # 统一响应格式
+├── getDailyPick/
+├── getCaseDetail/
+├── getUserCollections/
+├── toggleCollection/
+├── trackEvent/
+├── subscribeMessage/
+├── generateDailyPick/
+└── syncCaseData/            # 同步本地结构化数据到 NoSQL
+```
+
+### 3.3 导航结构
 
 ```
 TabBar
@@ -310,7 +368,7 @@ TabBar
     └── 点击收藏案例 → 案例详情 (navigateTo)
 ```
 
-### 3.3 删除的页面
+### 3.4 删除的页面
 
 以下模板页面需删除（不适用于本产品）：
 - pages/demo/demo.vue
@@ -319,7 +377,7 @@ TabBar
 - pages/login/phone-login.vue
 - pages/login/password-login.vue
 
-### 3.4 页面加载性能要求
+### 3.5 页面加载性能要求
 
 - 首屏加载 <= 3 秒（含网络请求）
 - 页面切换 <= 500ms
@@ -339,12 +397,12 @@ TabBar
 | source_account | string | 是 | 来源公众号名称 |
 | source_url | string | 是 | 原文链接 |
 | summary | string | 是 | 核心摘要，<=200字 |
-| score_total | number | 是 | 总分 0-10 |
-| score_feasibility | number | 是 | 落地可行性 0-3 |
-| score_profit | number | 是 | 收益潜力 0-2 |
-| score_timeliness | number | 是 | 时效性 0-2 |
-| score_detail | number | 是 | 实操细节 0-2 |
-| score_fitness | number | 是 | 用户适配度 0-1 |
+| score_total | number | 是 | 总分 0-10（整数，=五维度之和） |
+| score_feasibility | number | 是 | 落地可行性 0-3（整数） |
+| score_profit | number | 是 | 收益潜力 0-2（整数） |
+| score_timeliness | number | 是 | 时效性 0-2（整数） |
+| score_detail | number | 是 | 实操细节 0-2（整数） |
+| score_fitness | number | 是 | 用户适配度 0-1（整数） |
 | cost | string | 是 | 启动成本描述 |
 | expected_revenue | string | 是 | 预期收益描述 |
 | cycle | string | 是 | 变现周期描述 |
@@ -358,7 +416,9 @@ TabBar
 | created_at | date | 自动 | 创建时间 |
 | published_at | date | 否 | 发布时间 |
 
-**约束**: score_total = score_feasibility + score_profit + score_timeliness + score_detail + score_fitness
+**约束**: score_total = score_feasibility + score_profit + score_timeliness + score_detail + score_fitness（整数加法，不允许小数）
+
+**日期格式约定**: 所有时间字段统一使用 `YYYY-MM-DD HH:mm:ss`（北京时间），date 字段使用 `YYYY-MM-DD`。
 
 ### 4.2 DailyPick（每日精选）
 
@@ -388,7 +448,28 @@ TabBar
 |------|------|------|------|
 | _id | string | 自动 | CloudBase 自动生成 |
 | openid | string | 是 | 用户唯一标识 |
-| subscribed_at | date | 是 | 授权时间 |
+| template_id | string | 是 | 消息模板 ID |
+| subscribed_at | string | 是 | 授权时间（YYYY-MM-DD HH:mm:ss） |
+
+### 4.6 SystemLog（运维日志）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| _id | string | 自动 | CloudBase 自动生成 |
+| type | string | 是 | 日志类型（cron_success/cron_error/api_error） |
+| function_name | string | 是 | 云函数名称 |
+| detail | string | 否 | 详细信息（错误消息等） |
+| created_at | string | 是 | 日志时间（YYYY-MM-DD HH:mm:ss） |
+
+### 4.7 WechatToken（微信 API Token 缓存）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| _id | string | 自动 | 固定文档 ID（如 "access_token"） |
+| token | string | 是 | access_token 值 |
+| expire_at | string | 是 | 过期时间（YYYY-MM-DD HH:mm:ss） |
+
+---
 
 ### 4.5 Analytics（埋点）
 
@@ -441,7 +522,7 @@ TabBar
 1. 查 DailyPick 集合 where({date})
 2. 若无结果，查最近一个有数据的 date（兜底）
 3. 用 case_ids $in 查 Case 集合，过滤 status=published
-4. 若返回不足 3 个，补充历史高分案例（is_classic=true 的不计入，除非本身就是）
+4. 返回结果（不在此函数中做历史高分补充）
 
 ### 5.2 getCaseDetail
 
@@ -493,8 +574,8 @@ TabBar
 
 **查询逻辑**:
 1. 从 wxContext 获取 openid（不信任客户端传参）
-2. 查 UserCollection where({openid})，按 updated_at 倒序
-3. 关联查 Case 集合获取 title、score_total、steps
+2. 查 UserCollection where({openid})，按 updated_at 倒序，skip/pageSize 分页
+3. 收集所有 case_id，单次 Case.$in 批量查询获取 title、score_total、steps（避免 N+1 查询）
 
 ### 5.4 toggleCollection
 
@@ -512,7 +593,7 @@ TabBar
 
 **逻辑**:
 1. 从 wxContext 获取 openid
-2. action=collect: 查是否已存在，不存在则创建，存在则更新 progress
+2. action=collect: 查是否已存在，不存在则创建，存在则用完整记录模式更新 progress（读取现有记录 → 合并 progress → 写回完整记录）
 3. action=uncollect: 删除记录
 4. 并发保护：先查后写（幂等）
 
@@ -539,10 +620,13 @@ TabBar
 **入参**: 无（内部遍历 PushSubscription 集合调用）
 
 **逻辑**:
-1. 查 PushSubscription 集合，获取所有待推送用户
-2. 对每个用户调用微信订阅消息 API
-3. 发送成功后删除该条订阅记录（一次性用完）
-4. 发送失败记录日志，跳过该用户
+1. 从 WechatToken 集合获取 access_token（若过期则调用微信 API 刷新并缓存）
+2. 查 PushSubscription 集合，获取所有待推送用户
+3. 批量发送，每条间隔 200ms 避免触发微信 API 限频
+4. 调用微信服务端 API `subscribeMessage.send`（注意：不是前端 API `wx.requestSubscribeMessage`）
+5. 发送成功后删除该条订阅记录（一次性用完）
+6. 发送失败记录到 SystemLog，跳过该用户
+7. 发送完成后写入 SystemLog 记录执行结果（成功数/失败数）
 
 ### 5.7 generateDailyPick（定时任务）
 
@@ -551,11 +635,13 @@ TabBar
 **Cron**: CloudBase 7 段格式，每日早上 6:00 执行 `0 0 6 * * * *`
 
 **逻辑**:
-1. 查 Case 集合 where({status: 'published', published_at 不等于今天})
-2. 按 score_total 倒序取前 3 个
-3. 写入 DailyPick 集合 {date: 今天, case_ids: [id1, id2, id3]}
-4. 若不足 3 个：从历史高分已发布案例中补充（is_classic=true 可选）
-5. 触发 subscribeMessage 给已订阅用户发送通知
+1. 查询所有已存在的 DailyPick 记录的 case_ids（去重后的已用案例集合）
+2. 查 Case 集合 where({status: 'published'})，排除步骤 1 中已用过的 case_id
+3. 按 score_total 倒序取前 3 个
+4. 若不足 3 个：从已用过的案例中按 score_total 倒序补充（经典回顾）
+5. 写入 DailyPick 集合 {date: 今天, case_ids: [id1, id2, id3]}
+6. 触发 subscribeMessage 给已订阅用户发送通知
+7. 写入 SystemLog 记录执行结果（成功/失败 + 选取的案例 ID）
 
 ---
 
@@ -572,6 +658,11 @@ TabBar
 **安全要求**:
 - 所有云函数必须从 wxContext 获取 openid，**永远不从客户端参数接收 openid**
 - 云函数入参校验：case_id 必须是数字字符串，progress 必须是有效 JSON
+- 统一错误响应格式：`{success: true/false, data: {...}, error: string}`
+
+**NoSQL 更新模式**:
+- 所有 update 操作必须使用完整记录模式（先读取现有记录 → 合并变更字段 → 写回完整记录）
+- 避免部分更新导致数据丢失
 
 ---
 
@@ -641,9 +732,11 @@ TabBar
 }
 ```
 
-**校验规则**: score_total = score_feasibility + score_profit + score_timeliness + score_detail + score_fitness
+**校验规则**: score_total = score_feasibility + score_profit + score_timeliness + score_detail + score_fitness（整数加法，LLM prompt 必须指定 "所有评分为整数，不允许小数"）
 
 **异常处理**: JSON 解析失败或分数不匹配 → 标记 pending，不重试 LLM，人工审核后手动修正。
+
+**LLM Prompt 要求**: 所有评分字段必须为整数（0, 1, 2, 3），不允许小数。输出 JSON 示例中评分值应为 `"score_feasibility": 2` 而非 `2.5`。
 
 **成本估算**: ~2000 token/篇，约 0.01 元/篇，每周约 1-3 元。
 
@@ -701,19 +794,22 @@ LLM 评分管道中增加正则脱敏步骤，过滤以下模式：
 
 | # | 条件 | 状态 |
 |---|------|------|
-| 1 | 已注册的小程序 AppID 配置到 project.config.json | 已准备 |
+| 1 | 已注册的小程序 AppID 配置到 manifest.json 和 project.config.json | 待配置 |
 | 2 | 微信后台隐私政策文档 | 已准备 |
 | 3 | 一次性订阅消息模板 ID（审核通过） | 已准备 |
 | 4 | wxacode.get API 权限已开通 | 已准备 |
 | 5 | CloudBase 环境已开通 NoSQL 数据库 | 已准备 |
+| 6 | 配置真实 CloudBase 环境 ID（替换 cloudbaserc.json 和 cloudbase.ts 中的占位符） | 待配置 |
 
 ### 9.2 部署顺序
 
-1. 创建 NoSQL 集合（Case, DailyPick, UserCollection, PushSubscription, Analytics）
-2. 创建集合索引
-3. 部署云函数（7个函数）
-4. 配置定时触发器（generateDailyPick）
-5. 前端代码构建 + 上传审核
+1. 创建 NoSQL 集合（Case, DailyPick, UserCollection, PushSubscription, Analytics, SystemLog, WechatToken）
+2. 创建集合索引（含 UserCollection 的 openid+case_id 复合唯一索引、DailyPick 的 date 唯一索引）
+3. 创建云函数共享模块 `_shared/`（db.js, auth.js, wechat-api.js, response.js），并复制到各云函数目录
+4. 部署空壳云函数（7个函数，返回 mock 数据）→ 前端可并行开发
+5. 填充云函数业务逻辑 + 部署更新
+6. 配置定时触发器（generateDailyPick，Cron: `0 0 6 * * * *`）
+7. 前端代码构建 + 上传审核
 
 ### 9.3 回滚计划
 
@@ -761,6 +857,8 @@ LLM 评分管道中增加正则脱敏步骤，过滤以下模式：
 | LLM 评分不准确 | 中 | 中 | 人工二次审核 + 异常回退队列 |
 | 小程序审核不通过 | 低 | 高 | 已确认类目合规 + 审核介绍已准备 |
 | 种子用户获取困难 | 中 | 中 | 个人社交网络 + 相关社群 + 10人验证者口碑传播 |
-| 定时任务执行失败 | 低 | 高 | getDailyPick 回退到最近有效日 |
+| 定时任务执行失败 | 低 | 高 | getDailyPick 回退到最近有效日 + SystemLog 运维日志 |
 | Canvas 分享卡片兼容性 | 中 | 低 | 降级为 onShareAppMessage 原生分享 |
 | 内容脱敏遗漏 | 低 | 中 | 人工审核二次检查 + 投诉入口 |
+| 微信 API 限频 | 中 | 中 | subscribeMessage 批量发送间隔 200ms + 限频时跳过并记录日志 |
+| AppID 未配置 | 低 | 高 | manifest.json 中 mp-weixin.appid 为空，阻塞真机调试 |

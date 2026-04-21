@@ -58,8 +58,14 @@
 ### GAP-2: 定时精选任务失败兜底
 - **What**: 云函数定时触发器执行失败时，首页无数据
 - **Impact**: 用户打开首页看到空内容
-- **Mitigation**: getDailyPick查询失败时回退到最近有效日
+- **Mitigation**: getDailyPick查询失败时回退到最近有效日 + SystemLog记录执行状态
 - **Priority**: P1（开发时实现）
+
+### GAP-3: 微信订阅消息 API 限频策略
+- **What**: subscribeMessage.send API 有调用频率限制，批量发送 300+ 条可能被限频
+- **Impact**: 部分用户收不到推送通知
+- **Mitigation**: 当前实现：每条间隔 200ms。需进一步确认微信官方限频阈值，可能需要分批发送（如每批 50 条，批次间间隔 1 秒）
+- **Priority**: P1（推送功能开发前确认）
 
 ## Open Questions
 1. 变现模型：MVP免费开放后，后续如何变现？
