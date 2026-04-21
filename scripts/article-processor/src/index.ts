@@ -10,6 +10,21 @@ import { extractArticle } from "./extractor.js";
 import { reviewExtraction } from "./reviewer.js";
 import { formatProcessedMarkdown } from "./formatter.js";
 
+// Load .env from project root
+const envPath = path.resolve(import.meta.dirname ?? ".", "../../.env");
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIndex = trimmed.indexOf("=");
+    if (eqIndex > 0) {
+      const key = trimmed.slice(0, eqIndex).trim();
+      const val = trimmed.slice(eqIndex + 1).trim();
+      if (!process.env[key]) process.env[key] = val;
+    }
+  }
+}
+
 const DEFAULT_RAW_DIR = path.resolve("resources/raw");
 const DEFAULT_OUTPUT_DIR = path.resolve("resources/processed");
 
