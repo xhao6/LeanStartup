@@ -10,8 +10,17 @@ import { extractArticle } from "./extractor.js";
 import { reviewExtraction } from "./reviewer.js";
 import { formatProcessedMarkdown } from "./formatter.js";
 
-// Load .env from project root
-const envPath = path.resolve(import.meta.dirname ?? ".", "../../.env");
+// Load .env from project root (walk up from cwd or script location)
+function findProjectRoot(): string {
+  // Try cwd first
+  let dir = process.cwd();
+  if (fs.existsSync(path.join(dir, ".env"))) return dir;
+  // Fall back to walking up from script location
+  dir = path.resolve(import.meta.dirname ?? ".", "../..");
+  if (fs.existsSync(path.join(dir, ".env"))) return dir;
+  return process.cwd();
+}
+const envPath = path.join(findProjectRoot(), ".env");
 if (fs.existsSync(envPath)) {
   for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
     const trimmed = line.trim();
