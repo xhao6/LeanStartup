@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/0qKrGbGw-jkUfpQZxUrL5A
-title: "油管大神Justin Welsh：一人公司如何靠“内容系统”，实现每天工作2小时，年入170万美元"
-description: "只靠内容创作，一个人创业能做到百万美元营收吗？很多人会觉得这是天方夜谭——要么需要团队支撑，要么得靠资本加持，单枪匹马做内容，撑死只能赚点零花钱。"
-author: "小遇"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:54:44.561Z"
+url: 'https://mp.weixin.qq.com/s/0qKrGbGw-jkUfpQZxUrL5A'
+title: 油管大神Justin Welsh：一人公司如何靠“内容系统”，实现每天工作2小时，年入170万美元
+description: 只靠内容创作，一个人创业能做到百万美元营收吗？很多人会觉得这是天方夜谭——要么需要团队支撑，要么得靠资本加持，单枪匹马做内容，撑死只能赚点零花钱。
+author: 小遇
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:54:44.561Z'
+processed_at: '2026-04-21T15:57:32.959Z'
 ---
 
 # 油管大神Justin Welsh：一人公司如何靠“内容系统”，实现每天工作2小时，年入170万美元

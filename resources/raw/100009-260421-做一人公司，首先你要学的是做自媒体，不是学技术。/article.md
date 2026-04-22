@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/XMnrGosOxNSFaWFPpqJIOw
-title: "做一人公司，首先你要学的是做自媒体，不是学技术。"
-description: "大多数人第一反应：不对吧，技术都没有，拿什么单干？这个反应本身，就说明你走的还是打工人的逻辑。"
-author: "AI福安高"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:55:36.549Z"
+url: 'https://mp.weixin.qq.com/s/XMnrGosOxNSFaWFPpqJIOw'
+title: 做一人公司，首先你要学的是做自媒体，不是学技术。
+description: 大多数人第一反应：不对吧，技术都没有，拿什么单干？这个反应本身，就说明你走的还是打工人的逻辑。
+author: AI福安高
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:55:36.549Z'
+processed_at: '2026-04-21T16:09:42.661Z'
 ---
 
 # 做一人公司，首先你要学的是做自媒体，不是学技术。

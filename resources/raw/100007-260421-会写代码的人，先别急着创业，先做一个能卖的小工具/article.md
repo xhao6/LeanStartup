@@ -1,10 +1,12 @@
 ---
-url: https://mp.weixin.qq.com/s/6VNZcV727T8akKOCroeTaQ
-title: "会写代码的人，先别急着创业，先做一个能卖的小工具"
-description: "副业这件事，最容易把人拖住的不是技术不够，而是总想着一步做到很大。对普通程序员来说，先做一个能省时间、能解决具体问题、有人愿意掏钱的小工具，才是更现实的开始。"
-author: "房贷压不垮的码农"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:55:15.555Z"
+url: 'https://mp.weixin.qq.com/s/6VNZcV727T8akKOCroeTaQ'
+title: 会写代码的人，先别急着创业，先做一个能卖的小工具
+description: >-
+  副业这件事，最容易把人拖住的不是技术不够，而是总想着一步做到很大。对普通程序员来说，先做一个能省时间、能解决具体问题、有人愿意掏钱的小工具，才是更现实的开始。
+author: 房贷压不垮的码农
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:55:15.555Z'
+processed_at: '2026-04-21T16:04:37.305Z'
 ---
 
 # 会写代码的人，先别急着创业，先做一个能卖的小工具

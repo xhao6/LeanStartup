@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/avTVkA2hKQ9oK-iM-RUdMA
-title: "独立开发者小而美产品案例：比「月入万元」更有参考价值的真实故事"
-description: "「小而美」产品，才是大多数独立开发者更现实的参照。"
-author: "devclub"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:55:47.554Z"
+url: 'https://mp.weixin.qq.com/s/avTVkA2hKQ9oK-iM-RUdMA'
+title: 独立开发者小而美产品案例：比「月入万元」更有参考价值的真实故事
+description: 「小而美」产品，才是大多数独立开发者更现实的参照。
+author: devclub
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:55:47.554Z'
+processed_at: '2026-04-21T16:11:59.433Z'
 ---
 
 # 独立开发者小而美产品案例：比「月入万元」更有参考价值的真实故事

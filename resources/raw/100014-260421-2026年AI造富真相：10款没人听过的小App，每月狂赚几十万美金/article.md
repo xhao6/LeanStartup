@@ -1,10 +1,12 @@
 ---
-url: https://mp.weixin.qq.com/s/eoRJWjoSumKJYCE4vBPPtQ
-title: "2026年AI造富真相：10款没人听过的小App，每月狂赚几十万美金"
-description: "2026年最赚钱的不是大厂，而是不知名小团队做的AI小工具！10款没人听过的App，近半年上线、月入全超5万美金。YouTube创业博主Greg拆解完整逻辑，给出5条筛选标准、6套复制框架、7个现成方向，看完你也能做。"
-author: "Qson"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:36:11.084Z"
+url: 'https://mp.weixin.qq.com/s/eoRJWjoSumKJYCE4vBPPtQ'
+title: 2026年AI造富真相：10款没人听过的小App，每月狂赚几十万美金
+description: >-
+  2026年最赚钱的不是大厂，而是不知名小团队做的AI小工具！10款没人听过的App，近半年上线、月入全超5万美金。YouTube创业博主Greg拆解完整逻辑，给出5条筛选标准、6套复制框架、7个现成方向，看完你也能做。
+author: Qson
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:36:11.084Z'
+processed_at: '2026-04-21T16:20:41.358Z'
 ---
 
 # 2026年AI造富真相：10款没人听过的小App，每月狂赚几十万美金

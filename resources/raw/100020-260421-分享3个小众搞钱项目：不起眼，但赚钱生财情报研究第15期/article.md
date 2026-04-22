@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/FZSY5W9N6w3wndV-xAxpog
-title: "分享3个小众搞钱项目：不起眼，但赚钱 | 生财情报研究第15期"
-description: "给你拆解3个可以快速上手，能带来实际收益的赚钱机会。"
-author: "杨爽"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:37:15.347Z"
+url: 'https://mp.weixin.qq.com/s/FZSY5W9N6w3wndV-xAxpog'
+title: 分享3个小众搞钱项目：不起眼，但赚钱 | 生财情报研究第15期
+description: 给你拆解3个可以快速上手，能带来实际收益的赚钱机会。
+author: 杨爽
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:37:15.347Z'
+processed_at: '2026-04-22T00:24:55.343Z'
 ---
 
 # 分享3个小众搞钱项目：不起眼，但赚钱 | 生财情报研究第15期

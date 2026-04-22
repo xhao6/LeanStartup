@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/xaObEKXbIHirTmKrfbLFlQ
-title: "6个塑料瓶做一双鞋，这个品牌卖爆全球60多国，220万人买单"
-description: "把产品做透，把用户服务好，把品牌立住——那些愿意为品质买单的人，自然会来。"
-author: "Ellie"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:36:53.362Z"
+url: 'https://mp.weixin.qq.com/s/xaObEKXbIHirTmKrfbLFlQ'
+title: 6个塑料瓶做一双鞋，这个品牌卖爆全球60多国，220万人买单
+description: 把产品做透，把用户服务好，把品牌立住——那些愿意为品质买单的人，自然会来。
+author: Ellie
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:36:53.362Z'
+processed_at: '2026-04-21T16:30:07.857Z'
 ---
 
 # 6个塑料瓶做一双鞋，这个品牌卖爆全球60多国，220万人买单

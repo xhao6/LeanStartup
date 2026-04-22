@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/wv3cJutlIQ_vgfYq1RUXzg
-title: "周末写的小项目，每月赚得比996工资还高，程序员的被动收入玩法！"
-description: "程序员Andy习惯性点开Stripe后台，盯着上面的数字看了几秒才反应过来。"
-author: "5BASE"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T10:18:22.221Z"
+url: 'https://mp.weixin.qq.com/s/wv3cJutlIQ_vgfYq1RUXzg'
+title: 周末写的小项目，每月赚得比996工资还高，程序员的被动收入玩法！
+description: 程序员Andy习惯性点开Stripe后台，盯着上面的数字看了几秒才反应过来。
+author: 5BASE
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T10:18:22.221Z'
+processed_at: '2026-04-21T15:50:07.796Z'
 ---
 
 # 周末写的小项目，每月赚得比996工资还高，程序员的被动收入玩法！

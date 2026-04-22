@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/rXoMqqWC5ZQ30GzAJynHEQ
-title: "我，不懂代码，全职妈妈，却做出了5个App。"
-description: "我之前一直认为：一个全职妈妈的成长，是需要慢慢回到“现实世界”。重新工作、重新学习、重新证明自己。"
-author: "s顏竹"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:54:54.555Z"
+url: 'https://mp.weixin.qq.com/s/rXoMqqWC5ZQ30GzAJynHEQ'
+title: 我，不懂代码，全职妈妈，却做出了5个App。
+description: 我之前一直认为：一个全职妈妈的成长，是需要慢慢回到“现实世界”。重新工作、重新学习、重新证明自己。
+author: s顏竹
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:54:54.555Z'
+processed_at: '2026-04-21T15:59:36.541Z'
 ---
 
 # 我，不懂代码，全职妈妈，却做出了5个App。

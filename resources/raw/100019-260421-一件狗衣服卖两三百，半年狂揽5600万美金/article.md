@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/5IS8IfZ0W9a1x3RglqAYuw
-title: "一件狗衣服卖两三百，半年狂揽5600万美金"
-description: "小众不是小生意，真正的机会，可能就藏在那些“大多数人没注意到、但一小群人很需要”的缝隙里。"
-author: "Ellie"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:37:05.045Z"
+url: 'https://mp.weixin.qq.com/s/5IS8IfZ0W9a1x3RglqAYuw'
+title: 一件狗衣服卖两三百，半年狂揽5600万美金
+description: 小众不是小生意，真正的机会，可能就藏在那些“大多数人没注意到、但一小群人很需要”的缝隙里。
+author: Ellie
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:37:05.045Z'
+processed_at: '2026-04-21T16:31:09.030Z'
 ---
 
 # 一件狗衣服卖两三百，半年狂揽5600万美金

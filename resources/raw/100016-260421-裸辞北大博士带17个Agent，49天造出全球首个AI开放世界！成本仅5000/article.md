@@ -1,9 +1,10 @@
 ---
-url: https://mp.weixin.qq.com/s/oGH4ZfXeqdZ0iEDt8tlTxg
-title: "裸辞北大博士带17个Agent，49天造出全球首个AI开放世界！成本仅5000"
-author: "新智元"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:36:31.112Z"
+url: 'https://mp.weixin.qq.com/s/oGH4ZfXeqdZ0iEDt8tlTxg'
+title: 裸辞北大博士带17个Agent，49天造出全球首个AI开放世界！成本仅5000
+author: 新智元
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:36:31.112Z'
+processed_at: '2026-04-21T16:25:17.558Z'
 ---
 
 # 裸辞北大博士带17个Agent，49天造出全球首个AI开放世界！成本仅5000

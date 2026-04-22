@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/oqNNldcd63mPIHLCh0-dFA
-title: "一行代码没写，我用 Claude Code 做了个小程序，上线当天 100 人注册"
-description: "一天开发，两天调试，半个月等备案。品品这个～"
-author: "阿天"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:35:52.174Z"
+url: 'https://mp.weixin.qq.com/s/oqNNldcd63mPIHLCh0-dFA'
+title: 一行代码没写，我用 Claude Code 做了个小程序，上线当天 100 人注册
+description: 一天开发，两天调试，半个月等备案。品品这个～
+author: 阿天
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:35:52.174Z'
+processed_at: '2026-04-21T16:16:02.344Z'
 ---
 
 # 一行代码没写，我用 Claude Code 做了个小程序，上线当天 100 人注册

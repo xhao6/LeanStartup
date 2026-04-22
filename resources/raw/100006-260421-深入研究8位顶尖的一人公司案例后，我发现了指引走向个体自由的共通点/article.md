@@ -1,9 +1,10 @@
 ---
-url: https://mp.weixin.qq.com/s/5Sg8CNz2vT54oMoKpgcrxw
-title: "深入研究8位顶尖的一人公司案例后，我发现了指引走向个体自由的共通点"
-author: "月川"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:55:05.590Z"
+url: 'https://mp.weixin.qq.com/s/5Sg8CNz2vT54oMoKpgcrxw'
+title: 深入研究8位顶尖的一人公司案例后，我发现了指引走向个体自由的共通点
+author: 月川
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:55:05.590Z'
+processed_at: '2026-04-21T16:02:56.185Z'
 ---
 
 # 深入研究8位顶尖的一人公司案例后，我发现了指引走向个体自由的共通点

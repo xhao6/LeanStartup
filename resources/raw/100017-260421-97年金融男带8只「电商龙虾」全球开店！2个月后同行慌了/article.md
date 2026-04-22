@@ -1,9 +1,10 @@
 ---
-url: https://mp.weixin.qq.com/s/2QFoVQPjJ1TCiM3xVaJQ-A
-title: "97年金融男带8只「电商龙虾」全球开店！2个月后同行慌了"
-author: "新智元"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T14:36:42.221Z"
+url: 'https://mp.weixin.qq.com/s/2QFoVQPjJ1TCiM3xVaJQ-A'
+title: 97年金融男带8只「电商龙虾」全球开店！2个月后同行慌了
+author: 新智元
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T14:36:42.221Z'
+processed_at: '2026-04-22T00:22:40.003Z'
 ---
 
 # 97年金融男带8只「电商龙虾」全球开店！2个月后同行慌了

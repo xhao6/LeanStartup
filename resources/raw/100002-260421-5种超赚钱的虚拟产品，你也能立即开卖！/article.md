@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/OLEvyyojKVL6ged-tpbf4w
-title: "5种超赚钱的虚拟产品，你也能立即开卖！"
-description: "无需复杂的团队或高昂的成本，利用 Notion、AI 工具和 Canva，个人玩家也能创造出惊人的被动收入。"
-author: "5BASE"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T10:18:32.408Z"
+url: 'https://mp.weixin.qq.com/s/OLEvyyojKVL6ged-tpbf4w'
+title: 5种超赚钱的虚拟产品，你也能立即开卖！
+description: 无需复杂的团队或高昂的成本，利用 Notion、AI 工具和 Canva，个人玩家也能创造出惊人的被动收入。
+author: 5BASE
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T10:18:32.408Z'
+processed_at: '2026-04-21T15:53:03.068Z'
 ---
 
 # 5种超赚钱的虚拟产品，你也能立即开卖！

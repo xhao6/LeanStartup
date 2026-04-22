@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/93SWQxa9-ntnG9vi72TXOA
-title: "【文字版】95后男生，在小红书上卖饰品，月利润10万+"
-description: "95后男生，在小红书上卖饰品，月利润10万+昨天晚上，直播已经结束啦！我让AI帮我总结了这次直播的核心问题和观点。"
-author: "郭晓文"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-21T13:54:34.538Z"
+url: 'https://mp.weixin.qq.com/s/93SWQxa9-ntnG9vi72TXOA'
+title: 【文字版】95后男生，在小红书上卖饰品，月利润10万+
+description: 95后男生，在小红书上卖饰品，月利润10万+昨天晚上，直播已经结束啦！我让AI帮我总结了这次直播的核心问题和观点。
+author: 郭晓文
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-21T13:54:34.538Z'
+processed_at: '2026-04-21T15:55:27.748Z'
 ---
 
 # 【文字版】95后男生，在小红书上卖饰品，月利润10万+
