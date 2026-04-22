@@ -15,6 +15,8 @@ export interface RawArticleFrontmatter {
 export interface RawArticle {
   /** 6-digit ID extracted from directory name (e.g., "100001") */
   id: string;
+  /** Directory name (e.g., "100001-260421-周末写的小项目...") */
+  dirName: string;
   /** Absolute path to the article directory */
   dirPath: string;
   /** Parsed frontmatter */

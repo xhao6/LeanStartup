@@ -73,6 +73,7 @@ function scanUnprocessed(rawDir: string, filterIds?: string[]): RawArticle[] {
 
       articles.push({
         id,
+        dirName: entry.name,
         dirPath: path.join(rawDir, entry.name),
         frontmatter: frontmatter as RawArticleFrontmatter,
         content,
@@ -139,11 +140,12 @@ async function processArticle(
     // Step 3: Format and write output
     const outputMarkdown = formatProcessedMarkdown(article, extraction);
 
-    if (!fs.existsSync(options.outputDir)) {
-      fs.mkdirSync(options.outputDir, { recursive: true });
+    const articleOutputDir = path.join(options.outputDir, article.dirName);
+    if (!fs.existsSync(articleOutputDir)) {
+      fs.mkdirSync(articleOutputDir, { recursive: true });
     }
 
-    const outputPath = path.join(options.outputDir, `${article.id}.md`);
+    const outputPath = path.join(articleOutputDir, `${article.dirName}.md`);
     fs.writeFileSync(outputPath, outputMarkdown, "utf-8");
     console.log(`    -> ${outputPath}`);
 
