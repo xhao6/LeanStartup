@@ -67,6 +67,23 @@ export function formatProcessedMarkdown(
     sections.push(`## 避坑指南\n\n${pitfallsList}`);
   }
 
+  // Cycle (变现周期)
+  if (extraction.cycle) {
+    sections.push(`## 变现周期\n\n${extraction.cycle}`);
+  }
+
+  // Risk tags (风险标签)
+  if (extraction.riskTags.length > 0) {
+    const riskTagsList = extraction.riskTags.map((t) => `- ${t}`).join("\n");
+    sections.push(`## 风险标签\n\n${riskTagsList}`);
+  }
+
+  // Tags (吸睛标签)
+  if (extraction.tags.length > 0) {
+    const tagsList = extraction.tags.map((t) => `- ${t}`).join("\n");
+    sections.push(`## 吸睛标签\n\n${tagsList}`);
+  }
+
   return `---\n${frontmatter}\n---\n\n${sections.join("\n\n")}\n`;
 }
 
