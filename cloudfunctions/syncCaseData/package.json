@@ -1,6 +1,9 @@
 {
   "name": "syncCaseData",
   "version": "1.0.0",
+  "description": "Sync case data to Case collection",
   "main": "index.js",
-  "dependencies": {}
+  "dependencies": {
+    "@cloudbase/manager-node": "^5.0.0"
+  }
 }

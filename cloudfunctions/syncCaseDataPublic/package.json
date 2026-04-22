@@ -1,0 +1,9 @@
+{
+  "name": "syncCaseDataPublic",
+  "version": "1.0.0",
+  "description": "Sync case data to Case collection (public version for one-time sync)",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.1.0"
+  }
+}

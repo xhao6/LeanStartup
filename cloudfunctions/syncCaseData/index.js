@@ -1,13 +1,13 @@
 /**
  * syncCaseData - 同步案例数据到 Case 集合
  *
- * 使用 HTTP API 直接访问数据库，不依赖任何 npm 包
- * 凭证从 context.environment 嵌入式票据中获取
+ * 使用 @cloudbase/manager-node SDK
+ * 在云函数环境中，SDK 自动从环境变量获取凭证，无需传入 secretId/secretKey
  */
+const CloudBase = require('@cloudbase/manager-node')
 const { success, error } = require('./utils/response')
 const { formatDateTime } = require('./utils/date')
 const { assertCloudFunctionContext } = require('./utils/auth')
-const https = require('https')
 
 /**
  * 必填字段列表
@@ -81,101 +81,65 @@ function buildRecord(caseData, now) {
 }
 
 /**
- * 解析 context.environment JSON 字符串，提取嵌入式票据
- */
-function parseCredentials(context) {
-  const envObj = JSON.parse(context.environment || '{}')
-  return {
-    sessionToken: envObj.TENCENTCLOUD_SESSIONTOKEN,
-    envId: envObj.SCF_NAMESPACE || context.namespace
-  }
-}
-
-/**
- * 使用 Node.js 内置 https 调用 CloudBase 数据库 HTTP API
- * 使用 X-Tcb-Token 认证（TCB 嵌入式临时凭证）
- */
-function apiRequest(method, path, body, credentials) {
-  return new Promise((resolve, reject) => {
-    const host = `${credentials.envId}.api.tcloudbasegateway.com`
-    const bodyStr = body ? JSON.stringify(body) : ''
-    const headers = {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(bodyStr),
-      'X-Tcb-Token': credentials.sessionToken
-    }
-
-    const options = {
-      hostname: host,
-      path,
-      method,
-      headers,
-      timeout: 15000
-    }
-
-    const req = https.request(options, (res) => {
-      let data = ''
-      res.on('data', chunk => data += chunk)
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data))
-        } catch (e) {
-          resolve(data)
-        }
-      })
-    })
-    req.on('error', reject)
-    req.on('timeout', () => {
-      req.destroy()
-      reject(new Error('请求超时'))
-    })
-    if (bodyStr) req.write(bodyStr)
-    req.end()
-  })
-}
-
-/**
  * 查询单条记录
  */
-async function queryOne(colName, query, credentials) {
-  const res = await apiRequest('POST', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/query`, {
-    query,
-    limit: 1
-  }, credentials)
-  console.log(`queryOne ${colName} ${JSON.stringify(query)}: code=${res.code} found=${res.data ? res.data.length : 'N/A'}`)
-  if (res.code !== undefined && res.code !== 0) {
-    throw new Error(res.message || `queryOne failed code=${res.code}`)
+async function queryOne(db, collectionName, query, tag) {
+  const result = await db.runCommands({
+    MgoCommands: [{
+      TableName: collectionName,
+      CommandType: 'QUERY',
+      Command: JSON.stringify({
+        filter: query,
+        limit: 1
+      })
+    }],
+    Tag: tag
+  })
+
+  if (!result.Data || result.Data.length === 0) {
+    return { data: [] }
   }
-  return res
+
+  const data = JSON.parse(result.Data[0])
+  console.log(`queryOne ${collectionName} ${JSON.stringify(query)}: found=${data.length}`)
+  return { data }
 }
 
 /**
  * 新增记录
  */
-async function addRecord(colName, record, credentials) {
-  const res = await apiRequest('POST', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/records`, {
-    data: record
-  }, credentials)
-  console.log(`addRecord ${colName}: code=${res.code}`)
-  if (res.code !== undefined && res.code !== 0) {
-    throw new Error(res.message || `addRecord failed code=${res.code}`)
-  }
-  return res
+async function addRecord(db, collectionName, record, tag) {
+  const result = await db.runCommands({
+    MgoCommands: [{
+      TableName: collectionName,
+      CommandType: 'INSERT',
+      Command: JSON.stringify(record)
+    }],
+    Tag: tag
+  })
+
+  console.log(`addRecord ${collectionName}: InsertedIds=${result.InsertedIds?.join(',')}`)
+  return result
 }
 
 /**
  * 更新记录
  */
-async function updateRecord(colName, recordId, record, credentials) {
-  const res = await apiRequest('PATCH', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/records/${recordId}`, {
-    data: record,
-    query: { id: recordId }
-  }, credentials)
-  console.log(`updateRecord ${recordId}: code=${res.code}`)
-  if (res.code !== undefined && res.code !== 0) {
-    throw new Error(res.message || `updateRecord failed code=${res.code}`)
-  }
-  return res
+async function updateRecord(db, collectionName, record, tag) {
+  const result = await db.runCommands({
+    MgoCommands: [{
+      TableName: collectionName,
+      CommandType: 'UPDATE',
+      Command: JSON.stringify({
+        filter: { id: record.id },
+        update: { $set: record }
+      })
+    }],
+    Tag: tag
+  })
+
+  console.log(`updateRecord ${record.id}: ModifiedNum=${result.ModifiedNum}`)
+  return result
 }
 
 /**
@@ -192,17 +156,22 @@ exports.main = async (event, context) => {
       return error('cases 必须是非空数组', 'INVALID_INPUT')
     }
 
-    // 解析凭证
-    let credentials
-    try {
-      credentials = parseCredentials(context)
-    } catch (e) {
-      return error('无法解析 context.environment: ' + e.message, 'ENV_PARSE_ERROR')
+    // 初始化 CloudBase SDK（云函数环境无需 secretId/secretKey）
+    const envId = context.namespace || process.env.TCB_ENV
+    if (!envId) {
+      return error('无法获取环境 ID', 'ENV_ERROR')
     }
 
-    if (!credentials.sessionToken || !credentials.envId) {
-      return error(`缺少凭证: sessionToken=${!!credentials.sessionToken}, envId=${!!credentials.envId}`, 'MISSING_CREDENTIALS')
+    const app = CloudBase.init({ envId })
+    const db = app.database
+
+    // 获取数据库实例 ID
+    const { EnvInfo } = await app.env.getEnvInfo()
+    const { Databases } = EnvInfo
+    if (!Databases || Databases.length === 0) {
+      return error('未找到数据库实例', 'DB_ERROR')
     }
+    const tag = Databases[0].InstanceId
 
     const now = formatDateTime(new Date())
     let synced = 0
@@ -220,17 +189,17 @@ exports.main = async (event, context) => {
       const record = buildRecord(caseData, now)
 
       // 查询是否已存在
-      const qRes = await queryOne('Case', { id: caseId }, credentials)
+      const qRes = await queryOne(db, 'Case', { id: caseId }, tag)
 
       if (qRes.data && qRes.data.length > 0) {
         // 保留 created_at 和 published_at
         const existingDoc = qRes.data[0]
         record.created_at = existingDoc.created_at
         record.published_at = existingDoc.published_at || undefined
-        await updateRecord('Case', caseId, record, credentials)
+        await updateRecord(db, 'Case', record, tag)
       } else {
         record.created_at = now
-        await addRecord('Case', record, credentials)
+        await addRecord(db, 'Case', record, tag)
       }
 
       synced++
@@ -245,6 +214,7 @@ exports.main = async (event, context) => {
 
     return success({ synced })
   } catch (err) {
+    console.error('syncCaseData error:', err)
     return error(err.message || '未知错误', 'UNKNOWN')
   }
 }

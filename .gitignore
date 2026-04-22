@@ -23,3 +23,12 @@ coverage/
 .gstack/
 skills/
 .env
+
+# Temporary data files
+cases-batch.json
+cases-to-sync.json
+valid-cases.json
+
+# Cloud function lock files
+cloudfunctions/*/package-lock.json
+cloudfunctions/*/node_modules/
