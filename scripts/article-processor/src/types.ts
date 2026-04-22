@@ -56,6 +56,12 @@ export interface ExtractionResult {
   score: ArticleScore;
   scoreReasoning: ScoreReasoning;
   caseStory: string;
+  /** 变现周期描述 */
+  cycle: string;
+  /** 风险标签，最多3个 */
+  riskTags: string[];
+  /** 吸睛标签，恰好5个，每个2-6字，按吸睛程度排序 */
+  tags: string[];
 }
 
 /** JSON output from the review LLM call */
