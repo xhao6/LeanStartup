@@ -36,15 +36,12 @@ node sync-cases.js
 
 ## 云函数说明
 
-### syncCaseData（原始）
-- **用途**：生产环境使用，有鉴权保护
-- **特点**：只能从云函数内部调用
-- **场景**：定时任务、其他云函数内部调用
-
-### syncCaseDataPublic（新增）
-- **用途**：外部脚本数据同步
-- **特点**：无上下文验证，可从外部调用
+### syncCaseDataPublic
+- **用途**：数据同步云函数
+- **特点**：使用 `@cloudbase/node-sdk`，支持外部脚本调用
 - **场景**：批量导入、数据修复、运维脚本
+
+**注意**：原 `syncCaseData` 云函数已弃用并删除（2026-04-22）
 
 ## 使用流程
 
@@ -93,7 +90,13 @@ CLOUDBASE_SECRET_KEY=your-secret-key
 ```
 错误: 此函数仅支持云函数内部调用
 ```
-**解决**：确认使用的是 `syncCaseDataPublic` 而不是 `syncCaseData`
+**解决**：确认使用的是 `syncCaseDataPublic`
+
+### 问题：找不到云函数
+```
+错误: Function not found
+```
+**解决**：确认云函数 `syncCaseDataPublic` 已部署
 
 ### 问题：评分不一致
 ```
