@@ -178,4 +178,50 @@ describe('syncCaseData', () => {
     expect(addData.id).toBe('12345')
     expect(typeof addData.id).toBe('string')
   })
+
+  describe('边缘场景', () => {
+    it('单个批次中部分有效部分无效 → 返回部分失败错误', async () => {
+      const goodCase = makeValidCase()
+      const badCase = { id: '100002' } // 缺少必填字段
+
+      const result = await doSyncCaseData(
+        { cases: [goodCase, badCase] },
+        validContext,
+        makeDeps()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('INVALID_INPUT')
+      expect(result.error).toContain('[1]')
+      expect(result.error).toContain('title')
+    })
+
+    it('鉴权失败 → FORBIDDEN', async () => {
+      mockAssertAuth.mockImplementation(() => {
+        throw new Error('FORBIDDEN: 此函数仅支持云函数内部调用')
+      })
+
+      const result = await doSyncCaseData(
+        { cases: [makeValidCase()] },
+        createUnauthContext(),
+        makeDeps()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('FORBIDDEN')
+    })
+
+    it('title 为空字符串 → 缺少必填字段错误', async () => {
+      const caseData = makeValidCase({ title: '' })
+
+      const result = await doSyncCaseData(
+        { cases: [caseData] },
+        validContext,
+        makeDeps()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('title')
+    })
+  })
 })
