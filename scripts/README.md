@@ -1,111 +1,79 @@
-# 数据同步脚本
+# Scripts 目录
 
-用于将处理好的案例数据同步到 CloudBase NoSQL 数据库。
+内容管道相关脚本目录，包含文章下载和文章处理工具。
 
-## 脚本说明
+## 目录结构
 
-### prepare-cases.js
-从 `resources/processed/` 目录解析 MD 文件，生成批量 JSON 数据。
+```
+scripts/
+├── article-downloader/    # 文章下载工具
+│   └── README.md
+└── article-processor/     # 文章处理工具
+    └── README.md
+```
 
-**使用方法**：
+## 子模块说明
+
+### article-downloader - 文章下载工具
+
+使用 Chrome CDP (Chrome DevTools Protocol) 从微信公众号下载文章内容。
+
+**主要功能**：
+- 通过远程调试端口连接 Chrome 浏览器
+- 自动滚动加载完整文章内容
+- 提取文章标题和正文
+- 保存为 HTML 文件到 `resources/raw/`
+
+**快速开始**：
 ```bash
-node prepare-cases.js
+# 1. 启动 Chrome（带远程调试）
+chrome.exe --remote-debugging-port=9222
+
+# 2. 运行下载脚本
+cd scripts/article-downloader
+node download.js "https://mp.weixin.qq.com/s/xxxxx"
 ```
 
-**输出**：`cases-batch.json`
+**详细文档**：[article-downloader/README.md](article-downloader/README.md)
 
-**功能**：
-- 解析所有 MD 文件的 frontmatter
-- 提取各个 section（案例故事、操作步骤、避坑指南等）
-- 验证必填字段
-- 添加时间戳
+---
 
-### sync-cases.js
-调用云函数将数据同步到 Case 集合。
+### article-processor - 文章处理工具
 
-**使用方法**：
+使用 LLM (MiniMax AI) 对下载的文章进行智能评分和结构化提取。
+
+**主要功能**：
+- AI 评分（5 个维度：可行性、收益、时效性、细节、适配度）
+- 提取关键信息（摘要、步骤、工具、成本、风险等）
+- 自动脱敏处理（手机号、微信号、身份证等）
+- 生成结构化 Markdown 文件
+
+**快速开始**：
 ```bash
-node sync-cases.js
+cd scripts/article-processor
+node process.js 1700000001
 ```
 
-**功能**：
-- 读取 `cases-batch.json` 或解析 MD 文件
-- 调用 `syncCaseDataPublic` 云函数
-- 批量插入/更新案例数据
-- 显示同步进度和结果
+**详细文档**：[article-processor/README.md](article-processor/README.md)
 
-## 云函数说明
+## 数据流程
 
-### syncCaseDataPublic
-- **用途**：数据同步云函数
-- **特点**：使用 `@cloudbase/node-sdk`，支持外部脚本调用
-- **场景**：批量导入、数据修复、运维脚本
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     内容采集流程                               │
+└─────────────────────────────────────────────────────────────┘
 
-**注意**：原 `syncCaseData` 云函数已弃用并删除（2026-04-22）
-
-## 使用流程
-
-### 首次同步
-```bash
-# 1. 准备数据
-node prepare-cases.js
-
-# 2. 同步到数据库
-node sync-cases.js
+    运营筛选               article-downloader              article-processor
+  文章 URL      ──────►  下载 HTML 文件      ──────►  LLM 评分 + 结构化
+                          ↓                         ↓
+                   resources/raw/          resources/processed/
+                                               ↓
+                                         sync-cases.js (根目录)
+                                               ↓
+                                         Case 集合 (NoSQL 数据库)
 ```
 
-### 增量更新
-如果添加了新文章，直接运行：
-```bash
-node sync-cases.js
-```
+## 相关文档
 
-脚本会自动检测所有 MD 文件并同步。
-
-## 数据验证
-
-脚本会自动验证：
-- ✅ 评分必须为整数
-- ✅ 总分 = 五维度之和
-- ✅ 必填字段完整
-
-## 依赖
-
-- `dotenv` - 环境变量
-- `gray-matter` - Markdown 解析
-- `@cloudbase/node-sdk` - CloudBase SDK
-
-## 环境变量
-
-在 `.env` 文件中配置：
-```
-CLOUDBASE_ENV_ID=your-env-id
-CLOUDBASE_SECRET_ID=your-secret-id
-CLOUDBASE_SECRET_KEY=your-secret-key
-```
-
-## 故障排查
-
-### 问题：云函数调用失败
-```
-错误: 此函数仅支持云函数内部调用
-```
-**解决**：确认使用的是 `syncCaseDataPublic`
-
-### 问题：找不到云函数
-```
-错误: Function not found
-```
-**解决**：确认云函数 `syncCaseDataPublic` 已部署
-
-### 问题：评分不一致
-```
-评分不一致: score_total=7，五维度之和=6
-```
-**解决**：检查 MD 文件的 frontmatter，修正 total_score 或各维度评分
-
-### 问题：缺少字段
-```
-案例 xxx 缺少字段: cycle, pitfalls
-```
-**解决**：检查 MD 文件是否缺少对应的 section
+- **数据同步脚本**：项目根目录的 `sync-cases.js` 和 `prepare-cases.js`
+- **运维指南**：`docs/operations/` 目录
