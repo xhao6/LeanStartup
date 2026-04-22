@@ -13,16 +13,16 @@ const FUNCTIONS = [
   'toggleCollection',
   'trackEvent',
   'subscribeMessage',
-  'generateDailyPick',
-  'syncCaseData'
+  'generateDailyPick'
+  // syncCaseData - 已弃用，使用 syncCaseDataPublic 代替
 ]
 
 // 每个函数需要的共享模块
 const MODULES = {
   default: ['db.js', 'auth.js', 'response.js', 'date.js'],
   subscribeMessage: ['db.js', 'auth.js', 'response.js', 'date.js', 'wechat-api.js'],
-  generateDailyPick: ['db.js', 'auth.js', 'response.js', 'date.js', 'wechat-api.js'],
-  syncCaseData: ['db.js', 'auth.js', 'response.js', 'date.js']
+  generateDailyPick: ['db.js', 'auth.js', 'response.js', 'date.js', 'wechat-api.js']
+  // syncCaseData - 已弃用
 }
 
 function fileHash(filepath) {
