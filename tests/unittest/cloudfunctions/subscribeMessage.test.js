@@ -161,4 +161,51 @@ describe('subscribeMessage (DI)', () => {
     expect(result.success).toBe(false)
     expect(result.code).toBe('FORBIDDEN')
   })
+
+  describe('边缘场景', () => {
+    it('template_id 缺失 → INVALID_INPUT', async () => {
+      const deps = createMockDeps()
+      deps.assertCloudFunctionContext.mockImplementation(() => {})
+
+      const result = await doSubscribeMessage(
+        { data: { thing1: { value: 'hello' } } },
+        deps,
+        createMockContext()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('INVALID_INPUT')
+    })
+
+    it('data 缺失 → INVALID_INPUT', async () => {
+      const deps = createMockDeps()
+      deps.assertCloudFunctionContext.mockImplementation(() => {})
+
+      const result = await doSubscribeMessage(
+        { template_id: 'tmpl_001' },
+        deps,
+        createMockContext()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('INVALID_INPUT')
+    })
+
+    it('不足50条 → 不触发递归', async () => {
+      const deps = createMockDeps()
+      const subs = Array.from({ length: 10 }, (_, i) => ({
+        _id: `sub_${i}`, openid: `openid_${i}`
+      }))
+      deps.collection._results = [{ data: subs }]
+
+      const result = await doSubscribeMessage(
+        { template_id: 'tmpl_001', data: { thing1: { value: 'hello' } } },
+        deps,
+        createMockContext()
+      )
+
+      expect(result.data.sent).toBe(10)
+      expect(deps.callFunction).not.toHaveBeenCalled()
+    })
+  })
 })

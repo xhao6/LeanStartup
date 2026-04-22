@@ -189,4 +189,57 @@ describe('generateDailyPick (DI)', () => {
     // 清理 pending promise
     resolvePush({ result: { success: true } })
   })
+
+  describe('边缘场景', () => {
+    it('无可选案例（Case 集合为空）→ NO_CASES', async () => {
+      const deps = createMockDeps()
+      // _getResults queue: [todayPick=empty, recentPicks=empty, publishedCases=empty]
+      deps.collection._getResults.push(
+        { data: [] },   // 今日幂等检查
+        { data: [] },   // 30天去重查询
+        { data: [] }    // Case 查询: 无 published 案例
+      )
+
+      const result = await doGenerateDailyPick({}, deps)
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('NO_CASES')
+    })
+
+    it('有案例但全部30天内已用过 → 经典回顾补充', async () => {
+      const deps = createMockDeps()
+      const cases = [
+        { id: '100001', status: 'published', score_total: 9 },
+        { id: '100002', status: 'published', score_total: 8 }
+      ]
+      deps.collection._getResults.push(
+        { data: [] },                    // 今日不存在
+        { data: [{ case_ids: ['100001', '100002'] }] }, // 全部已用
+        { data: cases }                  // Case 查询
+      )
+
+      const result = await doGenerateDailyPick({}, deps)
+
+      expect(result.success).toBe(true)
+      expect(result.data.case_ids).toHaveLength(2)
+      // 经典回顾按 score_total 倒序
+      expect(result.data.case_ids[0]).toBe('100001')
+    })
+
+    it('PUSH_TEMPLATE_ID 未配置 → 不触发推送', async () => {
+      const deps = createMockDeps()
+      delete process.env.PUSH_TEMPLATE_ID
+
+      deps.collection._getResults.push(
+        { data: [] },
+        { data: [] },
+        { data: [{ id: '100001', status: 'published', score_total: 8 }] }
+      )
+
+      const result = await doGenerateDailyPick({}, deps)
+
+      expect(result.success).toBe(true)
+      expect(deps.callFunction).not.toHaveBeenCalled()
+    })
+  })
 })
