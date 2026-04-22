@@ -1,10 +1,8 @@
-# 数据同步指南
+# Sync-to-DB - 数据同步工具
 
-用于将处理好的案例数据从 `resources/processed/` 同步到 CloudBase NoSQL Case 集合。
+将处理好的案例数据从 `resources/processed/` 同步到 CloudBase NoSQL Case 集合。
 
-## 脚本位置
-
-数据同步工具位于 `scripts/sync-to-db/` 目录：
+## 目录结构
 
 ```
 scripts/sync-to-db/
@@ -14,7 +12,7 @@ scripts/sync-to-db/
 ├── prepare.js         # 准备数据（输出 JSON）
 ├── sync.js           # 同步数据（到云数据库）
 ├── index.js          # 统一入口
-└── README.md
+└── README.md         # 本文档
 ```
 
 ## 快速开始
@@ -34,6 +32,7 @@ node index.js prepare
 - 解析所有 MD 文件的 frontmatter 和 sections
 - 验证必填字段完整性
 - 验证评分数据一致性
+- 自动添加时间戳
 
 ### 2. 同步到数据库
 
@@ -49,6 +48,58 @@ node index.js sync
 - 调用 `syncCaseDataPublic` 云函数
 - 批量插入/更新案例数据
 - 显示同步进度和结果
+
+## 命令行选项
+
+### prepare 命令
+
+```bash
+node index.js prepare [选项]
+```
+
+| 选项 | 说明 | 默认值 |
+|------|------|--------|
+| `--input <dir>` | 输入目录 | `../../resources/processed` |
+| `--output <file>` | 输出文件 | `../../cases-batch.json` |
+| `-h, --help` | 显示帮助 | - |
+
+**示例**：
+```bash
+# 使用默认配置
+node index.js prepare
+
+# 指定输入输出
+node index.js prepare --input ./data --output ./cases.json
+```
+
+### sync 命令
+
+```bash
+node index.js sync [选项]
+```
+
+| 选项 | 说明 | 默认值 |
+|------|------|--------|
+| `--input <dir>` | 输入目录（直接解析 MD） | `../../resources/processed` |
+| `--file <path>` | 输入 JSON 文件 | - |
+| `--function <name>` | 云函数名称 | `syncCaseDataPublic` |
+| `--env <id>` | CloudBase 环境 ID | `CLOUDBASE_ENV_ID` |
+| `-h, --help` | 显示帮助 | - |
+
+**示例**：
+```bash
+# 直接解析 MD 文件并同步
+node index.js sync
+
+# 从 JSON 文件同步
+node index.js sync --file cases-batch.json
+
+# 指定输入目录
+node index.js sync --input ./data
+
+# 指定云函数
+node index.js sync --function myCustomSyncFunction
+```
 
 ## 数据验证
 
@@ -71,18 +122,16 @@ node index.js sync
 
 ```bash
 # 1. 准备数据
-node prepare-cases.js
+node index.js prepare
 
 # 2. 同步到数据库
-node sync-cases.js
+node index.js sync
 ```
 
 ### 增量更新
 
 添加新文章后，直接运行：
-
 ```bash
-cd scripts/sync-to-db
 node index.js sync
 ```
 
@@ -91,13 +140,11 @@ node index.js sync
 ### 数据修复
 
 当需要修复 Case 集合中的数据时：
-
 ```bash
 # 1. 修正 MD 文件中的错误
 vim resources/processed/100001-xxx/100001-xxx.md
 
 # 2. 重新同步
-cd scripts/sync-to-db
 node index.js sync
 ```
 
@@ -229,53 +276,16 @@ scores:
 - `## 风险标签`
 - `## 吸睛标签`
 
-## 命令行选项
+## 依赖
 
-### prepare 命令
-
-```bash
-node index.js prepare [选项]
-```
-
-| 选项 | 说明 | 默认值 |
-|------|------|--------|
-| `--input <dir>` | 输入目录 | `../../resources/processed` |
-| `--output <file>` | 输出文件 | `../../cases-batch.json` |
-| `-h, --help` | 显示帮助 | - |
-
-**示例**：
-```bash
-# 使用默认配置
-node index.js prepare
-
-# 指定输入输出
-node index.js prepare --input ./data --output ./cases.json
-```
-
-### sync 命令
-
-```bash
-node index.js sync [选项]
-```
-
-| 选项 | 说明 | 默认值 |
-|------|------|--------|
-| `--input <dir>` | 输入目录（直接解析 MD） | `../../resources/processed` |
-| `--file <path>` | 输入 JSON 文件 | - |
-| `--function <name>` | 云函数名称 | `syncCaseDataPublic` |
-| `--env <id>` | CloudBase 环境 ID | `CLOUDBASE_ENV_ID` |
-| `-h, --help` | 显示帮助 | - |
-
-**示例**：
-```bash
-# 直接解析 MD 文件并同步
-node index.js sync
-
-# 从 JSON 文件同步
-node index.js sync --file cases-batch.json
-
-# 指定输入目录
-node index.js sync --input ./data
+```json
+{
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "gray-matter": "^4.0.0",
+    "@cloudbase/node-sdk": "^3.1.0"
+  }
+}
 ```
 
 ## 模块说明
@@ -297,21 +307,8 @@ CloudBase 数据同步器，提供以下函数：
 - `initCloudBase(envId, secretId, secretKey)` - 初始化 CloudBase
 - `syncCasesToCloud(app, functionName, cases)` - 同步数据到云数据库
 
-## 依赖
-
-```json
-{
-  "dependencies": {
-    "dotenv": "^16.0.0",
-    "gray-matter": "^4.0.0",
-    "@cloudbase/node-sdk": "^3.1.0"
-  }
-}
-```
-
 ## 相关文档
 
-- **工具文档**：[scripts/sync-to-db/README.md](../../scripts/sync-to-db/README.md)
-- **文章下载**：[scripts/article-downloader/README.md](../../scripts/article-downloader/README.md)
-- **文章处理**：[scripts/article-processor/README.md](../../scripts/article-processor/README.md)
-- **云函数清理**：[delete-syncCaseData.md](./delete-syncCaseData.md)
+- **文章下载**：[article-downloader/README.md](../article-downloader/README.md)
+- **文章处理**：[article-processor/README.md](../article-processor/README.md)
+- **运维指南**：[docs/operations/data-sync.md](../../../docs/operations/data-sync.md)

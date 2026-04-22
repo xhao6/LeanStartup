@@ -1,16 +1,13 @@
 /**
- * 准备22篇案例数据
+ * MD 文件解析器
+ * 解析 Markdown frontmatter 和 sections
  */
-require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
 
-const processedDir = path.join(__dirname, 'resources/processed')
-const outputFile = path.join(__dirname, 'cases-batch.json')
-
 /**
- * 解析某个 section 的内容
+ * 提取某个 section 的内容
  */
 function extractSection(content, sectionName) {
   const regex = new RegExp(`## ${sectionName}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n$|$)`, 'i')
@@ -42,14 +39,6 @@ function parseCaseFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf8')
   const { data } = matter(content)
 
-  const cycle = extractSection(content, '变现周期')
-  const revenue = extractSection(content, '预期收益')
-  const cost = extractSection(content, '启动成本')
-  const pitfalls = extractSection(content, '避坑指南')
-  const suitableFor = extractSection(content, '适合人群')
-  const riskTags = extractSection(content, '风险标签')
-  const tags = extractSection(content, '吸睛标签')
-
   return {
     id: data.id,
     title: data.source_title || '',
@@ -62,30 +51,32 @@ function parseCaseFile(filePath) {
     score_timeliness: data.scores?.timeliness || 0,
     score_detail: data.scores?.detail || 0,
     score_fitness: data.scores?.userFit || 0,
-    cost: cost || '',
-    expected_revenue: revenue || '',
-    cycle: cycle || '',
+    cost: extractSection(content, '启动成本'),
+    expected_revenue: extractSection(content, '预期收益'),
+    cycle: extractSection(content, '变现周期'),
     steps: parseList(extractSection(content, '操作步骤')),
     tools: parseList(extractSection(content, '所需工具')),
-    pitfalls: pitfalls || '',
-    suitable_for: suitableFor || '',
-    risk_tags: parseList(riskTags),
-    tags: parseList(tags),
+    pitfalls: extractSection(content, '避坑指南'),
+    suitable_for: extractSection(content, '适合人群'),
+    risk_tags: parseList(extractSection(content, '风险标签')),
+    tags: parseList(extractSection(content, '吸睛标签')),
     case_story: extractSection(content, '案例故事') || '',
     status: 'published'
   }
 }
 
 /**
- * 读取所有处理过的案例
+ * 读取指定目录下的所有案例
+ * @param {string} dirPath - 处理后的文章目录
+ * @returns {Array} 案例数据数组
  */
-function loadAllCases() {
-  const entries = fs.readdirSync(processedDir, { withFileTypes: true })
+function loadCasesFromDir(dirPath) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
   const cases = []
 
   for (const entry of entries) {
     if (entry.isDirectory()) {
-      const mdFile = path.join(processedDir, entry.name, `${entry.name}.md`)
+      const mdFile = path.join(dirPath, entry.name, `${entry.name}.md`)
       if (fs.existsSync(mdFile)) {
         try {
           const caseData = parseCaseFile(mdFile)
@@ -101,34 +92,50 @@ function loadAllCases() {
 }
 
 /**
- * 主函数
+ * 验证案例数据完整性
+ * @param {Array} cases - 案例数据数组
+ * @returns {Object} 验证结果 { valid: boolean, errors: Array }
  */
-async function main() {
-  console.log('准备案例数据...')
-
-  const cases = loadAllCases()
-  console.log(`找到 ${cases.length} 个案例`)
-
-  // 验证所有必填字段
+function validateCases(cases) {
   const required = ['id', 'title', 'source_account', 'source_url', 'summary',
     'score_total', 'score_feasibility', 'score_profit', 'score_timeliness',
     'score_detail', 'score_fitness', 'cost', 'expected_revenue', 'cycle',
     'steps', 'tools', 'pitfalls', 'suitable_for', 'risk_tags', 'status']
 
-  for (let i = 0; i < cases.length; i++) {
-    const c = cases[i]
+  const errors = []
+
+  for (const c of cases) {
     const missing = required.filter(f => c[f] === undefined || c[f] === null || c[f] === '')
     if (missing.length > 0) {
-      console.error(`案例 ${c.id} 缺少字段: ${missing.join(', ')}`)
+      errors.push(`案例 ${c.id} 缺少字段: ${missing.join(', ')}`)
+    }
+
+    // 验证评分一致性
+    const sum = (c.score_feasibility || 0) + (c.score_profit || 0) +
+                (c.score_timeliness || 0) + (c.score_detail || 0) +
+                (c.score_fitness || 0)
+    if (c.score_total !== sum) {
+      errors.push(`案例 ${c.id} 评分不一致: score_total=${c.score_total}, 五维度之和=${sum}`)
+    }
+
+    // 验证评分为整数
+    for (const key of ['score_total', 'score_feasibility', 'score_profit', 'score_timeliness', 'score_detail', 'score_fitness']) {
+      if (c[key] !== undefined && !Number.isInteger(c[key])) {
+        errors.push(`案例 ${c.id} ${key} 必须为整数，当前值: ${c[key]}`)
+      }
     }
   }
 
-  // 写入 JSON 文件
-  fs.writeFileSync(outputFile, JSON.stringify({ cases }, null, 2))
-  console.log(`已写入: ${outputFile}`)
-  console.log('\n现在可以使用以下方式同步:')
-  console.log('1. 使用 callFunction 调用 syncCaseData 云函数')
-  console.log('2. 或使用 MCP writeNoSqlDatabaseContent 工具')
+  return {
+    valid: errors.length === 0,
+    errors
+  }
 }
 
-main()
+module.exports = {
+  extractSection,
+  parseList,
+  parseCaseFile,
+  loadCasesFromDir,
+  validateCases
+}

@@ -1,6 +1,6 @@
 # Scripts 目录
 
-内容管道相关脚本目录，包含文章下载和文章处理工具。
+内容管道相关脚本目录，包含文章下载、文章处理和数据同步工具。
 
 ## 目录结构
 
@@ -8,7 +8,14 @@
 scripts/
 ├── article-downloader/    # 文章下载工具
 │   └── README.md
-└── article-processor/     # 文章处理工具
+├── article-processor/     # 文章处理工具
+│   └── README.md
+└── sync-to-db/           # 数据同步工具
+    ├── lib/
+    │   ├── parser.js     # MD 文件解析器
+    │   └── sync.js       # CloudBase 数据同步器
+    ├── prepare.js        # 准备数据（输出 JSON）
+    ├── sync.js          # 同步数据（到云数据库）
     └── README.md
 ```
 
@@ -56,6 +63,31 @@ node process.js 1700000001
 
 **详细文档**：[article-processor/README.md](article-processor/README.md)
 
+---
+
+### sync-to-db - 数据同步工具
+
+将处理好的案例数据从 `resources/processed/` 同步到 CloudBase NoSQL Case 集合。
+
+**主要功能**：
+- 解析 Markdown 文件（frontmatter + sections）
+- 验证数据完整性（评分、必填字段）
+- 调用云函数批量同步到数据库
+- 支持命令行参数配置
+
+**快速开始**：
+```bash
+# 同步数据（直接解析 MD 文件）
+cd scripts/sync-to-db
+node index.js sync
+
+# 或分步操作
+node index.js prepare  # 生成 cases-batch.json
+node index.js sync --file ../../cases-batch.json
+```
+
+**详细文档**：[sync-to-db/README.md](sync-to-db/README.md)
+
 ## 数据流程
 
 ```
@@ -68,12 +100,13 @@ node process.js 1700000001
                           ↓                         ↓
                    resources/raw/          resources/processed/
                                                ↓
-                                         sync-cases.js (根目录)
+                                         sync-to-db
                                                ↓
                                          Case 集合 (NoSQL 数据库)
 ```
 
 ## 相关文档
 
-- **数据同步脚本**：项目根目录的 `sync-cases.js` 和 `prepare-cases.js`
-- **运维指南**：`docs/operations/` 目录
+- **运维指南**：[docs/operations/](../docs/operations/)
+  - [data-sync.md](../docs/operations/data-sync.md) - 数据同步详细指南
+  - [delete-syncCaseData.md](../docs/operations/delete-syncCaseData.md) - 云函数清理记录
