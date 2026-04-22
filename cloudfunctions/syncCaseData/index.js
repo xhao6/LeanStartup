@@ -1,8 +1,13 @@
-// cloudfunctions/syncCaseData/index.js
-const { collection, getCommand } = require('./utils/db.js')
-const { assertCloudFunctionContext } = require('./utils/auth.js')
-const { formatDateTime } = require('./utils/date.js')
-const { success, error } = require('./utils/response.js')
+/**
+ * syncCaseData - 同步案例数据到 Case 集合
+ *
+ * 使用 HTTP API 直接访问数据库，不依赖任何 npm 包
+ * 凭证从 context.environment 嵌入式票据中获取
+ */
+const { success, error } = require('./utils/response')
+const { formatDateTime } = require('./utils/date')
+const { assertCloudFunctionContext } = require('./utils/auth')
+const https = require('https')
 
 /**
  * 必填字段列表
@@ -25,35 +30,27 @@ const SCORE_FIELDS = [
 
 /**
  * 校验单个案例数据
- * @param {object} caseData
- * @returns {{ valid: boolean, message?: string }}
  */
 function validateCase(caseData) {
-  // 检查必填字段
   const missing = REQUIRED_FIELDS.filter(f => caseData[f] === undefined || caseData[f] === null || caseData[f] === '')
   if (missing.length > 0) {
     return { valid: false, message: `缺少必填字段: ${missing.join(', ')}` }
   }
-
-  // 校验评分为整数
   const scores = [caseData.score_total, ...SCORE_FIELDS.map(f => caseData[f])]
   for (const s of scores) {
     if (!Number.isInteger(s)) {
       return { valid: false, message: `评分必须为整数，当前值: ${s}` }
     }
   }
-
-  // 校验总分 = 五维度之和
   const dimensionsSum = SCORE_FIELDS.reduce((sum, f) => sum + caseData[f], 0)
   if (caseData.score_total !== dimensionsSum) {
     return { valid: false, message: `评分不一致: score_total=${caseData.score_total}，五维度之和=${dimensionsSum}` }
   }
-
   return { valid: true }
 }
 
 /**
- * 构建案例记录（用于写入数据库）
+ * 构建案例记录
  */
 function buildRecord(caseData, now) {
   return {
@@ -84,63 +81,156 @@ function buildRecord(caseData, now) {
 }
 
 /**
- * syncCaseData 核心逻辑（依赖注入版本）
- *
- * @param {object} event - 云函数事件参数 { cases: object[] }
- * @param {object} context - 云函数上下文
- * @param {object} deps - 注入的依赖
- * @param {Function} deps.collection - 数据库集合操作
- * @param {Function} deps.getCommand - 获取数据库命令
- * @param {Function} deps.formatDateTime - 格式化时间
- * @param {Function} deps.assertCloudFunctionContext - 鉴权断言
+ * 解析 context.environment JSON 字符串，提取嵌入式票据
  */
-async function doSyncCaseData(event, context, deps) {
-  const { collection, getCommand, formatDateTime, assertCloudFunctionContext } = deps
+function parseCredentials(context) {
+  const envObj = JSON.parse(context.environment || '{}')
+  return {
+    sessionToken: envObj.TENCENTCLOUD_SESSIONTOKEN,
+    envId: envObj.SCF_NAMESPACE || context.namespace
+  }
+}
 
+/**
+ * 使用 Node.js 内置 https 调用 CloudBase 数据库 HTTP API
+ * 使用 X-Tcb-Token 认证（TCB 嵌入式临时凭证）
+ */
+function apiRequest(method, path, body, credentials) {
+  return new Promise((resolve, reject) => {
+    const host = `${credentials.envId}.api.tcloudbasegateway.com`
+    const bodyStr = body ? JSON.stringify(body) : ''
+    const headers = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(bodyStr),
+      'X-Tcb-Token': credentials.sessionToken
+    }
+
+    const options = {
+      hostname: host,
+      path,
+      method,
+      headers,
+      timeout: 15000
+    }
+
+    const req = https.request(options, (res) => {
+      let data = ''
+      res.on('data', chunk => data += chunk)
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data))
+        } catch (e) {
+          resolve(data)
+        }
+      })
+    })
+    req.on('error', reject)
+    req.on('timeout', () => {
+      req.destroy()
+      reject(new Error('请求超时'))
+    })
+    if (bodyStr) req.write(bodyStr)
+    req.end()
+  })
+}
+
+/**
+ * 查询单条记录
+ */
+async function queryOne(colName, query, credentials) {
+  const res = await apiRequest('POST', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/query`, {
+    query,
+    limit: 1
+  }, credentials)
+  console.log(`queryOne ${colName} ${JSON.stringify(query)}: code=${res.code} found=${res.data ? res.data.length : 'N/A'}`)
+  if (res.code !== undefined && res.code !== 0) {
+    throw new Error(res.message || `queryOne failed code=${res.code}`)
+  }
+  return res
+}
+
+/**
+ * 新增记录
+ */
+async function addRecord(colName, record, credentials) {
+  const res = await apiRequest('POST', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/records`, {
+    data: record
+  }, credentials)
+  console.log(`addRecord ${colName}: code=${res.code}`)
+  if (res.code !== undefined && res.code !== 0) {
+    throw new Error(res.message || `addRecord failed code=${res.code}`)
+  }
+  return res
+}
+
+/**
+ * 更新记录
+ */
+async function updateRecord(colName, recordId, record, credentials) {
+  const res = await apiRequest('PATCH', `/databasepatch/v1/apps/${credentials.envId}/collections/${colName}/records/${recordId}`, {
+    data: record,
+    query: { id: recordId }
+  }, credentials)
+  console.log(`updateRecord ${recordId}: code=${res.code}`)
+  if (res.code !== undefined && res.code !== 0) {
+    throw new Error(res.message || `updateRecord failed code=${res.code}`)
+  }
+  return res
+}
+
+/**
+ * 云函数入口
+ */
+exports.main = async (event, context) => {
   try {
-    // 1. 内部调用鉴权
+    // 内部调用鉴权
     assertCloudFunctionContext(context)
 
     const { cases } = event
 
-    // 2. 基本输入校验
     if (!Array.isArray(cases) || cases.length === 0) {
       return error('cases 必须是非空数组', 'INVALID_INPUT')
     }
 
-    const col = collection('Case')
+    // 解析凭证
+    let credentials
+    try {
+      credentials = parseCredentials(context)
+    } catch (e) {
+      return error('无法解析 context.environment: ' + e.message, 'ENV_PARSE_ERROR')
+    }
+
+    if (!credentials.sessionToken || !credentials.envId) {
+      return error(`缺少凭证: sessionToken=${!!credentials.sessionToken}, envId=${!!credentials.envId}`, 'MISSING_CREDENTIALS')
+    }
+
     const now = formatDateTime(new Date())
     let synced = 0
     const errors = []
 
     for (let i = 0; i < cases.length; i++) {
       const caseData = cases[i]
-
-      // 3. 数据校验
       const validation = validateCase(caseData)
       if (!validation.valid) {
         errors.push({ index: i, id: caseData.id, message: validation.message })
         continue
       }
 
-      // 4. id 类型强转为字符串
       const caseId = String(caseData.id)
-
-      // 5. 查询是否已存在
-      const { data: existing } = await col.where({ id: caseId }).get()
-
       const record = buildRecord(caseData, now)
 
-      if (existing.length > 0) {
-        // 6. 已存在 → 保留 created_at 和 published_at，更新其他字段
-        const existingDoc = existing[0]
+      // 查询是否已存在
+      const qRes = await queryOne('Case', { id: caseId }, credentials)
+
+      if (qRes.data && qRes.data.length > 0) {
+        // 保留 created_at 和 published_at
+        const existingDoc = qRes.data[0]
         record.created_at = existingDoc.created_at
         record.published_at = existingDoc.published_at || undefined
-        await col.where({ id: caseId }).update(record)
+        await updateRecord('Case', caseId, record, credentials)
       } else {
-        // 7. 新增 → 设置 created_at
         record.created_at = now
-        await col.add(record)
+        await addRecord('Case', record, credentials)
       }
 
       synced++
@@ -155,28 +245,6 @@ async function doSyncCaseData(event, context, deps) {
 
     return success({ synced })
   } catch (err) {
-    // 鉴权错误
-    if (err.message && err.message.startsWith('FORBIDDEN')) {
-      return error(err.message, 'FORBIDDEN')
-    }
-    // 其他未知错误
     return error(err.message || '未知错误', 'UNKNOWN')
   }
 }
-
-/**
- * 云函数入口 — 生产环境使用真实依赖
- */
-exports.main = async (event, context) => {
-  return doSyncCaseData(event, context, {
-    collection,
-    getCommand,
-    formatDateTime,
-    assertCloudFunctionContext
-  })
-}
-
-/**
- * 导出核心逻辑供测试使用
- */
-exports.doSyncCaseData = doSyncCaseData
