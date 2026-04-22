@@ -27,6 +27,7 @@ ${scoringRubricText()}
 5. sourceTitle 必须从原文标题提取
 6. caseStory 用300-800字的叙事手法详述案例故事，开头用吸引读者的钩子切入，保留关键数据和转折点
 7. 必须严格按JSON格式输出，不要输出其他内容
+8. tags 必须恰好5个标签，按吸睛程度排序（第一个最抓眼球），每个标签2-6个字，必须有辨识度能区分于其他案例，禁止泛标签（如"副业"、"赚钱"、"项目"、"推荐"）
 
 ## JSON格式
 {
@@ -52,7 +53,10 @@ ${scoringRubricText()}
     "detail": "打分理由",
     "userFit": "打分理由"
   },
-  "caseStory": "300-800字案例故事，开头有钩子"
+  "caseStory": "300-800字案例故事，开头有钩子",
+  "cycle": "变现周期描述，如'1-2周见收益'",
+  "riskTags": ["风险标签1", "风险标签2"],
+  "tags": ["吸睛标签1", "吸睛标签2", "吸睛标签3", "吸睛标签4", "吸睛标签5"]
 }`;
 
 /**
@@ -100,6 +104,8 @@ export async function extractArticle(
   if (!Array.isArray(parsed.steps)) parsed.steps = [];
   if (!Array.isArray(parsed.tools)) parsed.tools = [];
   if (!Array.isArray(parsed.pitfalls)) parsed.pitfalls = [];
+  if (!Array.isArray(parsed.riskTags)) parsed.riskTags = [];
+  if (!Array.isArray(parsed.tags)) parsed.tags = [];
 
   return parsed;
 }
