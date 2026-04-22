@@ -1,0 +1,7 @@
+{
+  "name": "cloudfunctions",
+  "private": true,
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.1.0"
+  }
+}
