@@ -93,7 +93,7 @@ tests/
 **Files:**
 - 无文件创建，通过 CloudBase MCP 工具操作
 
-- [ ] **Step 1: 创建 7 个 NoSQL 集合**
+- [x] **Step 1: 创建 7 个 NoSQL 集合**
 
 通过 CloudBase MCP 工具 `writeNoSqlDatabaseStructure` 逐个创建：
 
@@ -110,7 +110,7 @@ tests/
 
 每个集合使用 `action: "createCollection"`。
 
-- [ ] **Step 2: 创建 DailyPick 的 date 唯一索引**
+- [x] **Step 2: 创建 DailyPick 的 date 唯一索引**
 
 ```
 集合: DailyPick
@@ -119,7 +119,7 @@ tests/
 唯一: true
 ```
 
-- [ ] **Step 3: 创建 UserCollection 的复合唯一索引**
+- [x] **Step 3: 创建 UserCollection 的复合唯一索引**
 
 ```
 集合: UserCollection
@@ -128,7 +128,7 @@ tests/
 唯一: true
 ```
 
-- [ ] **Step 4: 创建 Analytics 的查询索引**
+- [x] **Step 4: 创建 Analytics 的查询索引**
 
 ```
 集合: Analytics
@@ -137,7 +137,7 @@ tests/
 唯一: false
 ```
 
-- [ ] **Step 5: 创建 Case 的状态+评分索引**
+- [x] **Step 5: 创建 Case 的状态+评分索引**
 
 ```
 集合: Case
@@ -146,7 +146,7 @@ tests/
 唯一: false
 ```
 
-- [ ] **Step 6: 验证集合和索引**
+- [x] **Step 6: 验证集合和索引**
 
 使用 `readNoSqlDatabaseStructure` 的 `listCollections` 和 `listIndexes` 确认所有集合和索引存在。
 
@@ -162,7 +162,7 @@ tests/
 - Create: `cloudfunctions/_shared/wechat-api.js`
 - Create: `cloudfunctions/_shared/copy-shared.js`
 
-- [ ] **Step 1: 编写 db.js — 数据库初始化**
+- [x] **Step 1: 编写 db.js — 数据库初始化**
 
 ```js
 // cloudfunctions/_shared/db.js
@@ -192,7 +192,7 @@ function collection(name) {
 module.exports = { getApp, getDb, collection }
 ```
 
-- [ ] **Step 2: 编写 auth.js — OPENID 提取 + 输入校验**
+- [x] **Step 2: 编写 auth.js — OPENID 提取 + 输入校验**
 
 ```js
 // cloudfunctions/_shared/auth.js
@@ -258,7 +258,7 @@ function validateEventName(event) {
 module.exports = { getOpenid, validateCaseId, validateProgress, validateEventName }
 ```
 
-- [ ] **Step 3: 编写 response.js — 统一响应格式**
+- [x] **Step 3: 编写 response.js — 统一响应格式**
 
 ```js
 // cloudfunctions/_shared/response.js
@@ -274,7 +274,7 @@ function error(message, code) {
 module.exports = { success, error }
 ```
 
-- [ ] **Step 4: 编写 date.js — 日期格式化**
+- [x] **Step 4: 编写 date.js — 日期格式化**
 
 ```js
 // cloudfunctions/_shared/date.js
@@ -304,7 +304,7 @@ function getTodayDate() {
 module.exports = { formatDateTime, getTodayDate }
 ```
 
-- [ ] **Step 5: 编写 wechat-api.js — access_token 缓存 + 推送**
+- [x] **Step 5: 编写 wechat-api.js — access_token 缓存 + 推送**
 
 ```js
 // cloudfunctions/_shared/wechat-api.js
@@ -436,7 +436,7 @@ async function getMiniProgramCode(scene, page) {
 module.exports = { getAccessToken, sendSubscribeMessage, getMiniProgramCode }
 ```
 
-- [ ] **Step 6: 编写 copy-shared.js — 复制共享模块到各函数目录**
+- [x] **Step 6: 编写 copy-shared.js — 复制共享模块到各函数目录**
 
 ```js
 // cloudfunctions/_shared/copy-shared.js
@@ -489,13 +489,13 @@ for (const fn of FUNCTIONS) {
 console.log('\nDone. All shared modules copied.')
 ```
 
-- [ ] **Step 7: 运行复制脚本验证**
+- [x] **Step 7: 运行复制脚本验证**
 
 Run: `cd cloudfunctions/_shared && node copy-shared.js`
 
 Expected: 每个 `cloudfunctions/<fn>/utils/` 目录包含对应的共享模块文件。
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add cloudfunctions/_shared/
@@ -511,7 +511,7 @@ git commit -m "feat: add cloud function shared modules (_shared/)"
 - Create: `cloudfunctions/getDailyPick/package.json`
 - Copy: `_shared/` → `getDailyPick/utils/` (via copy-shared.js)
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```js
 // cloudfunctions/getDailyPick/package.json
@@ -523,13 +523,13 @@ git commit -m "feat: add cloud function shared modules (_shared/)"
 }
 ```
 
-- [ ] **Step 2: 运行 copy-shared.js 确保 utils/ 就位**
+- [x] **Step 2: 运行 copy-shared.js 确保 utils/ 就位**
 
 Run: `cd cloudfunctions/_shared && node copy-shared.js`
 
 Expected: `cloudfunctions/getDailyPick/utils/` 包含 db.js, auth.js, response.js, date.js。
 
-- [ ] **Step 3: 编写 index.js**
+- [x] **Step 3: 编写 index.js**
 
 ```js
 // cloudfunctions/getDailyPick/index.js
@@ -610,7 +610,7 @@ exports.main = async (event) => {
 
 > **注意**: `collection('DailyPick')._db.command` 访问的是底层的 `Db.command`（即 `db.command`），用于构造查询操作符如 `lt`、`in`。如果 CloudBase Node SDK 的 `collection()` 不直接暴露 `_db`，需要改用 `getDb().command` 代替。在 `_shared/db.js` 中已导出 `getDb()`，所以也可写作 `const { getDb } = require('./utils/db')` 然后 `const cmd = getDb().command`。
 
-- [ ] **Step 4: 修正 command 访问方式**
+- [x] **Step 4: 修正 command 访问方式**
 
 为避免上述访问链问题，修改 `_shared/db.js` 增加 `getCommand` 导出：
 
@@ -701,7 +701,7 @@ exports.main = async (event) => {
 }
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 rtk git add cloudfunctions/getDailyPick/ cloudfunctions/_shared/db.js
@@ -716,7 +716,7 @@ git commit -m "feat: add getDailyPick cloud function"
 - Create: `cloudfunctions/getCaseDetail/index.js`
 - Create: `cloudfunctions/getCaseDetail/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -727,7 +727,7 @@ git commit -m "feat: add getDailyPick cloud function"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/getCaseDetail/index.js
@@ -771,7 +771,7 @@ exports.main = async (event) => {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/getCaseDetail/
@@ -786,7 +786,7 @@ git commit -m "feat: add getCaseDetail cloud function"
 - Create: `cloudfunctions/trackEvent/index.js`
 - Create: `cloudfunctions/trackEvent/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -797,7 +797,7 @@ git commit -m "feat: add getCaseDetail cloud function"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/trackEvent/index.js
@@ -853,7 +853,7 @@ exports.main = async (event, context) => {
 
 > **设计决策**: trackEvent 即使出错也返回 `success(null)`，因为埋点失败不应阻断用户操作。错误仅通过 `console.error` 记录。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/trackEvent/
@@ -868,7 +868,7 @@ git commit -m "feat: add trackEvent cloud function"
 - Create: `cloudfunctions/getUserCollections/index.js`
 - Create: `cloudfunctions/getUserCollections/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -879,7 +879,7 @@ git commit -m "feat: add trackEvent cloud function"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/getUserCollections/index.js
@@ -957,7 +957,7 @@ exports.main = async (event, context) => {
 
 > **N+1 优化**: 先批量拿 UserCollection，收集所有 case_id，单次 `$in` 查 Case。不是逐条查 Case。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/getUserCollections/
@@ -972,7 +972,7 @@ git commit -m "feat: add getUserCollections cloud function"
 - Create: `cloudfunctions/toggleCollection/index.js`
 - Create: `cloudfunctions/toggleCollection/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -983,7 +983,7 @@ git commit -m "feat: add getUserCollections cloud function"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/toggleCollection/index.js
@@ -1073,7 +1073,7 @@ exports.main = async (event, context) => {
 
 > **完整记录模式**: PRD 要求所有 NoSQL update 先读后写。此处 `toggleCollection` 收藏时：读取现有记录 → 合并 progress → `doc().set()` 写回完整记录。不是 `$set` 部分更新。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/toggleCollection/
@@ -1088,7 +1088,7 @@ git commit -m "feat: add toggleCollection cloud function"
 - Create: `cloudfunctions/subscribeMessage/index.js`
 - Create: `cloudfunctions/subscribeMessage/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -1103,7 +1103,7 @@ git commit -m "feat: add toggleCollection cloud function"
 
 > **注意**: CloudBase Node.js 运行时可能内置 `node-fetch` 或支持原生 `fetch`。如果运行时是 Node.js 18+，可用全局 `fetch` 替代 `node-fetch`。部署前确认运行时版本。
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/subscribeMessage/index.js
@@ -1198,7 +1198,7 @@ exports.main = async (event) => {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/subscribeMessage/
@@ -1213,7 +1213,7 @@ git commit -m "feat: add subscribeMessage cloud function"
 - Create: `cloudfunctions/generateDailyPick/index.js`
 - Create: `cloudfunctions/generateDailyPick/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -1224,7 +1224,7 @@ git commit -m "feat: add subscribeMessage cloud function"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/generateDailyPick/index.js
@@ -1368,7 +1368,7 @@ exports.main = async () => {
 
 > **去重策略**: 不是检查 `published_at != today`，而是排除所有 DailyPick 记录中已出现过的 case_id。确保案例不会重复推荐，直到所有 published 案例都用过后才会"经典回顾"。
 
-- [ ] **Step 3: 配置定时触发器**
+- [x] **Step 3: 配置定时触发器**
 
 通过 CloudBase MCP 工具 `manageFunctions` 创建触发器：
 
@@ -1383,7 +1383,7 @@ triggers:
 
 或通过 CloudBase 控制台手动配置。
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 rtk git add cloudfunctions/generateDailyPick/
@@ -1398,7 +1398,7 @@ git commit -m "feat: add generateDailyPick cloud function with cron trigger"
 - Create: `cloudfunctions/syncCaseData/index.js`
 - Create: `cloudfunctions/syncCaseData/package.json`
 
-- [ ] **Step 1: 创建 package.json**
+- [x] **Step 1: 创建 package.json**
 
 ```json
 {
@@ -1409,7 +1409,7 @@ git commit -m "feat: add generateDailyPick cloud function with cron trigger"
 }
 ```
 
-- [ ] **Step 2: 编写 index.js**
+- [x] **Step 2: 编写 index.js**
 
 ```js
 // cloudfunctions/syncCaseData/index.js
@@ -1536,7 +1536,7 @@ exports.main = async (event) => {
 
 > **评分校验**: 所有评分必须为整数，且 `score_total` = 五维度之和。不符合则拒绝写入，返回错误详情。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 rtk git add cloudfunctions/syncCaseData/
@@ -1545,7 +1545,9 @@ git commit -m "feat: add syncCaseData cloud function"
 
 ---
 
-## Task 11: 本地 LLM 评分脚本 (scripts/llm-score/)
+## Task 11: 本地 LLM 评分脚本 (scripts/llm-score/) — ⚠️ 未按计划实施，由 `scripts/article-processor/` 替代
+
+> **实际状态**: `scripts/llm-score/` 未创建。替代方案 `scripts/article-processor/` 已完成，使用 Anthropic SDK（而非 OpenAI）调用 MiniMax-M2.7，包含提取+评分+AI审核三步流水线，输出结构化 MD（而非 score.json），功能超出了原计划范围。如需 score.json 格式输出，可从 article-processor 的结果中转换。
 
 **Files:**
 - Create: `scripts/llm-score/package.json`
@@ -1896,7 +1898,7 @@ git commit -m "feat: add local LLM scoring script"
 
 > **测试策略**: 云函数测试不需要启动 CloudBase 环境。通过 mock `utils/db.js` 的 `collection()` 返回值来模拟数据库操作。每个测试文件独立，不依赖真实云环境。
 
-- [ ] **Step 1: 安装测试依赖**
+- [x] **Step 1: 安装测试依赖**
 
 在项目根目录:
 
@@ -1914,7 +1916,7 @@ npm install -D vitest
 }
 ```
 
-- [ ] **Step 2: 创建 mock-context.js**
+- [x] **Step 2: 创建 mock-context.js**
 
 ```js
 // tests/unittest/cloudfunctions/helpers/mock-context.js
@@ -1943,7 +1945,7 @@ function createUnauthContext() {
 module.exports = { createMockContext, createUnauthContext }
 ```
 
-- [ ] **Step 3: 编写 shared/auth.test.js**
+- [x] **Step 3: 编写 shared/auth.test.js**
 
 ```js
 // tests/unittest/cloudfunctions/shared/auth.test.js
@@ -2011,7 +2013,7 @@ describe('auth', () => {
 })
 ```
 
-- [ ] **Step 4: 编写 shared/response.test.js**
+- [x] **Step 4: 编写 shared/response.test.js**
 
 ```js
 // tests/unittest/cloudfunctions/shared/response.test.js
@@ -2036,7 +2038,7 @@ describe('response', () => {
 })
 ```
 
-- [ ] **Step 5: 编写 shared/date.test.js**
+- [x] **Step 5: 编写 shared/date.test.js**
 
 ```js
 // tests/unittest/cloudfunctions/shared/date.test.js
@@ -2062,7 +2064,7 @@ describe('date', () => {
 })
 ```
 
-- [ ] **Step 6: 编写 getDailyPick.test.js（云函数集成测试）**
+- [x] **Step 6: 编写 getDailyPick.test.js（云函数集成测试）**
 
 ```js
 // tests/unittest/cloudfunctions/getDailyPick.test.js
@@ -2114,7 +2116,7 @@ describe('getDailyPick', () => {
 
 > **测试说明**: 云函数的完整集成测试需要精细 mock `collection()` 的链式调用。上面的 shared 模块测试（auth/response/date）是纯函数，可以直接测试。云函数的 mock 测试结构已给出，实际 mock 返回值需要根据函数逻辑配置。生产中建议先跑通 shared 模块测试，云函数逻辑通过 CloudBase 控制台手动验证。
 
-- [ ] **Step 7: 运行测试**
+- [x] **Step 7: 运行测试**
 
 ```bash
 npx vitest run tests/unittest/cloudfunctions/shared/
@@ -2122,7 +2124,7 @@ npx vitest run tests/unittest/cloudfunctions/shared/
 
 Expected: 所有 shared 模块测试通过（auth: 8 tests, response: 3 tests, date: 3 tests）。
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 rtk git add tests/unittest/
@@ -2133,11 +2135,11 @@ git commit -m "test: add cloud function unit tests"
 
 ## Task 13: 部署与验证
 
-- [ ] **Step 1: 部署共享模块到各云函数目录**
+- [x] **Step 1: 部署共享模块到各云函数目录**
 
 Run: `cd cloudfunctions/_shared && node copy-shared.js`
 
-- [ ] **Step 2: 通过 CloudBase MCP 工具部署云函数**
+- [x] **Step 2: 通过 CloudBase MCP 工具部署云函数**
 
 按顺序部署（先无依赖的简单函数，后有依赖的复杂函数）：
 
@@ -2160,7 +2162,7 @@ runtime: Nodejs18.15
 
 对每个函数重复上述操作。
 
-- [ ] **Step 3: 配置定时触发器**
+- [x] **Step 3: 配置定时触发器**
 
 ```
 action: createFunctionTrigger
@@ -2171,14 +2173,14 @@ triggers:
     config: "0 0 6 * * * *"
 ```
 
-- [ ] **Step 4: 配置环境变量**
+- [x] **Step 4: 配置环境变量**
 
 在 CloudBase 控制台为 subscribeMessage 和 generateDailyPick 配置环境变量:
 - `WX_APPID`: 小程序 AppID
 - `WX_APPSECRET`: 小程序 AppSecret
 - `PUSH_TEMPLATE_ID`: 推送消息模板 ID
 
-- [ ] **Step 5: 端到端验证**
+- [x] **Step 5: 端到端验证**
 
 ```bash
 # 1. 通过 syncCaseData 导入测试数据
@@ -2191,7 +2193,7 @@ triggers:
 # 调用 getDailyPick 验证返回数据
 ```
 
-- [ ] **Step 6: Final commit**
+- [x] **Step 6: Final commit**
 
 ```bash
 rtk git add -A
