@@ -23,6 +23,8 @@ const REVIEW_SYSTEM_PROMPT = `你是一位严格的副业案例质量审核员�
 4. 事实性校验：金额、数字、工具名、平台名是否准确提取
 5. 步骤完整性：操作步骤是否有明显遗漏
 6. 广告残留：是否还有广告/拉群/关注内容残留
+7. 标签质量：tags 是否恰好5个、每个2-6字、有辨识度且无泛标签；riskTags 是否最多3个
+8. 变现周期：cycle 字段是否合理提取
 
 ## 输出要求
 如果发现任何问题，直接在extraction中修正，并在reviewNotes中说明修正内容。
@@ -80,6 +82,8 @@ export async function reviewExtraction(
   if (!Array.isArray(parsed.extraction.tools)) parsed.extraction.tools = [];
   if (!Array.isArray(parsed.extraction.pitfalls)) parsed.extraction.pitfalls = [];
   if (!Array.isArray(parsed.reviewNotes)) parsed.reviewNotes = [];
+  if (!Array.isArray(parsed.extraction.riskTags)) parsed.extraction.riskTags = [];
+  if (!Array.isArray(parsed.extraction.tags)) parsed.extraction.tags = [];
 
   return parsed;
 }
