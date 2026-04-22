@@ -4,8 +4,8 @@
 |------|-----|
 | 产品名称 | 精益副业案例库 |
 | 版本 | MVP v1.1 |
-| 日期 | 2026-04-21 |
-| 状态 | 待开发 |
+| 日期 | 2026-04-22 |
+| 状态 | 开发中 |
 | 负责人 | Ava Bytewood |
 | 基于文档 | CEO Plan 2026-04-21, office-hours design doc, BEST-PRACTICES.md |
 
@@ -696,17 +696,29 @@ TabBar
 └──────────────────────────────────────┘   └──────────────┘
 ```
 
-### 7.2 已实现部分
+### 7.2 已实现部分 ✅
 
-- Chrome CDP 下载工具: `scripts/article-downloader/`（完整可用）
-- 已有 2 篇测试文章
+- **Chrome CDP 下载工具**: `scripts/article-downloader/`（完整可用）
+- **LLM 评分 + 结构化提取**: `scripts/article-processor/`（完整可用）
+  - 使用 minimax-2.7 模型进行 AI 评分
+  - 自动生成结构化 Markdown 文件
+  - 包含 5 维度评分 + 完整字段提取
+  - 自动脱敏处理（手机号、微信号、身份证、邮箱）
+- **云函数同步脚本**: `sync-cases.js` + `prepare-cases.js`（完整可用）
+  - 解析 MD 文件并同步到 NoSQL Case 集合
+  - 支持批量同步和单条同步
+  - 使用 `@cloudbase/node-sdk` 实现数据写入
+- **数据内容**: 已完成 22 篇精选案例（100001-100022）
+  - 来源：5BASE、郭晓文、小遇、阿强ai实验室等优质公众号
+  - 涵盖：小程序电商、虚拟产品、内容创业、一人公司等赛道
 
 ### 7.3 待实现部分
 
-- 本地 LLM 评分脚本（调用 minimax-2.7 模型）
-- 结构化 MD 生成（本地中间产物）
-- 云函数同步脚本（解析 MD → 写入 NoSQL）
-- 定时任务（generateDailyPick）
+- ~~本地 LLM 评分脚本（调用 minimax-2.7 模型）~~ ✅ 已完成
+- ~~结构化 MD 生成（本地中间产物）~~ ✅ 已完成
+- ~~云函数同步脚本（解析 MD → 写入 NoSQL）~~ ✅ 已完成
+- 定时任务（generateDailyPick）- 待开发
+- 前端页面开发 - 待开发
 
 ### 7.4 LLM 评分规格
 
@@ -798,8 +810,9 @@ LLM 评分管道中增加正则脱敏步骤，过滤以下模式：
 | 2 | 微信后台隐私政策文档 | 已准备 |
 | 3 | 一次性订阅消息模板 ID（审核通过） | 已准备 |
 | 4 | wxacode.get API 权限已开通 | 已准备 |
-| 5 | CloudBase 环境已开通 NoSQL 数据库 | 已准备 |
-| 6 | 配置真实 CloudBase 环境 ID（替换 cloudbaserc.json 和 cloudbase.ts 中的占位符） | 待配置 |
+| 5 | CloudBase 环境已开通 NoSQL 数据库 | ✅ 已完成 |
+| 6 | 配置真实 CloudBase 环境 ID（替换 cloudbaserc.json 和 cloudbase.ts 中的占位符） | ✅ 已完成 |
+| 7 | Case 集合已填充初始数据（22篇精选案例） | ✅ 已完成 |
 
 ### 9.2 部署顺序
 
@@ -862,3 +875,57 @@ LLM 评分管道中增加正则脱敏步骤，过滤以下模式：
 | 内容脱敏遗漏 | 低 | 中 | 人工审核二次检查 + 投诉入口 |
 | 微信 API 限频 | 中 | 中 | subscribeMessage 批量发送间隔 200ms + 限频时跳过并记录日志 |
 | AppID 未配置 | 低 | 高 | manifest.json 中 mp-weixin.appid 为空，阻塞真机调试 |
+
+---
+
+## 13. 实现进度（截至 2026-04-22）
+
+### 13.1 已完成 ✅
+
+**后端云函数**：
+- ✅ syncCaseDataPublic - 数据同步云函数（使用 @cloudbase/node-sdk）
+- ✅ 数据模型验证完成（23 条记录在 Case 集合）
+
+**内容管道**：
+- ✅ article-downloader - Chrome CDP 文章下载工具
+- ✅ article-processor - LLM 评分 + 结构化提取
+- ✅ prepare-cases.js - MD 文件解析工具
+- ✅ sync-cases.js - 数据同步脚本
+- ✅ 22 篇精选案例入库（ID: 100001-100022）
+
+**数据库**：
+- ✅ NoSQL 集合创建完成
+- ✅ Case 集合索引配置完成
+- ✅ 初始数据填充完成（23 条记录）
+
+**测试数据**：
+- ✅ 100001 - 周末写的小项目，每月赚得比996工资还高（API赚钱）
+- ✅ 100002 - 5种超赚钱的虚拟产品（数字产品）
+- ✅ 100003 - 95后男生在小红书卖饰品（小红书电商）
+- ✅ 100004 - Justin Welsh 一人公司内容系统（内容创业）
+- ✅ 100005 - 全职妈妈做了5个App（无代码开发）
+- ✅ ... 更多案例涵盖：AI 应用、独立开发、副业项目等
+
+### 13.2 进行中 🔄
+
+- 前端页面开发（待启动）
+- 定时任务配置（待启动）
+
+### 13.3 技术栈总结
+
+**后端**：
+- CloudBase NoSQL 数据库
+- CloudBase 云函数（Node.js 18.15）
+- @cloudbase/node-sdk SDK
+- @cloudbase/manager-node SDK
+
+**内容处理**：
+- Chrome CDP（文章下载）
+- MiniMax AI API（LLM 评分）
+- gray-matter（Markdown frontmatter 解析）
+
+**前端（规划中）**：
+- UniApp 框架
+- Vue 3 + TypeScript
+- Pinia 状态管理
+- CloudBase JS SDK

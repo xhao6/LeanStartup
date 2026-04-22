@@ -1,5 +1,49 @@
 # TODOS.md - 精益副业案例库
 
+> 最后更新：2026-04-22
+
+## ✅ 已完成任务（2026-04-22）
+
+### 后端云函数
+- [x] syncCaseDataPublic 云函数开发
+- [x] 使用 @cloudbase/node-sdk 实现 NoSQL 写入
+- [x] Case 集合数据模型验证
+
+### 内容管道
+- [x] article-downloader 文章下载工具（Chrome CDP）
+- [x] article-processor LLM 评分 + 结构化提取
+- [x] prepare-cases.js MD 文件解析工具
+- [x] sync-cases.js 数据同步脚本
+- [x] 22 篇精选案例处理和入库
+
+### 数据库
+- [x] Case 集合创建和配置
+- [x] 初始数据填充（23 条记录）
+
+## 🔄 当前进行中
+
+### 前端开发
+- [ ] 首页（今日精选 Top3）
+- [ ] 案例详情页
+- [ ] 历史榜单页
+- [ ] 个人中心页
+
+### 云函数开发
+- [ ] getDailyPick 云函数
+- [ ] getCaseDetail 云函数
+- [ ] getUserCollections 云函数
+- [ ] toggleCollection 云函数
+- [ ] generateDailyPick 定时任务
+
+## 待办事项（按优先级）
+
+### P0: 核心功能（MVP 必须完成）
+- [ ] 前端 4 个核心页面开发
+- [ ] 7 个云函数开发部署
+- [ ] 定时任务配置
+
+---
+
 ## Deferred Features (按优先级排序)
 
 ### P1: 用户画像匹配问卷
