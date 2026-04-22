@@ -121,4 +121,38 @@ describe('trackEvent', () => {
     // 埋点不影响用户体验，错误时也返回 success(null)
     expect(result).toEqual({ success: true, data: null })
   })
+
+  describe('边缘场景', () => {
+    it('包含 extra 字段 → 正常写入', async () => {
+      analyticsChain.add.mockResolvedValueOnce({ _id: 'log_1' })
+
+      const deps = makeDeps()
+      deps.validateEventName.mockReturnValue(true)
+
+      const result = await doTrackEvent(
+        { event: 'page_view', case_id: '100001', extra: { from: 'daily_pick' } },
+        deps
+      )
+
+      expect(result.success).toBe(true)
+      const addData = analyticsChain.add.mock.calls[0][0]
+      expect(addData.extra).toEqual({ from: 'daily_pick' })
+    })
+
+    it('subscribe 失败（写 PushSubscription 失败）→ 仍返回 success', async () => {
+      // First add is for PushSubscription (subscribe event)
+      pushSubscriptionChain.add.mockRejectedValueOnce(new Error('db write failed'))
+
+      const deps = makeDeps()
+      deps.validateEventName.mockReturnValue(true)
+
+      const result = await doTrackEvent(
+        { event: 'subscribe', case_id: '100001' },
+        deps
+      )
+
+      // subscribe 失败不应影响主流程，埋点静默失败
+      expect(result.success).toBe(true)
+    })
+  })
 })

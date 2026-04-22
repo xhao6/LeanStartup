@@ -202,4 +202,65 @@ describe('toggleCollection', () => {
       expect(result.data.progress).toEqual({})
     })
   })
+
+  describe('边缘场景', () => {
+    it('collect 时 progress 为 null → 创建空 progress 记录', async () => {
+      ucChain.get.mockResolvedValueOnce({ data: [] })
+
+      const result = await toggleCollection(
+        { case_id: '100001', action: 'collect', progress: null },
+        makeDeps()
+      )
+
+      expect(result.success).toBe(true)
+      expect(result.data.action).toBe('created')
+      expect(result.data.progress).toEqual({})
+    })
+
+    it('update 时 progress 为 null → 保留原 progress 不变', async () => {
+      ucChain.get.mockResolvedValueOnce({
+        data: [{
+          _id: 'existing_1',
+          openid,
+          case_id: '100001',
+          progress: { step_1: true, step_2: false },
+          created_at: '2026-04-20',
+          updated_at: '2026-04-20'
+        }]
+      })
+
+      const result = await toggleCollection(
+        { case_id: '100001', action: 'collect', progress: null },
+        makeDeps()
+      )
+
+      expect(result.success).toBe(true)
+      expect(result.data.action).toBe('updated')
+      // { ...{step_1:true, step_2:false}, ...null } → 原progress 不变
+      expect(result.data.progress).toEqual({ step_1: true, step_2: false })
+    })
+
+    it('action 不是 collect/uncollect → INVALID_INPUT', async () => {
+      const result = await toggleCollection(
+        { case_id: '100001', action: 'invalid_action' },
+        makeDeps()
+      )
+
+      expect(result.success).toBe(false)
+      expect(result.code).toBe('INVALID_INPUT')
+    })
+
+    it('uncollect 成功 → 返回 uncollected', async () => {
+      ucChain.remove.mockResolvedValueOnce({ stats: { removed: 1 } })
+
+      const result = await toggleCollection(
+        { case_id: '100001', action: 'uncollect' },
+        makeDeps()
+      )
+
+      expect(result.success).toBe(true)
+      expect(result.data.action).toBe('uncollected')
+      expect(result.data.case_id).toBe('100001')
+    })
+  })
 })

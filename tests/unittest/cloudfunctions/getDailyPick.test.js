@@ -336,4 +336,43 @@ describe('getDailyPick - dependency injection', () => {
     expect(result.data).toHaveProperty('page')
     expect(result.data).toHaveProperty('pageSize')
   })
+
+  // ----------------------------------------------------------
+  // Edge cases
+  // ----------------------------------------------------------
+  describe('边缘场景', () => {
+    it('查询历史时分页参数无效 → 使用默认值', async () => {
+      const { dailyPickChain } = deps
+
+      dailyPickChain.get.mockResolvedValueOnce({ data: [] })
+      dailyPickChain.count.mockResolvedValueOnce({ total: 0 })
+
+      const result = await handleGetDailyPick(
+        { page: -1, pageSize: 0 },
+        deps
+      )
+
+      // Math.max(1, Number(-1)) = 1, Number(0)||10 = 10 → Math.min(50, Math.max(1, 10)) = 10
+      expect(result.success).toBe(true)
+      expect(result.data.page).toBe(1)
+      expect(result.data.pageSize).toBe(10)
+    })
+
+    it('单日查询但 DailyPick 不存在 → 返回空 cases', async () => {
+      const { dailyPickChain } = deps
+
+      // First .get() returns empty (no data for target date)
+      dailyPickChain.get.mockResolvedValueOnce({ data: [] })
+      // Second .get() (fallback) also returns empty
+      dailyPickChain.get.mockResolvedValueOnce({ data: [] })
+
+      const result = await handleGetDailyPick(
+        { date: '2026-04-21' },
+        deps
+      )
+
+      expect(result.success).toBe(true)
+      expect(result.data.cases).toEqual([])
+    })
+  })
 })

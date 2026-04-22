@@ -149,4 +149,50 @@ describe('getUserCollections', () => {
       expect(result.data.list).toEqual([])
     })
   })
+
+  describe('边缘场景', () => {
+    it('Case 被删除 → 返回默认空值', async () => {
+      ucChain.count.mockResolvedValueOnce({ total: 2 })
+      ucChain.get.mockResolvedValueOnce({
+        data: [
+          { _id: 'uc_1', openid, case_id: '100001', progress: {}, updated_at: '2026-04-21' },
+          { _id: 'uc_2', openid, case_id: '999999', progress: { step_1: true }, updated_at: '2026-04-20' }
+        ]
+      })
+      // 只返回一个 Case，999999 不存在
+      caseChain.get.mockResolvedValueOnce({
+        data: [
+          { _id: 'doc_001', id: '100001', title: '存在的案例', score_total: 8, steps_count: 3 }
+        ]
+      })
+
+      const result = await getUserCollections({ page: 1, pageSize: 10 }, makeDeps())
+
+      expect(result.success).toBe(true)
+      expect(result.data.list).toHaveLength(2)
+
+      const deletedCase = result.data.list.find(i => i.case_id === '999999')
+      expect(deletedCase.title).toBe('')
+      expect(deletedCase.score_total).toBe(0)
+      expect(deletedCase.completed_count).toBe(1)
+    })
+
+    it('progress 全部完成 → completed_count 等于 steps_count', async () => {
+      ucChain.count.mockResolvedValueOnce({ total: 1 })
+      ucChain.get.mockResolvedValueOnce({
+        data: [
+          { _id: 'uc_1', openid, case_id: '100001', progress: { step_1: true, step_2: true, step_3: true }, updated_at: '2026-04-21' }
+        ]
+      })
+      caseChain.get.mockResolvedValueOnce({
+        data: [
+          { _id: 'doc_001', id: '100001', title: '完整案例', score_total: 8, steps_count: 3 }
+        ]
+      })
+
+      const result = await getUserCollections({ page: 1, pageSize: 10 }, makeDeps())
+
+      expect(result.data.list[0].completed_count).toBe(3)
+    })
+  })
 })
