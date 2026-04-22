@@ -76,6 +76,8 @@ function buildRecord(caseData, now) {
     pitfalls: caseData.pitfalls,
     suitable_for: caseData.suitable_for,
     risk_tags: caseData.risk_tags,
+    case_story: caseData.case_story || '',
+    tags: caseData.tags || [],
     status: caseData.status,
     updated_at: now
   }
