@@ -192,11 +192,9 @@
 
 // ── Space Between Children ────────────────────────────────
 
-.space-y-2 > * + * { margin-top: 8px; }
-.space-y-3 > * + * { margin-top: 12px; }
-.space-y-4 > * + * { margin-top: 16px; }
-
-.col-span-2 { grid-column: span 2 / span 2; }
+// ── Space Between Children ──────────────────────────────
+// NOTE: space-y-* combinator selectors removed — not supported in WXSS
+// Use px-* and py-* padding utilities instead for equivalent spacing
 
 // ── Animations ─────────────────────────────────────────────
 
