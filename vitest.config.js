@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/unittest/**/*.test.js'],
+    include: ['tests/unittest/**/*.test.js', 'tests/api/**/*.test.js'],
     // 让 vitest 能正确拦截 CJS 模块的 vi.mock
     server: {
       deps: {
