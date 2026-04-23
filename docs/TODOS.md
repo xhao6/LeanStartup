@@ -29,18 +29,30 @@
 - [x] Case 集合创建和配置
 - [x] 初始数据填充（23 条记录）
 
-## 🔄 当前进行中
+### 前端核心页面（2026-04-23）
+- [x] 首页（今日精选 Top3 + CaseCard 组件 + rank badge）
+- [x] 案例详情页（评分雷达 + 基础信息 + 步骤 + 工具 + 资源 + 分享卡片）
+- [x] 案例详情页扩展（来源信息行 + 案例故事 + 预期收益/变现周期 + 避坑指南 + 风险标签）
+- [x] 历史榜单页（月分组 + 日期卡片 + 分页加载）
+- [x] 往期榜单详情页（独立页面 + CaseCard 复用 + 日期横幅）
+- [x] 个人中心页（用户信息 + 菜单 + 微信原生客服按钮）
+- [x] 我的收藏页（收藏列表 + 取消收藏 + 空状态）
+- [x] 订阅管理页
+- [x] 用户协议 / 隐私政策 / 关于页面
 
-### 前端开发
-- [ ] 首页（今日精选 Top3）
-- [ ] 案例详情页
-- [ ] 历史榜单页
-- [ ] 个人中心页
+### 前端基础设施（2026-04-23）
+- [x] Design System（DESIGN.md + TailwindCSS 配色）
+- [x] Composables 架构（useDailyPick / useCaseDetail / useHistory / useCache / useLogin / useShare）
+- [x] Pinia Store（collectionStore + 订阅状态管理）
+- [x] CaseDetail 接口扩展（+6 字段：case_story / pitfalls / risk_tags / expected_revenue / cycle / tags）
+- [x] SUBSCRIBE_TEMPLATE_ID 配置实际值
+- [x] 单元测试覆盖（366+ tests，composables / helpers / pages）
+- [x] E2E 测试（case-collection 数据验证）
 
 ## 待办事项（按优先级）
 
 ### P0: 核心功能（MVP 必须完成）
-- [ ] 前端 4 个核心页面开发
+- [x] 前端核心页面开发 ✅
 - [x] 7 个云函数开发部署 ✅
 - [x] 定时任务配置 ✅
 
