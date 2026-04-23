@@ -24,7 +24,7 @@
       <!-- Title area -->
       <view class="pt-4 pb-3">
         <text
-          class="text-xl font-bold leading-[1.4]"
+          class="text-xl font-bold"
           :style="{ color: '#1A1A2E', fontFamily: 'Noto Serif SC, serif' }"
         >
           {{ caseData.title }}
@@ -80,7 +80,7 @@
           <!-- Large score badge -->
           <view class="flex flex-col items-center flex-shrink-0">
             <view
-              class="flex items-center justify-center rounded-[20px] px-3 py-1"
+              class="flex items-center justify-center rounded-full px-3 py-1"
               :style="{ background: 'linear-gradient(135deg, #F5A623, #FF8C00)' }"
             >
               <text

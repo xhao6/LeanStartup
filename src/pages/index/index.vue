@@ -3,7 +3,7 @@
     <!-- Header -->
     <view class="pt-12 pb-6 px-5">
       <view class="text-center">
-        <text class="text-[28px] font-bold" :style="{ fontFamily: 'Noto Serif SC, serif', color: '#1A1A2E' }">
+        <text class="font-bold" :style="{ fontFamily: 'Noto Serif SC, serif', color: '#1A1A2E', fontSize: '28px' }">
           精益副业案例库
         </text>
       </view>
