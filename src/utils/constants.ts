@@ -54,7 +54,7 @@ export const CACHE_TTL = {
 } as const
 
 // Subscribe template ID (configure in WeChat MP platform)
-export const SUBSCRIBE_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'
+export const SUBSCRIBE_TEMPLATE_ID = 'POdB9EzzVCyvfHrJSgmG8vnXLkKiiIWPRC35qjv4wH4'
 
 // Page size
 export const PAGE_SIZE = 20
