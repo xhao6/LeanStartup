@@ -1,56 +1,13 @@
 // ============================================================
 // Design Tokens — SCSS Variables (for use in scoped styles)
 // Aligned with DESIGN.md v2026-04-23
+//
+// NOTE: WeChat mini programs (WXSS) do NOT support:
+//   - :root / CSS custom properties (--var)
+//   - [data-theme] attribute selectors
+//   - @layer / @tailwind directives
+//   All design tokens below are SCSS variables only.
 // ============================================================
-
-// ── CSS Custom Properties (for runtime theming / dark mode) ──
-:root {
-  // Colors
-  --color-primary: #1A1A2E;
-  --color-secondary: #4A4A68;
-  --color-accent: #E94560;
-  --color-gold: #F5A623;
-  --color-bg: #FAFAF8;
-  --color-surface: #FFFFFF;
-  --color-border: #E8E6E1;
-  --color-muted: #9B9A97;
-  --color-success: #059669;
-  --color-warning: #F59E0B;
-  --color-error: #DC2626;
-  --color-info: #0369A1;
-
-  // Typography
-  --font-display: 'Noto Serif SC', serif;
-  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
-  --font-mono: 'Roboto Mono', monospace;
-
-  // Shadows
-  --shadow-card: 0 2px 12px rgba(26, 26, 46, 0.06);
-  --shadow-card-hover: 0 8px 32px rgba(26, 26, 46, 0.12);
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
-
-  // Border radius
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
-}
-
-// ── Dark mode overrides ─────────────────────────────────────
-[data-theme="dark"] {
-  --color-primary: #FAFAF8;
-  --color-secondary: #B8B8B8;
-  --color-accent: #FF6B8A;
-  --color-gold: #FFC857;
-  --color-bg: #1A1A2E;
-  --color-surface: #252538;
-  --color-border: #3A3A52;
-  --color-muted: #6B6B80;
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.2);
-  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
 
 // ── Morandi Tag Colors (5 pairs: bg / text) ────────────────
 $morandi-1-bg: #E8D5C4;
