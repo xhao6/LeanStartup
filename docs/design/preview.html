@@ -1419,6 +1419,87 @@ body {
   transform: scale(0.98);
 }
 
+/* ========== RANKING DETAIL PAGE（历史榜单详情） ========== */
+.page-ranking-detail {
+  padding: 0;
+}
+
+.ranking-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #F1F5F9;
+  margin: 0 -32px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.ranking-detail-back {
+  font-size: 24px;
+  color: var(--color-primary);
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1;
+}
+.ranking-detail-nav-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.ranking-detail-nav-right {
+  width: 24px;
+}
+
+/* Date banner */
+.ranking-detail-date-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 16px 4px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.ranking-detail-date-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+.ranking-detail-date-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.ranking-detail-date-weekday {
+  font-size: 12px;
+  color: var(--color-muted);
+  margin-left: auto;
+}
+
+/* Card list */
+.ranking-detail-list {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Footer hint */
+.ranking-detail-footer {
+  padding: 16px;
+  text-align: center;
+}
+.ranking-detail-footer-text {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
 /* ========== PROFILE PAGE（完全按LeanSkill设计） ========== */
 .page-profile {
   padding: 0;
@@ -1597,7 +1678,7 @@ body {
 <section class="section">
   <p class="section-label">页面预览</p>
   <h2 class="section-title">Full Page Previews</h2>
-  <p class="section-desc">4 个核心页面 — 模拟 iPhone 屏幕效果</p>
+  <p class="section-desc">5 个核心页面 — 模拟 iPhone 屏幕效果</p>
 
   <div class="phone-previews">
 
@@ -2067,6 +2148,77 @@ body {
             <span class="tab-icon">👤</span>
             <span class="tab-label">我的</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 3.5: 历史榜单详情页（某一天的 Top3） -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●●●●●</span>
+      </div>
+      <div class="phone-screen page-ranking-detail">
+        <!-- 顶部导航（非 TabBar 子页面） -->
+        <div class="ranking-detail-nav">
+          <span class="ranking-detail-back">‹</span>
+          <span class="ranking-detail-nav-title">往期榜单</span>
+          <span class="ranking-detail-nav-right"></span>
+        </div>
+
+        <!-- 日期横幅 -->
+        <div class="ranking-detail-date-banner">
+          <div class="ranking-detail-date-dot"></div>
+          <span class="ranking-detail-date-label">2026年4月23日</span>
+          <span class="ranking-detail-date-weekday">周三</span>
+        </div>
+
+        <!-- 案例卡片列表（与首页卡片完全一致） -->
+        <div class="ranking-detail-list">
+          <!-- Case Card 1 -->
+          <div class="home-case-card rank-1">
+            <div class="home-case-rank">1</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">8.5★</span>周末写的小项目，每月赚得比 996 工资还高</h3>
+              <p class="home-case-desc">通过 API 服务变现，零成本启动，月入过万。完整操作步骤+避坑指南。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-cost">零成本</span>
+                <span class="tag-pill tag-source">API 赚钱</span>
+                <span class="tag-pill tag-time">1-2周变现</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Case Card 2 -->
+          <div class="home-case-card rank-2">
+            <div class="home-case-rank">2</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">7.5★</span>5种超赚钱的虚拟产品，有人已经月入10万</h3>
+              <p class="home-case-desc">数字产品边际成本为零，一份时间卖多次，适合有某项技能的人。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-cost">零成本</span>
+                <span class="tag-pill tag-source">虚拟产品</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Case Card 3 -->
+          <div class="home-case-card rank-3">
+            <div class="home-case-rank">3</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">7.0★</span>95后男生在小红书卖饰品，3个月从0到月销30万</h3>
+              <p class="home-case-desc">小红书种草+闲鱼出单，低门槛副业，适合爱逛街的女生。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-time">低门槛</span>
+                <span class="tag-pill tag-source">小红书电商</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部操作提示 -->
+        <div class="ranking-detail-footer">
+          <text class="ranking-detail-footer-text">点击案例查看详情</text>
         </div>
       </div>
     </div>
