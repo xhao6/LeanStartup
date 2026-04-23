@@ -70,7 +70,7 @@
                 <view
                   class="h-full rounded-full"
                   :style="{
-                    width: ((caseData[dim.key] as number || 0) / dim.max * 100) + '%',
+                    width: (getScoreValue(caseData, dim.key) / dim.max * 100) + '%',
                     background: 'linear-gradient(90deg, #F5A623, #FF8C00)'
                   }"
                 />
@@ -79,7 +79,7 @@
                 class="text-xs font-semibold w-6 text-right"
                 :style="{ color: '#1A1A2E', fontFamily: 'Roboto Mono, monospace' }"
               >
-                {{ caseData[dim.key] as number || 0 }}
+                {{ getScoreValue(caseData, dim.key) }}
               </text>
             </view>
           </view>
@@ -271,7 +271,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { useCaseDetail } from '@/composables/useCaseDetail'
+import { useCaseDetail, getScoreValue } from '@/composables/useCaseDetail'
 import { useCollectionStore } from '@/store'
 import { useLogin } from '@/composables/useLogin'
 import { useShare } from '@/composables/useShare'

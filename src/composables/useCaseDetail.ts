@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { CF } from '@/utils/constants'
 
+export type ScoreField = 'score_feasibility' | 'score_profit' | 'score_timeliness' | 'score_detail' | 'score_fitness'
+
 export interface CaseDetail {
   id: string
   title: string
@@ -18,7 +20,11 @@ export interface CaseDetail {
   steps?: Array<{ title: string; description?: string }>
   tools?: Array<{ name: string; description?: string }>
   resources?: Array<{ name: string; url?: string }>
-  [key: string]: any
+}
+
+/** Safely read a score dimension value from a CaseDetail object */
+export function getScoreValue(data: Partial<CaseDetail>, key: string): number {
+  return Number((data as Record<string, unknown>)[key]) || 0
 }
 
 export function useCaseDetail() {
