@@ -58,25 +58,44 @@
       class="mx-4 mt-4 overflow-hidden"
       style="background: #fff; border-radius: 12px; border: 1px solid #E8E6E1"
     >
-      <view
-        v-for="(item, index) in menuItems"
-        :key="item.key"
-        class="flex items-center"
-        :class="{ 'border-b': index < menuItems.length - 1 }"
-        style="padding: 16px 18px; border-bottom-color: #E8E6E1; border-bottom-width: 1px; border-bottom-style: solid"
-        :style="index === menuItems.length - 1 ? { borderBottom: 'none' } : {}"
-        @tap="onMenuTap(item)"
-      >
-        <text
-          class="mr-3"
-          style="width: 24px; text-align: center; font-size: 20px; color: #4A4A68"
-        >{{ item.icon }}</text>
-        <text
-          class="flex-1"
-          style="font-size: 15px; font-weight: 400; color: #1A1A2E"
-        >{{ item.label }}</text>
-        <text style="font-size: 14px; color: #9B9A97">›</text>
-      </view>
+      <template v-for="(item, index) in menuItems" :key="item.key">
+        <button
+          v-if="item.action === 'contact'"
+          open-type="contact"
+          class="flex items-center contact-btn"
+          :class="{ 'border-b': index < menuItems.length - 1 }"
+          style="padding: 16px 18px; background: transparent; border: none; border-left: none; border-right: none; border-top: none; border-radius: 0; font-family: inherit; font-size: inherit; line-height: inherit; text-align: left; width: 100%; display: flex; align-items: center; border-bottom-color: #E8E6E1; border-bottom-width: 1px; border-bottom-style: solid"
+          :style="index === menuItems.length - 1 ? { borderBottom: 'none' } : {}"
+        >
+          <text
+            class="mr-3"
+            style="width: 24px; text-align: center; font-size: 20px; color: #4A4A68"
+          >{{ item.icon }}</text>
+          <text
+            class="flex-1"
+            style="font-size: 15px; font-weight: 400; color: #1A1A2E"
+          >{{ item.label }}</text>
+          <text style="font-size: 14px; color: #9B9A97">›</text>
+        </button>
+        <view
+          v-else
+          class="flex items-center"
+          :class="{ 'border-b': index < menuItems.length - 1 }"
+          style="padding: 16px 18px; border-bottom-color: #E8E6E1; border-bottom-width: 1px; border-bottom-style: solid"
+          :style="index === menuItems.length - 1 ? { borderBottom: 'none' } : {}"
+          @tap="onMenuTap(item)"
+        >
+          <text
+            class="mr-3"
+            style="width: 24px; text-align: center; font-size: 20px; color: #4A4A68"
+          >{{ item.icon }}</text>
+          <text
+            class="flex-1"
+            style="font-size: 15px; font-weight: 400; color: #1A1A2E"
+          >{{ item.label }}</text>
+          <text style="font-size: 14px; color: #9B9A97">›</text>
+        </view>
+      </template>
     </view>
 
     <!-- Version -->
@@ -134,3 +153,9 @@ onShow(() => {
   }
 })
 </script>
+
+<style scoped>
+.contact-btn::after {
+  border: none;
+}
+</style>
