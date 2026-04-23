@@ -31,6 +31,12 @@
       }
     },
     {
+      "path": "pages/ranking-detail/index",
+      "style": {
+        "navigationBarTitleText": "往期榜单"
+      }
+    },
+    {
       "path": "pages/subscription/index",
       "style": {
         "navigationBarTitleText": "订阅管理"

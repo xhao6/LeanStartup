@@ -160,7 +160,7 @@ const formatDate = (dateStr: string): string => {
 }
 
 const goToDate = (date: string) => {
-  uni.navigateTo({ url: `/pages/index/index?date=${date}` })
+  uni.navigateTo({ url: `/pages/ranking-detail/index?date=${date}` })
 }
 
 const handleLoadMore = () => {
