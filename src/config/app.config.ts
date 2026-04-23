@@ -3,8 +3,7 @@ const appConfig = {
   appDesc: '每日精选3个高价值副业案例',
   version: '1.0.0',
   contactEmail: 'xhaoca@foxmail.com',
-  copyrightYear: 2026,
-  subscribeTemplateId: 'YOUR_TEMPLATE_ID'
+  copyrightYear: 2026
 }
 
 export default appConfig

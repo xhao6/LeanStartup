@@ -77,7 +77,7 @@ import appConfig from '@/config/app.config'
     <view class="px-5 pb-8">
       <view class="border-t border-[#E8E6E1] pt-4">
         <text class="block text-xs text-[#9B9A97] text-center">
-          &copy; 2026 {{ appConfig.appName }}. All rights reserved.
+          &copy; {{ appConfig.copyrightYear }} {{ appConfig.appName }}. All rights reserved.
         </text>
       </view>
     </view>

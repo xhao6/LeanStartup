@@ -82,7 +82,7 @@
       >
         <view class="shimmer-overlay" />
         <view class="flex items-center relative z-10">
-          <text class="text-lg mr-2">&#x1F514;</text>
+          <text class="text-lg mr-2">&#9831;</text>
           <text class="text-base font-semibold text-white">订阅每日精选提醒</text>
         </view>
         <text class="text-sm text-white relative z-10" style="opacity: 0.9">立即订阅</text>

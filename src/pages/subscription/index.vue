@@ -21,7 +21,7 @@
           style="width: 48px; height: 48px; border-radius: 24px"
           :style="{ background: subscriptionStore.isSubscribed ? 'rgba(5,150,105,0.1)' : 'rgba(155,154,151,0.1)' }"
         >
-          <text style="font-size: 24px">{{ subscriptionStore.isSubscribed ? '\u{1F514}' : '\u{1F51A}' }}</text>
+          <text style="font-size: 24px">{{ subscriptionStore.isSubscribed ? '&#9831;' : '&#9786;' }}</text>
         </view>
         <view class="flex-1">
           <text class="font-bold" style="font-size: 16px; color: #1A1A2E">
@@ -72,7 +72,7 @@
     <view class="mx-4 mt-4 p-5 mb-6" style="background: #fff; border-radius: 12px; border: 1px solid #E8E6E1">
       <text class="font-bold" style="font-size: 15px; color: #1A1A2E">通知记录</text>
       <view class="flex flex-col items-center py-8">
-        <text style="font-size: 32px; color: #E8E6E1">\u{263A}</text>
+        <text style="font-size: 32px; color: #E8E6E1">&#9676;</text>
         <text class="mt-3" style="font-size: 14px; color: #9B9A97">暂无通知记录</text>
         <text class="mt-1" style="font-size: 12px; color: #9B9A97">订阅后推送的通知将显示在这里</text>
       </view>
