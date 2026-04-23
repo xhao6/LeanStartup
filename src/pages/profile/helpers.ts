@@ -50,6 +50,18 @@ export function handleMenuAction(
       deps.clearCache()
       deps.showToast({ title: '缓存已清除', icon: 'success' })
       break
+    case 'subscribe':
+      deps.navigateTo('/pages/subscription/index')
+      break
+    case 'terms':
+      deps.navigateTo('/pages/agreement/index')
+      break
+    case 'privacy':
+      deps.navigateTo('/pages/privacy/index')
+      break
+    case 'about':
+      deps.navigateTo('/pages/about/index')
+      break
     default:
       deps.showToast({ title: '功能开发中', icon: 'none' })
       break

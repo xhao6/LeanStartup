@@ -29,6 +29,30 @@
       "style": {
         "navigationBarTitleText": "案例详情"
       }
+    },
+    {
+      "path": "pages/subscription/index",
+      "style": {
+        "navigationBarTitleText": "订阅管理"
+      }
+    },
+    {
+      "path": "pages/agreement/index",
+      "style": {
+        "navigationBarTitleText": "用户协议"
+      }
+    },
+    {
+      "path": "pages/privacy/index",
+      "style": {
+        "navigationBarTitleText": "隐私政策"
+      }
+    },
+    {
+      "path": "pages/about/index",
+      "style": {
+        "navigationBarTitleText": "关于精益副业"
+      }
     }
   ],
   "globalStyle": {
