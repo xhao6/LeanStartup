@@ -109,7 +109,13 @@ onShow(async () => {
   if (!isLoggedIn.value) {
     const ok = await ensureLoggedIn()
     if (!ok) {
-      uni.navigateBack()
+      // Fallback to home if no page history (e.g. direct entry via share link)
+      const pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        uni.switchTab({ url: '/pages/index/index' })
+      }
       return
     }
   }

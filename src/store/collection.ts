@@ -11,7 +11,7 @@ export interface CollectionItem {
 }
 
 interface CollectionState {
-  favorites: Record<string, { case_id: string }>
+  favorites: Record<string, { case_id: string } | undefined>
   collectionList: CollectionItem[]
   total: number
   currentPage: number
@@ -29,7 +29,7 @@ export const useCollectionStore = defineStore('collection', {
 
   getters: {
     isCollected: (state) => (caseId: string): boolean => {
-      return caseId in state.favorites
+      return !!state.favorites[caseId]
     },
 
     hasMore: (state): boolean => {
@@ -39,6 +39,12 @@ export const useCollectionStore = defineStore('collection', {
   },
 
   actions: {
+    /** Remove a case from favorites reactively */
+    _removeFavorite(caseId: string) {
+      const { [caseId]: _, ...rest } = this.favorites
+      this.favorites = rest
+    },
+
     async toggleFavorite(caseId: string, progress?: Record<string, boolean>) {
       const wasCollected = this.isCollected(caseId)
       const action = wasCollected ? 'uncollect' : 'collect'
@@ -46,7 +52,7 @@ export const useCollectionStore = defineStore('collection', {
       // Optimistic update
       if (wasCollected) {
         const backup = { ...this.favorites }
-        delete (this.favorites as Record<string, any>)[caseId]
+        this._removeFavorite(caseId)
         try {
           await wx.cloud.callFunction({
             name: CF.TOGGLE_COLLECTION,
@@ -68,7 +74,7 @@ export const useCollectionStore = defineStore('collection', {
           })
         } catch (e) {
           // Revert on failure
-          delete (this.favorites as Record<string, any>)[caseId]
+          this._removeFavorite(caseId)
           throw e
         }
       }
@@ -130,13 +136,17 @@ export const useCollectionStore = defineStore('collection', {
 
       if (res.result?.errCode === 0) {
         const collectedIds = new Set(res.result.data.list.map((item: CollectionItem) => item.case_id))
+        const updated = { ...this.favorites }
         for (const id of caseIds) {
           if (collectedIds.has(id)) {
-            this.favorites[id] = { case_id: id }
+            updated[id] = { case_id: id }
           } else {
-            delete (this.favorites as Record<string, any>)[id]
+            const { [id]: _, ...rest } = updated
+            Object.keys(updated).length = 0 // clear
+            Object.assign(updated, rest)
           }
         }
+        this.favorites = updated
       }
     }
   }
