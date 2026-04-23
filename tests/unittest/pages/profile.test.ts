@@ -124,52 +124,44 @@ describe('handleMenuAction', () => {
     })
   })
 
-  it('shows "功能开发中" toast for subscribe action', () => {
+  it('navigates to subscription page for subscribe action', () => {
     const deps = makeDeps()
     handleMenuAction(
       { key: 'subscribe', label: '订阅管理', icon: '⬡', action: 'subscribe' },
       deps
     )
-    expect(deps.showToast).toHaveBeenCalledWith({
-      title: '功能开发中',
-      icon: 'none'
-    })
+    expect(deps.navigateTo).toHaveBeenCalledWith('/pages/subscription/index')
+    expect(deps.showToast).not.toHaveBeenCalled()
   })
 
-  it('shows "功能开发中" toast for terms action', () => {
+  it('navigates to agreement page for terms action', () => {
     const deps = makeDeps()
     handleMenuAction(
       { key: 'terms', label: '用户协议', icon: '▤', action: 'terms' },
       deps
     )
-    expect(deps.showToast).toHaveBeenCalledWith({
-      title: '功能开发中',
-      icon: 'none'
-    })
+    expect(deps.navigateTo).toHaveBeenCalledWith('/pages/agreement/index')
+    expect(deps.showToast).not.toHaveBeenCalled()
   })
 
-  it('shows "功能开发中" toast for privacy action', () => {
+  it('navigates to privacy page for privacy action', () => {
     const deps = makeDeps()
     handleMenuAction(
       { key: 'privacy', label: '隐私政策', icon: '◆', action: 'privacy' },
       deps
     )
-    expect(deps.showToast).toHaveBeenCalledWith({
-      title: '功能开发中',
-      icon: 'none'
-    })
+    expect(deps.navigateTo).toHaveBeenCalledWith('/pages/privacy/index')
+    expect(deps.showToast).not.toHaveBeenCalled()
   })
 
-  it('shows "功能开发中" toast for about action', () => {
+  it('navigates to about page for about action', () => {
     const deps = makeDeps()
     handleMenuAction(
       { key: 'about', label: '关于精益副业', icon: '◎', action: 'about' },
       deps
     )
-    expect(deps.showToast).toHaveBeenCalledWith({
-      title: '功能开发中',
-      icon: 'none'
-    })
+    expect(deps.navigateTo).toHaveBeenCalledWith('/pages/about/index')
+    expect(deps.showToast).not.toHaveBeenCalled()
   })
 })
 
