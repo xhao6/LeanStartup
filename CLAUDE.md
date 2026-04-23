@@ -447,6 +447,12 @@ npm run alova-gen   # 从 Alova 配置生成 API
 2. **类型定义**: 自动生成在 `src/auto-import.d.ts` 和 `src/uni-pages.d.ts`
 3. **全局组件**: 通过 vite.config.ts 中的 unplugin-vue-components 注册
 
+## Design System
+Always read DESIGN.md before making any visual or UI decisions.
+All font choices, colors, spacing, and aesthetic direction are defined there.
+Do not deviate without explicit user approval.
+In QA mode, flag any code that doesn't match DESIGN.md.
+
 ## 可用技能
 
 - /office-hours - 头脑风暴新想法

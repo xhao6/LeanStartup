@@ -1,0 +1,2518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>精益副业案例库 — 设计系统预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-primary: 1A1A2E;
+  --color-secondary: #4A4A68;
+  --color-accent: #E94560;
+  --color-gold: #F5A623;
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E6E1;
+  --color-muted: #9B9A97;
+  --font-display: 'Noto Serif SC', 'Georgia', serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --shadow-card: 0 2px 12px rgba(26,26,46,0.06);
+  --shadow-card-hover: 0 8px 32px rgba(26,26,46,0.12);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+  --transition: 200ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-fast: 150ms ease-out;
+}
+
+[data-theme="dark"] {
+  --color-primary: #FAFAF8;
+  --color-secondary: #B8B8B8;
+  --color-accent: #FF6B8A;
+  --color-gold: #FFC857;
+  --color-bg: 1A1A2E;
+  --color-surface: 252538;
+  --color-border: 3A3A52;
+  --color-muted: #6B6B7B;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 20px 80px;
+}
+
+.site-header {
+  max-width: 960px;
+  margin: 0 auto 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.site-header h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  transition: var(--transition);
+}
+.theme-toggle:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+.section {
+  max-width: 960px;
+  margin: 0 auto 80px;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 32px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.section-desc {
+  color: var(--color-secondary);
+  font-size: 15px;
+  margin-bottom: 40px;
+}
+
+.font-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+.font-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+.font-card .font-role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 16px;
+}
+.font-card .font-sample {
+  font-size: 32px;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+}
+.font-card .font-meta {
+  font-size: 12px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+}
+.font-display-sample { font-family: var(--font-display); }
+.font-body-sample { font-family: var(--font-body); }
+.font-mono-sample { font-family: var(--font-mono); font-size: 24px; }
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+.color-swatch {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.color-swatch .swatch-bg {
+  height: 72px;
+}
+.color-swatch .swatch-info {
+  background: var(--color-surface);
+  padding: 10px 12px;
+}
+.swatch-name {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.swatch-hex {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-height: 44px;
+  min-width: 44px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.btn:active { transform: scale(0.98); opacity: 0.9; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-accent) 0%, #FF6B8A 100%);
+  color: #fff;
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(233,69,96,0.3);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-border);
+}
+.btn-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: 0 2px 8px rgba(233,69,96,0.1);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1.5px solid var(--color-accent);
+}
+.btn-ghost:hover {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(233,69,96,0.2);
+}
+
+.case-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.case-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+.case-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--color-accent);
+  border-radius: 3px 0 0 3px;
+  opacity: 0;
+  transition: var(--transition);
+}
+.case-card:hover::before { opacity: 1; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
+  padding-right: 16px;
+}
+.score-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #F5A623, #FF8C00);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.score-badge .score-star { font-size: 10px; }
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--color-muted);
+  margin-bottom: 12px;
+}
+.card-meta .source { color: var(--color-secondary); }
+.card-summary {
+  font-size: 14px;
+  color: var(--color-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-footer { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--color-bg);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+}
+.tag.cost { background: #E8F5E9; color: 2E7D32; border-color: #C8E6C9; }
+.tag.time { background: #E3F2FD; color: 1565C0; border-color: #BBDEFB; }
+
+.detail-preview {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 480px;
+}
+.detail-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+.detail-score-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.detail-score-num {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-gold);
+  line-height: 1;
+}
+.detail-score-label { font-size: 12px; color: var(--color-muted); }
+.score-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.score-bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.score-bar-name { width: 72px; color: var(--color-secondary); }
+.score-bar-track {
+  flex: 1;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold), var(--color-accent));
+  border-radius: 2px;
+  transition: width 600ms ease-out;
+}
+.detail-body { padding: 24px; }
+.detail-section { margin-bottom: 24px; }
+.detail-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+}
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.fact-item {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.fact-label { font-size: 11px; color: var(--color-muted); margin-bottom: 4px; }
+.fact-value { font-size: 13px; font-weight: 600; }
+
+.checklist { display: flex; flex-direction: column; gap: 10px; }
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.checklist-item:hover { background: var(--color-border); }
+.check-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  margin-top: 1px;
+}
+.check-box.checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.check-box.checked::after {
+  content: '✓';
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.checklist-text { font-size: 14px; line-height: 1.5; }
+.checklist-item.done .checklist-text {
+  text-decoration: line-through;
+  color: var(--color-muted);
+}
+
+.pitfall-box {
+  background: #FFF3E0;
+  border: 1px solid #FFE0B2;
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.pitfall-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #E65100;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pitfall-text { font-size: 13px; color: #BF360C; line-height: 1.6; }
+
+/* 案例故事 */
+.detail-story {
+  background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+  border: 1px solid #BAE6FD;
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.detail-story-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0369A1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.detail-story-text {
+  font-size: 14px;
+  color: #0C4A6E;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* 案例标签 */
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.case-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #E0E7FF;
+  color: #4338CA;
+}
+
+.detail-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0; right: 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 12px 24px;
+  display: flex;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+}
+.detail-footer .btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 28px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.asymmetric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.asymmetric-grid .featured-card {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+.asymmetric-grid .small-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+.asymmetric-grid .small-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+.featured-card {
+  background: linear-gradient(135deg, 1A1A2E 0%, 2D2D44 100%);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.featured-card .card-title { color: #fff; font-size: 16px; }
+.featured-card .card-meta { color: rgba(255,255,255,0.6); }
+.featured-card .score-badge { background: linear-gradient(135deg, #F5A623, #FF8C00); }
+.small-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: var(--transition);
+}
+.small-card:hover { box-shadow: var(--shadow-card); }
+.small-card .card-title { font-size: 13px; margin-bottom: 6px; }
+.small-card .score-badge { font-size: 11px; padding: 2px 7px; }
+.small-card .card-meta { font-size: 10px; margin-bottom: 6px; }
+.small-card .card-summary { font-size: 11px; -webkit-line-clamp: 2; margin-bottom: 8px; }
+
+.share-card {
+  background: linear-gradient(145deg, 1A1A2E 0%, 252538 50%, 1A1A2E 100%);
+  border-radius: 20px;
+  padding: 32px 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.share-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(233,69,96,0.3), transparent 70%);
+  pointer-events: none;
+}
+.share-card .top-label {
+  display: inline-block;
+  background: var(--color-accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.share-card .case-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.share-card .case-summary {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 20px;
+}
+.share-card .bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.share-card .score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.share-card .score-num {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-gold);
+}
+.share-card .score-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+.share-card .qr-placeholder {
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  border: 1px dashed rgba(255,255,255,0.2);
+}
+
+@media (max-width: 640px) {
+  body { padding: 24px 16px 60px; }
+  .section-title { font-size: 22px; }
+  .font-card .font-sample { font-size: 24px; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.case-card, .small-card, .detail-preview {
+  animation: fadeUp 400ms ease-out both;
+}
+.case-card:nth-child(2) { animation-delay: 80ms; }
+.case-card:nth-child(3) { animation-delay: 160ms; }
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.25); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.15); }
+}
+.heart-anim { animation: heartBeat 600ms ease-out; }
+
+/* ========== Phone Previews ========== */
+.phone-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  gap: 40px;
+  align-items: start;
+  justify-items: center;
+}
+
+.phone-frame {
+  width: 390px;
+  background: 1A1A2E;
+  border-radius: 44px;
+  padding: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+  margin: 0 auto;
+}
+
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px 6px;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+.status-icons { letter-spacing: 2px; }
+
+.phone-screen {
+  background: var(--color-bg);
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  height: 844px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== HOME PAGE ========== */
+.page-home {
+  padding: 0;
+  padding-bottom: 60px;
+}
+
+.page-hero {
+  padding: 20px 18px 12px;
+  text-align: center;
+}
+.page-hero-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.page-hero-slogan {
+  font-size: 13px;
+  color: var(--color-secondary);
+  font-weight: 400;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #F1F5F9;
+  margin: 0 -32px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-bottom: 12px;
+}
+.home-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: pulse 2s infinite;
+}
+.home-logo-area {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.home-date { font-size: 11px; color: var(--color-muted); font-family: var(--font-mono); margin-left: auto; }
+
+.home-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 14px;
+  margin-bottom: 12px;
+}
+
+.home-case-card {
+  display: flex;
+  align-items: stretch;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+.home-case-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.home-case-card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.home-case-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 12px 8px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  position: relative;
+}
+.rank-1 .home-case-rank { background: linear-gradient(180deg, #FBBF24 0%, #F97316 100%); }
+.rank-2 .home-case-rank { background: linear-gradient(180deg, #94A3B8 0%, #64748B 100%); }
+.rank-3 .home-case-rank { background: linear-gradient(180deg, #D4A574 0%, #B8956C 100%); }
+
+.home-case-content {
+  flex: 1;
+  padding: 16px 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.home-case-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+.home-case-score-inline {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-right: 4px;
+}
+.home-case-desc {
+  font-size: 13px;
+  color: var(--color-secondary);
+  line-height: 1.5;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.home-case-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.home-case-score {
+  display: none; /* 评分已融入标题，不再单独显示 */
+}
+
+.tag-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag-cost { background: #D1FAE5; color: #059669; }
+.tag-time { background: #DBEAFE; color: #2563EB; }
+.tag-source { background: var(--color-bg); color: var(--color-secondary); border: 1px solid var(--color-border); }
+
+.home-subscribe-banner {
+  background: linear-gradient(135deg, #E94560 0%, #FF6B8A 50%, #F5A623 100%);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 14px 16px;
+  box-shadow: 0 4px 20px rgba(233,69,96,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.home-subscribe-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.home-subscribe-text { position: relative; z-index: 1; }
+.home-subscribe-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.home-subscribe-desc { font-size: 11px; color: rgba(255,255,255,0.85); }
+.home-subscribe-btn {
+  background: #fff;
+  color: var(--color-accent);
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  position: relative;
+  z-index: 1;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  white-space: nowrap;
+}
+.home-subscribe-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.home-subscribe-btn:active {
+  transform: scale(0.98);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ========== DETAIL PAGE ========== */
+.page-detail {
+  padding: 0;
+}
+
+.detail-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.detail-back { font-size: 22px; color: var(--color-accent); font-weight: 300; cursor: pointer; }
+.detail-nav-title { font-size: 13px; font-weight: 500; color: var(--color-primary); }
+.detail-share-icon { font-size: 16px; color: var(--color-accent); }
+
+.detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-primary);
+}
+
+/* 来源信息 */
+.detail-source-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.detail-source-account {
+  font-size: 13px;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+.detail-source-link {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* 核心摘要 */
+.detail-summary {
+  font-size: 14px;
+  color: var(--color-secondary);
+  line-height: 1.7;
+  margin-bottom: 4px;
+}
+
+/* 工具/资源 */
+.detail-tools {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.detail-tool-item {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.detail-tool-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.detail-tool-desc {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+/* 风险标签 */
+.detail-risk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.risk-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* 莫兰迪色标签 */
+.case-tag-mor-1 { background: #E8D5C4; color: #5D4E37; } /* 暖棕色 */
+.case-tag-mor-2 { background: #D4E2D4; color: #3D5C3D; } /* 橄榄绿 */
+.case-tag-mor-3 { background: #D5D4E2; color: #4A4D6E; } /* 灰蓝色 */
+.case-tag-mor-4 { background: #E2D4D5; color: #6E4A4D; } /* 灰粉色 */
+.case-tag-mor-5 { background: #DFDBD0; color: #5C5A4F; } /* 米灰色 */
+
+/* 案例故事 */
+.detail-story {
+  background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+  border: 1px solid #BAE6FD;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 4px;
+}
+.detail-story-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369A1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.detail-story-text {
+  font-size: 13px;
+  color: #0C4A6E;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* 案例标签 */
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.case-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #E0E7FF;
+  color: #4338CA;
+}
+
+.detail-score-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.detail-total-score { text-align: center; min-width: 52px; }
+.detail-score-num { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--color-gold); line-height: 1; }
+.detail-score-max { font-size: 11px; color: var(--color-muted); font-family: var(--font-mono); }
+.detail-score-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.detail-bar-row { display: flex; align-items: center; gap: 6px; }
+.detail-bar-label { font-size: 9px; color: var(--color-secondary); width: 56px; white-space: nowrap; }
+.detail-bar-track { flex: 1; height: 3px; background: var(--color-border); border-radius: 2px; overflow: hidden; }
+.detail-bar-fill { height: 100%; background: linear-gradient(90deg, var(--color-gold), var(--color-accent)); border-radius: 2px; }
+.detail-bar-val { font-size: 9px; font-family: var(--font-mono); color: var(--color-muted); width: 28px; text-align: right; }
+
+.detail-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.detail-fact-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.detail-fact-icon { font-size: 12px; }
+.detail-fact-label { font-size: 9px; color: var(--color-muted); }
+.detail-fact-value { font-size: 11px; font-weight: 600; color: var(--color-primary); margin-left: auto; }
+
+.detail-steps-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.detail-steps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.detail-steps-title { font-size: 11px; font-weight: 700; color: var(--color-primary); }
+.detail-steps-progress { font-size: 10px; color: var(--color-accent); font-weight: 500; }
+.detail-step { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.detail-step:last-child { margin-bottom: 0; }
+.detail-step-check {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  flex-shrink: 0;
+  color: var(--color-muted);
+  background: var(--color-bg);
+}
+.detail-step-check.done {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+.detail-step-text { font-size: 11px; line-height: 1.4; color: var(--color-primary); }
+.detail-step-text.done { text-decoration: line-through; color: var(--color-muted); }
+
+.detail-warning-box {
+  background: #FFF3E0;
+  border: 1px solid #FFE0B2;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.detail-warning-header { font-size: 10px; font-weight: 700; color: #E65100; margin-bottom: 4px; }
+.detail-warning-text { font-size: 10px; color: #BF360C; line-height: 1.5; }
+
+.detail-bottom-actions {
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+.detail-btn-secondary,
+.detail-btn-primary {
+  flex: 1;
+  padding: 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-base);
+  white-space: nowrap;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.detail-btn-secondary {
+  background: var(--color-bg);
+  color: var(--color-primary);
+}
+.detail-btn-secondary:hover {
+  background: var(--color-border);
+}
+.detail-btn-primary {
+  background: linear-gradient(135deg, var(--color-accent) 0%, #FF6B8A 100%);
+  color: #fff;
+}
+.detail-btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(233,69,96,0.3);
+  transform: translateY(-1px);
+}
+.detail-btn-secondary:active,
+.detail-btn-primary:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* ========== RANKING PAGE ========== */
+.page-ranking {
+  padding: 0;
+  padding-bottom: 60px;
+}
+
+.ranking-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #F1F5F9;
+  margin: 0 -32px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-bottom: 12px;
+}
+.ranking-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+.ranking-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: pulse 2s infinite;
+}
+.ranking-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ranking-count {
+  font-size: 11px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+}
+.ranking-back { font-size: 20px; color: var(--color-secondary); font-weight: 300; cursor: pointer; }
+
+.ranking-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+}
+
+/* 历史列表样式（参考 LeanSkill） */
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.ranking-item:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+.ranking-rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 14px 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.ranking-item:nth-child(1) .ranking-rank-badge { background: linear-gradient(180deg, #FBBF24 0%, #F97316 100%); }
+.ranking-item:nth-child(2) .ranking-rank-badge { background: linear-gradient(180deg, #94A3B8 0%, #64748B 100%); }
+.ranking-item:nth-child(3) .ranking-rank-badge { background: linear-gradient(180deg, #D4A574 0%, #B8956C 100%); }
+.ranking-item:nth-child(n+4) .ranking-rank-badge { background: var(--color-bg); color: var(--color-secondary); }
+
+.ranking-item-content { flex: 1; padding: 14px 12px; min-width: 0; }
+.ranking-item-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: 1.3;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ranking-score-inline {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-right: 3px;
+}
+.ranking-item-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.ranking-item-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.ranking-item-tag.tag-cost { background: #D1FAE5; color: #059669; }
+.ranking-item-tag.tag-time { background: #DBEAFE; color: #2563EB; }
+.ranking-item-tag.tag-source { background: var(--color-bg); color: var(--color-secondary); border: 1px solid var(--color-border); }
+
+.ranking-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-size: 16px;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+/* 历史列表样式（参考 LeanSkill） */
+.ranking-history-body {
+  padding: 0 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ranking-date-group {
+  margin-bottom: 16px;
+}
+
+.ranking-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+}
+
+.ranking-group-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ranking-group-count {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.ranking-history-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.ranking-history-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.ranking-history-card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.ranking-history-date {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-muted);
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+.ranking-history-skills {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px;
+  min-width: 0;
+}
+
+.ranking-history-skill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ranking-history-rank {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 24px;
+  text-align: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.ranking-history-rank.rank-gold {
+  background: linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
+}
+
+.ranking-history-rank.rank-silver {
+  background: linear-gradient(135deg, #94A3B8 0%, #64748B 100%);
+}
+
+.ranking-history-rank.rank-bronze {
+  background: linear-gradient(135deg, #D4A574 0%, #B8956C 100%);
+}
+
+.ranking-history-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ranking-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 16px 14px 20px;
+}
+
+.ranking-load-more-btn {
+  text-align: center;
+  padding: 12px 24px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ranking-load-more-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: 0 2px 12px rgba(233,69,96,0.1);
+}
+
+.ranking-load-more-btn:active {
+  transform: scale(0.98);
+}
+
+/* ========== PROFILE PAGE（完全按LeanSkill设计） ========== */
+.page-profile {
+  padding: 0;
+  padding-bottom: 60px;
+  background: var(--color-bg);
+}
+
+/* 顶部登录区域（深色背景） */
+.profile-header-dark {
+  background: linear-gradient(180deg, #2D2D44 0%, #1A1A2E 100%);
+  padding: 32px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-login-avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+
+.profile-login-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.profile-login-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* 统计数据卡片（两栏布局） */
+.profile-stats-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin: 16px 14px 20px;
+  padding: 20px 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.profile-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-stat-num {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.profile-stat-label {
+  font-size: 13px;
+  color: var(--color-secondary);
+}
+
+.profile-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--color-border);
+}
+
+/* 功能菜单列表（LeanSkill 标准列表样式） */
+.profile-menu-list {
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: background var(--transition-base);
+  border-bottom: 1px solid var(--color-border);
+  min-height: 56px;
+}
+
+.profile-menu-item:last-child {
+  border-bottom: none;
+}
+
+.profile-menu-item:hover {
+  background: var(--color-bg);
+}
+
+.profile-menu-item:active {
+  background: var(--color-border);
+}
+
+.profile-menu-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.profile-menu-label {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-primary);
+  flex: 1;
+}
+
+.profile-menu-arrow {
+  font-size: 18px;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+/* ========== TAB BAR (shared) - LeanSkill 风格 ========== */
+.tab-bar {
+  display: flex;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 6px 0;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  font-size: 11px;
+  font-weight:  500;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+.tab-item.active {
+  color: var(--color-accent);
+}
+.tab-icon { font-size: 20px; transition: transform var(--transition-base); }
+.tab-item:active .tab-icon { transform: scale(0.9); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>精益副业案例库 — 设计系统</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">☀ 明/暗切换</span>
+  </button>
+</header>
+
+<section class="section">
+  <p class="section-label">页面预览</p>
+  <h2 class="section-title">Full Page Previews</h2>
+  <p class="section-desc">4 个核心页面 — 模拟 iPhone 屏幕效果</p>
+
+  <div class="phone-previews">
+
+    <!-- Page 1: 首页 -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●●●●●</span>
+      </div>
+      <div class="phone-screen page-home">
+        <!-- 大标题 -->
+        <div class="page-hero">
+          <h1 class="page-hero-title">搞钱案例榜</h1>
+          <p class="page-hero-slogan">每日 3 个可落地副业案例</p>
+        </div>
+
+        <!-- 顶部标题区 -->
+        <div class="home-header">
+          <div class="home-dot"></div>
+          <span class="home-logo-area">今日精选</span>
+          <span class="home-date">2026-04-23</span>
+        </div>
+
+        <!-- 卡片列表 -->
+        <div class="home-card-list">
+          <!-- Case Card 1 -->
+          <div class="home-case-card rank-1">
+            <div class="home-case-rank">1</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">8.5★</span>周末写的小项目，每月赚得比 996 工资还高</h3>
+              <p class="home-case-desc">通过 API 服务变现，零成本启动，月入过万。完整操作步骤+避坑指南。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-cost">零成本</span>
+                <span class="tag-pill tag-source">API 赚钱</span>
+                <span class="tag-pill tag-time">1-2周变现</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Case Card 2 -->
+          <div class="home-case-card rank-2">
+            <div class="home-case-rank">2</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">7.5★</span>5种超赚钱的虚拟产品，有人已经月入10万</h3>
+              <p class="home-case-desc">数字产品边际成本为零，一份时间卖多次，适合有某项技能的人。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-cost">零成本</span>
+                <span class="tag-pill tag-source">虚拟产品</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Case Card 3 -->
+          <div class="home-case-card rank-3">
+            <div class="home-case-rank">3</div>
+            <div class="home-case-content">
+              <h3 class="home-case-title"><span class="home-case-score-inline">7.0★</span>95后男生在小红书卖饰品，3个月从0到月销30万</h3>
+              <p class="home-case-desc">小红书种草+闲鱼出单，低门槛副业，适合爱逛街的女生。</p>
+              <div class="home-case-tags">
+                <span class="tag-pill tag-time">低门槛</span>
+                <span class="tag-pill tag-source">小红书电商</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 订阅横幅 -->
+        <div class="home-subscribe-banner">
+          <div class="home-subscribe-text">
+            <div class="home-subscribe-title">订阅每日提醒</div>
+            <div class="home-subscribe-desc">第一时间收到最新 TOP3 推送</div>
+          </div>
+          <button class="home-subscribe-btn">立即订阅</button>
+        </div>
+
+        <!-- TabBar -->
+        <div class="tab-bar">
+          <div class="tab-item active">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-label">首页</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">📋</span>
+            <span class="tab-label">榜单</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">❤️</span>
+            <span class="tab-label">收藏</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">👤</span>
+            <span class="tab-label">我的</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 2: 案例详情页 -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●●●●●</span>
+      </div>
+      <div class="phone-screen page-detail">
+        <!-- 顶部导航 -->
+        <div class="detail-nav">
+          <span class="detail-back">‹</span>
+          <span class="detail-nav-title">案例详情</span>
+          <span class="detail-share-icon">↗</span>
+        </div>
+
+        <!-- 详情内容 -->
+        <div class="detail-content">
+          <h2 class="detail-title">周末写的小项目，每月赚得比 996 工资还高</h2>
+
+          <!-- 来源信息 -->
+          <div class="detail-source-row">
+            <span class="detail-source-account">📌 API 赚钱派</span>
+            <span class="detail-source-link">↗ 阅读原文</span>
+          </div>
+
+          <!-- 案例标签 -->
+          <div class="detail-tags">
+            <span class="case-tag case-tag-mor-1">#API开发</span>
+            <span class="case-tag case-tag-mor-2">#副业</span>
+            <span class="case-tag case-tag-mor-3">#程序员</span>
+            <span class="case-tag case-tag-mor-4">#零成本</span>
+            <span class="case-tag case-tag-mor-5">#被动收入</span>
+          </div>
+
+          <!-- 核心摘要 -->
+          <p class="detail-summary">通过 API 服务变现，零成本启动，月入过万。适合有编程基础的职场人，利用业余时间开发实用工具出售订阅。完整技术栈+部署+推广方案。</p>
+
+          <!-- 案例故事 -->
+          <div class="detail-story">
+            <div class="detail-story-header">📖 案例故事</div>
+            <p class="detail-story-text">"我是某互联网公司的后端开发，利用周末时间写了一个图片压缩 API。最初只是为了解决自己项目的需求，后来把接口放到 RapidAPI 上，没想到第一个月就有 50 多个订阅，收入 3000+。现在每月稳定收入 8000+，比我工资还高。"</p>
+          </div>
+
+          <!-- 评分总览 -->
+          <div class="detail-score-section">
+            <div class="detail-total-score">
+              <span class="detail-score-num">8.5</span>
+              <span class="detail-score-max">/10</span>
+            </div>
+            <div class="detail-score-bars">
+              <div class="detail-bar-row">
+                <span class="detail-bar-label">落地可行性</span>
+                <div class="detail-bar-track"><div class="detail-bar-fill" style="width:83%"></div></div>
+                <span class="detail-bar-val">2.5/3</span>
+              </div>
+              <div class="detail-bar-row">
+                <span class="detail-bar-label">收益潜力</span>
+                <div class="detail-bar-track"><div class="detail-bar-fill" style="width:75%"></div></div>
+                <span class="detail-bar-val">1.5/2</span>
+              </div>
+              <div class="detail-bar-row">
+                <span class="detail-bar-label">时效性</span>
+                <div class="detail-bar-track"><div class="detail-bar-fill" style="width:75%"></div></div>
+                <span class="detail-bar-val">1.5/2</span>
+              </div>
+              <div class="detail-bar-row">
+                <span class="detail-bar-label">实操细节</span>
+                <div class="detail-bar-track"><div class="detail-bar-fill" style="width:75%"></div></div>
+                <span class="detail-bar-val">1.5/2</span>
+              </div>
+              <div class="detail-bar-row">
+                <span class="detail-bar-label">用户适配度</span>
+                <div class="detail-bar-track"><div class="detail-bar-fill" style="width:100%"></div></div>
+                <span class="detail-bar-val">1/1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 基础信息 -->
+          <div class="detail-facts-grid">
+            <div class="detail-fact-item">
+              <span class="detail-fact-icon">💰</span>
+              <span class="detail-fact-label">启动成本</span>
+              <span class="detail-fact-value">零成本</span>
+            </div>
+            <div class="detail-fact-item">
+              <span class="detail-fact-icon">📈</span>
+              <span class="detail-fact-label">预期收益</span>
+              <span class="detail-fact-value">5000+/月</span>
+            </div>
+            <div class="detail-fact-item">
+              <span class="detail-fact-icon">⏰</span>
+              <span class="detail-fact-label">变现周期</span>
+              <span class="detail-fact-value">1-2周</span>
+            </div>
+            <div class="detail-fact-item">
+              <span class="detail-fact-icon">👥</span>
+              <span class="detail-fact-label">适合人群</span>
+              <span class="detail-fact-value">职场人/学生</span>
+            </div>
+          </div>
+
+          <!-- 实践步骤 -->
+          <div class="detail-steps-section">
+            <div class="detail-steps-header">
+              <span class="detail-steps-title">实践步骤</span>
+              <span class="detail-steps-progress">2/5 完成</span>
+            </div>
+            <div class="detail-step done">
+              <div class="detail-step-check done">✓</div>
+              <span class="detail-step-text done">注册开发者账号并完成认证</span>
+            </div>
+            <div class="detail-step done">
+              <div class="detail-step-check done">✓</div>
+              <span class="detail-step-text done">选择一个有需求的垂直赛道</span>
+            </div>
+            <div class="detail-step">
+              <div class="detail-step-check">3</div>
+              <span class="detail-step-text">开发一个解决该需求的 API 服务</span>
+            </div>
+            <div class="detail-step">
+              <div class="detail-step-check">4</div>
+              <span class="detail-step-text">部署到云服务器并配置 HTTPS</span>
+            </div>
+            <div class="detail-step">
+              <div class="detail-step-check">5</div>
+              <span class="detail-step-text">在 V2EX/掘金发布并持续优化</span>
+            </div>
+          </div>
+
+          <!-- 工具/资源 -->
+          <div class="detail-tools">
+            <div class="detail-tool-item">
+              <span class="detail-tool-name">Python 3.x</span>
+              <span class="detail-tool-desc">后端开发</span>
+            </div>
+            <div class="detail-tool-item">
+              <span class="detail-tool-name">FastAPI</span>
+              <span class="detail-tool-desc">API 框架</span>
+            </div>
+            <div class="detail-tool-item">
+              <span class="detail-tool-name">阿里云/腾讯云</span>
+              <span class="detail-tool-desc">云服务器</span>
+            </div>
+            <div class="detail-tool-item">
+              <span class="detail-tool-name">Docker</span>
+              <span class="detail-tool-desc">容器部署</span>
+            </div>
+          </div>
+
+          <!-- 避坑指南 -->
+          <div class="detail-warning-box">
+            <div class="detail-warning-header">⚠️ 避坑指南</div>
+            <p class="detail-warning-text">前期需要一定技术基础，建议先学习 Python 基础。API 限频可能导致服务不稳定，需要提前做好容灾方案。</p>
+          </div>
+
+          <!-- 风险标签 -->
+          <div class="detail-risk-tags">
+            <span class="risk-tag">需编程基础</span>
+            <span class="risk-tag">竞争激烈</span>
+            <span class="risk-tag">前期收入不稳定</span>
+          </div>
+        </div>
+
+        <!-- 固定底部操作栏 -->
+        <div class="detail-bottom-actions">
+          <button class="detail-btn-secondary">🖼️ 存为图片</button>
+          <button class="detail-btn-secondary">↗ 分享</button>
+          <button class="detail-btn-primary">❤️ 收藏</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 3: 历史榜单页 -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●●●●●</span>
+      </div>
+      <div class="phone-screen page-ranking">
+        <!-- 顶部导航 -->
+        <div class="ranking-nav">
+          <div class="ranking-status">
+            <div class="ranking-dot"></div>
+            <span>历史</span>
+          </div>
+          <span class="ranking-title">往期榜单</span>
+          <span class="ranking-count">共 10+ 期</span>
+        </div>
+
+        <!-- 历史列表内容 -->
+        <div class="ranking-history-body">
+
+          <!-- 4月分组 -->
+          <div class="ranking-date-group">
+            <div class="ranking-date-header">
+              <span class="ranking-group-title">2026年4月</span>
+              <span class="ranking-group-count">5 期</span>
+            </div>
+
+            <!-- 历史卡片 1 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">04-23</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">周末写的小项目，每月赚得比 996 工资还高，API 服务变现零成本启动月入过万</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">5种超赚钱的虚拟产品，有人已经月入10万，数字产品边际成本为零</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">95后男生在小红书卖饰品，3个月从0到月销30万</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+
+            <!-- 历史卡片 2 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">04-22</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">小红书卖虚拟资料，月入3万的完整复盘，数字产品变现模式</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">程序员写一个插件卖，直通车费都省了，技术变现案例</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">周末写的小项目，每月赚得比 996 工资还高</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+
+            <!-- 历史卡片 3 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">04-21</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">拆解一个闲鱼无货源玩法，30天跑通全流程</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">5种超赚钱的虚拟产品，有人已经月入10万</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">95后男生在小红书卖饰品，3个月从0到月销30万</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+
+            <!-- 历史卡片 4 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">04-20</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">程序员写一个插件卖，直通车费都省了</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">周末写的小项目，每月赚得比 996 工资还高</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">小红书卖虚拟资料，月入3万的完整复盘</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+
+            <!-- 历史卡片 5 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">04-19</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">拆解一个闲鱼无货源玩法，30天跑通全流程</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">5种超赚钱的虚拟产品，有人已经月入10万</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">周末写的小项目，每月赚得比 996 工资还高</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- 3月分组（初始隐藏，点击加载更多后显示） -->
+          <div class="ranking-date-group" style="display:none;">
+            <div class="ranking-date-header">
+              <span class="ranking-group-title">2026年3月</span>
+              <span class="ranking-group-count">5 期</span>
+            </div>
+
+            <!-- 历史卡片 6 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">03-31</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">周末写的小项目，每月赚得比 996 工资还高</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">程序员写一个插件卖，直通车费都省了</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">小红书卖虚拟资料，月入3万的完整复盘</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+
+            <!-- 历史卡片 7 -->
+            <div class="ranking-history-card">
+              <div class="ranking-history-date">03-30</div>
+              <div class="ranking-history-skills">
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-gold">1</span>
+                  <span class="ranking-history-title">拆解一个闲鱼无货源玩法，30天跑通全流程</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-silver">2</span>
+                  <span class="ranking-history-title">95后男生在小红书卖饰品，3个月从0到月销30万</span>
+                </div>
+                <div class="ranking-history-skill">
+                  <span class="ranking-history-rank rank-bronze">3</span>
+                  <span class="ranking-history-title">5种超赚钱的虚拟产品，有人已经月入10万</span>
+                </div>
+              </div>
+              <div class="ranking-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- 加载更多 -->
+          <div class="ranking-load-more">
+            <div class="ranking-load-more-btn">加载更多</div>
+          </div>
+        </div>
+
+        <!-- TabBar -->
+        <div class="tab-bar">
+          <div class="tab-item">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-label">首页</span>
+          </div>
+          <div class="tab-item active">
+            <span class="tab-icon">📋</span>
+            <span class="tab-label">榜单</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">❤️</span>
+            <span class="tab-label">收藏</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">👤</span>
+            <span class="tab-label">我的</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 4: 个人中心页（完全按LeanSkill设计） -->
+    <div class="phone-frame">
+      <div class="phone-status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●●●●●</span>
+      </div>
+      <div class="phone-screen page-profile">
+        <!-- 顶部登录区域（深色背景） -->
+        <div class="profile-header-dark">
+          <div class="profile-login-avatar">😊</div>
+          <div class="profile-login-title">点击登录</div>
+          <div class="profile-login-subtitle">登录同步收藏数据</div>
+        </div>
+
+        <!-- 统计数据卡片（两栏布局） -->
+        <div class="profile-stats-card">
+          <div class="profile-stat-item">
+            <span class="profile-stat-num">0</span>
+            <span class="profile-stat-label">已阅榜单</span>
+          </div>
+          <div class="profile-stat-divider"></div>
+          <div class="profile-stat-item">
+            <span class="profile-stat-num">0</span>
+            <span class="profile-stat-label">我的收藏</span>
+          </div>
+        </div>
+
+        <!-- 功能菜单列表（8项，完全按LeanSkill顺序） -->
+        <div class="profile-menu-list">
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">⬡</span>
+            <span class="profile-menu-label">订阅管理</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">★</span>
+            <span class="profile-menu-label">我的收藏</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">↗</span>
+            <span class="profile-menu-label">转发给朋友</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">🎧</span>
+            <span class="profile-menu-label">联系客服</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">📄</span>
+            <span class="profile-menu-label">用户协议</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">🔒</span>
+            <span class="profile-menu-label">隐私政策</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">🗑</span>
+            <span class="profile-menu-label">清除缓存</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+          <div class="profile-menu-item">
+            <span class="profile-menu-icon">ℹ</span>
+            <span class="profile-menu-label">关于精益副业</span>
+            <span class="profile-menu-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- TabBar -->
+        <div class="tab-bar">
+          <div class="tab-item">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-label">首页</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">📋</span>
+            <span class="tab-label">榜单</span>
+          </div>
+          <div class="tab-item">
+            <span class="tab-icon">❤️</span>
+            <span class="tab-label">收藏</span>
+          </div>
+          <div class="tab-item active">
+            <span class="tab-icon">👤</span>
+            <span class="tab-label">我的</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">字体系统</p>
+  <h2 class="section-title">Typography</h2>
+  <p class="section-desc">衬线体传达"精选"感，无衬线确保小屏幕易读</p>
+  <div class="font-grid">
+    <div class="font-card">
+      <p class="font-role">Display / 标题</p>
+      <p class="font-sample font-display-sample">每日 3 个<br>可落地副业案例</p>
+      <p class="font-meta">Noto Serif SC — 衬线体，期刊感</p>
+    </div>
+    <div class="font-card">
+      <p class="font-role">Body / 正文</p>
+      <p class="font-sample font-body-sample">通过 AI 评分筛选，从公众号文章中精选出每日 3 个可操作性最强的副业案例</p>
+      <p class="font-meta">Noto Sans SC — 无衬线，易读</p>
+    </div>
+    <div class="font-card">
+      <p class="font-role">数字 / 评分</p>
+      <p class="font-sample font-mono-sample">8.5 / 10</p>
+      <p class="font-meta">Roboto Mono — 等宽数字，对齐</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">色彩系统</p>
+  <h2 class="section-title">Color Palette</h2>
+  <p class="section-desc">深墨色主色 + 玫红强调 + 金色评分，暖白纸张底</p>
+  <div class="color-grid">
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:1A1A2E;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Primary</p>
+        <p class="swatch-hex">1A1A2E</p>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:#4A4A68;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Secondary</p>
+        <p class="swatch-hex">#4A4A68</p>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:#E94560;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Accent</p>
+        <p class="swatch-hex">#E94560</p>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:#F5A623;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Gold</p>
+        <p class="swatch-hex">#F5A623</p>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:#FAFAF8; border: 1px solid #E8E6E1;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Background</p>
+        <p class="swatch-hex">#FAFAF8</p>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-bg" style="background:#FFFFFF; border: 1px solid #E8E6E1;"></div>
+      <div class="swatch-info">
+        <p class="swatch-name">Surface</p>
+        <p class="swatch-hex">#FFFFFF</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">组件</p>
+  <h2 class="section-title">UI Components</h2>
+  <p class="section-desc">按钮、标签、评分徽章 — 44px 最小触摸目标</p>
+  <div class="font-card" style="margin-bottom:24px;">
+    <p class="font-role" style="margin-bottom:16px;">Buttons</p>
+    <div class="btn-grid">
+      <button class="btn btn-primary">❤️ 收藏案例</button>
+      <button class="btn btn-secondary">📋 操作步骤</button>
+      <button class="btn btn-ghost">🔗 阅读原文</button>
+    </div>
+  </div>
+  <div class="font-card">
+    <p class="font-role" style="margin-bottom:16px;">Tags</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="tag cost">💰 零成本</span>
+      <span class="tag time">⏱️ 1-2小时/天</span>
+      <span class="tag">📱 小程序</span>
+      <span class="tag">🏠 居家可做</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">首页卡片</p>
+  <h2 class="section-title">Case Cards — 非对称 Editorial 排布</h2>
+  <p class="section-desc">排名徽章（左）+ 内容区（右），打破居中卡片模板</p>
+  <div class="home-card-list" style="max-width:480px;margin:0 auto;">
+    <!-- Case Card 1 -->
+    <div class="home-case-card rank-1">
+      <div class="home-case-rank">1</div>
+      <div class="home-case-content">
+        <h3 class="home-case-title"><span class="home-case-score-inline">8.5★</span>周末写的小项目，每月赚得比 996 工资还高</h3>
+        <p class="home-case-desc">通过 API 服务变现，零成本启动，月入过万。完整操作步骤+避坑指南。</p>
+        <div class="home-case-tags">
+          <span class="tag-pill tag-cost">零成本</span>
+          <span class="tag-pill tag-source">API 赚钱</span>
+          <span class="tag-pill tag-time">1-2周变现</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Card 2 -->
+    <div class="home-case-card rank-2">
+      <div class="home-case-rank">2</div>
+      <div class="home-case-content">
+        <h3 class="home-case-title"><span class="home-case-score-inline">7.5★</span>5种超赚钱的虚拟产品，有人已经月入10万</h3>
+        <p class="home-case-desc">数字产品边际成本为零，一份时间卖多次，适合有某项技能的人。</p>
+        <div class="home-case-tags">
+          <span class="tag-pill tag-cost">零成本</span>
+          <span class="tag-pill tag-source">虚拟产品</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Card 3 -->
+    <div class="home-case-card rank-3">
+      <div class="home-case-rank">3</div>
+      <div class="home-case-content">
+        <h3 class="home-case-title"><span class="home-case-score-inline">7.0★</span>95后男生在小红书卖饰品，3个月从0到月销30万</h3>
+        <p class="home-case-desc">小红书种草+闲鱼出单，低门槛副业，适合爱逛街的女生。</p>
+        <div class="home-case-tags">
+          <span class="tag-pill tag-time">低门槛</span>
+          <span class="tag-pill tag-source">小红书电商</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">详情页</p>
+  <h2 class="section-title">Case Detail</h2>
+  <p class="section-desc">评分条可视化 + Checklist + 避坑指南 + 固定底部操作栏</p>
+  <div class="detail-preview">
+    <div class="detail-header">
+      <h3 class="detail-title">周末写的小项目，每月赚得比 996 工资还高</h3>
+      <div class="detail-score-row">
+        <div>
+          <div class="detail-score-num">8.5</div>
+          <div class="detail-score-label">AI 总分</div>
+        </div>
+        <div class="score-bars">
+          <div class="score-bar-row">
+            <span class="score-bar-name">落地可行性</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:80%"></div></div>
+            <span style="font-size:11px;font-weight:600;">2.5/3</span>
+          </div>
+          <div class="score-bar-row">
+            <span class="score-bar-name">收益潜力</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:75%"></div></div>
+            <span style="font-size:11px;font-weight:600;">1.5/2</span>
+          </div>
+          <div class="score-bar-row">
+            <span class="score-bar-name">时效性</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:75%"></div></div>
+            <span style="font-size:11px;font-weight:600;">1.5/2</span>
+          </div>
+          <div class="score-bar-row">
+            <span class="score-bar-name">实操细节</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:75%"></div></div>
+            <span style="font-size:11px;font-weight:600;">1.5/2</span>
+          </div>
+          <div class="score-bar-row">
+            <span class="score-bar-name">用户适配度</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:80%"></div></div>
+            <span style="font-size:11px;font-weight:600;">1/1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <!-- 来源信息 -->
+      <div class="detail-source-row">
+        <span class="detail-source-account">API 赚钱派</span>
+        <span class="detail-source-link">↗ 阅读原文</span>
+      </div>
+
+      <!-- 案例标签 -->
+      <div class="detail-section">
+        <p class="detail-section-title">案例标签</p>
+        <div class="detail-tags">
+          <span class="case-tag case-tag-mor-1">#API开发</span>
+          <span class="case-tag case-tag-mor-2">#副业</span>
+          <span class="case-tag case-tag-mor-3">#程序员</span>
+          <span class="case-tag case-tag-mor-4">#零成本</span>
+          <span class="case-tag case-tag-mor-5">#被动收入</span>
+        </div>
+      </div>
+
+      <!-- 核心摘要 -->
+      <div class="detail-section">
+        <p class="detail-section-title">核心摘要</p>
+        <p class="detail-summary">通过 API 服务变现，零成本启动，月入过万。适合有编程基础的职场人，利用业余时间开发实用工具出售订阅。</p>
+      </div>
+
+      <!-- 案例故事 -->
+      <div class="detail-section">
+        <p class="detail-section-title">📖 案例故事</p>
+        <div class="detail-story">
+          <p class="detail-story-text">"我是某互联网公司的后端开发，利用周末时间写了一个图片压缩 API。最初只是为了解决自己项目的需求，后来把接口放到 RapidAPI 上，没想到第一个月就有 50 多个订阅，收入 3000+。现在每月稳定收入 8000+，比我工资还高。"</p>
+        </div>
+      </div>
+
+      <!-- 基础信息 -->
+      <div class="detail-section">
+        <p class="detail-section-title">基础信息</p>
+        <div class="detail-facts">
+          <div class="fact-item">
+            <span class="detail-fact-icon">💰</span>
+            <span class="detail-fact-label">启动成本</span>
+            <span class="detail-fact-value">零成本</span>
+          </div>
+          <div class="fact-item">
+            <span class="detail-fact-icon">📈</span>
+            <span class="detail-fact-label">预期收益</span>
+            <span class="detail-fact-value">5000+/月</span>
+          </div>
+          <div class="fact-item">
+            <span class="detail-fact-icon">⏰</span>
+            <span class="detail-fact-label">变现周期</span>
+            <span class="detail-fact-value">1-2周</span>
+          </div>
+          <div class="fact-item">
+            <span class="detail-fact-icon">👥</span>
+            <span class="detail-fact-label">适合人群</span>
+            <span class="detail-fact-value">职场人/学生</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 实践步骤 -->
+      <div class="detail-section">
+        <p class="detail-section-title">实践步骤 <span style="font-weight:400;color:var(--color-muted);font-size:11px;">完成 2/5 步</span></p>
+        <div class="checklist">
+          <div class="checklist-item done">
+            <div class="check-box checked"></div>
+            <span class="checklist-text">注册开发者账号并完成认证</span>
+          </div>
+          <div class="checklist-item done">
+            <div class="check-box checked"></div>
+            <span class="checklist-text">选择一个有需求的垂直赛道</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-box"></div>
+            <span class="checklist-text">开发一个解决该需求的 API 服务</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-box"></div>
+            <span class="checklist-text">部署到云服务器并配置 HTTPS</span>
+          </div>
+          <div class="checklist-item">
+            <div class="check-box"></div>
+            <span class="checklist-text">在 V2EX/掘金发布并持续优化</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工具/资源 -->
+      <div class="detail-section">
+        <p class="detail-section-title">工具 & 资源</p>
+        <div class="detail-tools">
+          <div class="detail-tool-item">
+            <span class="detail-tool-name">Python 3.x</span>
+            <span class="detail-tool-desc">后端开发</span>
+          </div>
+          <div class="detail-tool-item">
+            <span class="detail-tool-name">FastAPI</span>
+            <span class="detail-tool-desc">API 框架</span>
+          </div>
+          <div class="detail-tool-item">
+            <span class="detail-tool-name">阿里云/腾讯云</span>
+            <span class="detail-tool-desc">云服务器</span>
+          </div>
+          <div class="detail-tool-item">
+            <span class="detail-tool-name">Docker</span>
+            <span class="detail-tool-desc">容器部署</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 避坑指南 -->
+      <div class="detail-section">
+        <p class="detail-section-title">避坑指南</p>
+        <div class="pitfall-box">
+          <p class="pitfall-title">⚠️ 风险提示</p>
+          <p class="pitfall-text">前期需要一定技术基础，建议先学习 Python 基础。API 限频可能导致服务不稳定，需要提前做好容灾方案。定价策略要合理，避免过高或过低。</p>
+        </div>
+      </div>
+
+      <!-- 风险标签 -->
+      <div class="detail-section">
+        <p class="detail-section-title">风险提示</p>
+        <div class="detail-risk-tags">
+          <span class="risk-tag">需编程基础</span>
+          <span class="risk-tag">竞争激烈</span>
+          <span class="risk-tag">前期收入不稳定</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail-footer">
+      <button class="btn btn-secondary">🖼️ 存为图片</button>
+      <button class="btn btn-secondary">↗ 分享</button>
+      <button class="btn btn-primary">❤️ 收藏</button>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="section-label">分享卡片</p>
+  <h2 class="section-title">Share Card</h2>
+  <p class="section-desc">Canvas 导出到相册，设计独立高对比度，确保朋友圈截图抓眼球</p>
+  <div class="share-card">
+    <p class="top-label">精益副业案例库</p>
+    <h3 class="case-title">周末写的小项目，每月赚得比 996 工资还高</h3>
+    <p class="case-summary">通过 API 服务变现，零成本启动，月入过万。完整操作步骤+避坑指南。</p>
+    <div class="bottom-row">
+      <div class="score-display">
+        <span class="score-num">8.5</span>
+        <span class="score-label">AI 评分</span>
+      </div>
+      <div class="qr-placeholder">小程序码</div>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-label').textContent = isDark ? '☀ 明/暗切换' : '🌙 明/暗切换';
+}
+</script>
+</body>
+</html>
