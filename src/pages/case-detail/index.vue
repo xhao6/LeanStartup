@@ -162,7 +162,7 @@
           </view>
 
           <!-- Suitable for -->
-          <view v-if="suitableForList.length" class="col-span-2 flex items-start gap-2">
+          <view v-if="suitableForList.length" class="flex items-start gap-2">
             <text class="text-sm flex-shrink-0" :style="{ color: '#F5A623' }">&#x1F465;</text>
             <view class="flex-1 min-w-0">
               <text class="text-xs block" :style="{ color: '#9B9A97' }">适合人群</text>
@@ -170,7 +170,7 @@
                 <view
                   v-for="(tag, i) in suitableForList"
                   :key="i"
-                  class="inline-flex items-center rounded-full px-[10px] py-[4px]"
+                  class="inline-flex items-center rounded-full px-2 py-1"
                   :style="{ backgroundColor: morandiColors[i % 5].bg }"
                 >
                   <text class="text-xs font-semibold" :style="{ color: morandiColors[i % 5].text }">
@@ -292,7 +292,7 @@
         <view
           v-for="(tag, i) in caseData.risk_tags"
           :key="i"
-          class="inline-flex items-center rounded-full px-[10px] py-[4px]"
+          class="inline-flex items-center rounded-full px-2 py-1"
           :style="{ backgroundColor: '#FEE2E2' }"
         >
           <text class="text-xs font-semibold" :style="{ color: '#DC2626' }">{{ tag }}</text>
