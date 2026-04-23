@@ -1,73 +1,78 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "CloudBase UniApp",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/demo/demo",
-			"style": {
-				"navigationBarTitleText": "云开发演示",
-				"navigationBarBackgroundColor": "#007aff",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "选择登录方式",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/login/password-login",
-			"style": {
-				"navigationBarTitleText": "密码登录",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/login/phone-login",
-			"style": {
-				"navigationBarTitleText": "手机验证码登录",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/login/email-login",
-			"style": {
-				"navigationBarTitleText": "邮箱验证码登录",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/profile/profile",
-			"style": {
-				"navigationBarTitleText": "用户信息",
-				"navigationBarBackgroundColor": "#667eea",
-				"navigationBarTextStyle": "white"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "CloudBase UniApp",
-		"navigationBarBackgroundColor": "#667eea",
-		"backgroundColor": "#f5f5f5"
-	},
-	"easycom": {
-	"autoscan": true,
-	"custom": {
-	  "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
-	}
-	
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "精益副业案例库"
+      }
+    },
+    {
+      "path": "pages/history/index",
+      "style": {
+        "navigationBarTitleText": "历史榜单"
+      }
+    },
+    {
+      "path": "pages/favorites/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/case-detail/index",
+      "style": {
+        "navigationBarTitleText": "案例详情"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "精益副业案例库",
+    "navigationBarBackgroundColor": "#FAFAF8",
+    "backgroundColor": "#FAFAF8"
+  },
+  "tabBar": {
+    "color": "#9B9A97",
+    "selectedColor": "#E94560",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日精选",
+        "iconPath": "static/tabbar/today.png",
+        "selectedIconPath": "static/tabbar/today-active.png"
+      },
+      {
+        "pagePath": "pages/history/index",
+        "text": "历史榜单",
+        "iconPath": "static/tabbar/history.png",
+        "selectedIconPath": "static/tabbar/history-active.png"
+      },
+      {
+        "pagePath": "pages/favorites/index",
+        "text": "我的收藏",
+        "iconPath": "static/tabbar/favorites.png",
+        "selectedIconPath": "static/tabbar/favorites-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "个人中心",
+        "iconPath": "static/tabbar/profile.png",
+        "selectedIconPath": "static/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
   }
 }
