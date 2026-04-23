@@ -99,8 +99,13 @@ import type { CaseData } from '@/components/helpers'
 import { parseSuitableFor } from '@/components/helpers'
 import { useDailyPick } from '@/composables/useDailyPick'
 import { useShare } from '@/composables/useShare'
+import { useSubscriptionStore } from '@/store'
+import { useLogin } from '@/composables/useLogin'
+import { SUBSCRIBE_TEMPLATE_ID } from '@/utils/constants'
 
 const { cases, date, isLoading, error, fetchDailyPick, refresh } = useDailyPick()
+const subscriptionStore = useSubscriptionStore()
+const { loginAndDo } = useLogin()
 
 /** Normalize cases to CaseData shape (ensure suitable_for is always string[]) */
 const normalizedCases = computed<CaseData[]>(() =>
@@ -131,12 +136,40 @@ const handleRetry = () => {
   refresh()
 }
 
-const handleSubscribe = () => {
-  uni.showToast({
-    title: '功能开发中',
-    icon: 'none',
-    duration: 2000
-  })
+const handleSubscribe = async () => {
+  try {
+    // Step 1: Request subscribe message authorization (must be in sync call stack from user tap)
+    await new Promise<void>((resolve, reject) => {
+      wx.requestSubscribeMessage({
+        tmplIds: [SUBSCRIBE_TEMPLATE_ID],
+        success: (res: any) => {
+          if (res[SUBSCRIBE_TEMPLATE_ID] === 'accept') {
+            resolve()
+          } else {
+            reject(new Error('用户拒绝授权'))
+          }
+        },
+        fail: (err: any) => reject(err)
+      })
+    })
+
+    // Step 2: Ensure logged in
+    await loginAndDo(async () => {})
+
+    // Step 3: Call subscribe
+    const result = await subscriptionStore.subscribe()
+    if (result.success) {
+      uni.showToast({ title: '订阅成功', icon: 'success' })
+    } else {
+      uni.showToast({ title: result.message || '订阅失败', icon: 'none' })
+    }
+  } catch (err: any) {
+    if (err.message === '用户拒绝授权') {
+      uni.showToast({ title: '已取消授权', icon: 'none' })
+    } else {
+      uni.showToast({ title: '订阅失败', icon: 'none' })
+    }
+  }
 }
 </script>
 

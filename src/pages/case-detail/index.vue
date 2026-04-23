@@ -219,6 +219,23 @@
       </view>
     </view>
 
+    <!-- Share Card Modal -->
+    <view
+      v-if="showShareCard && caseData"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      :style="{ backgroundColor: 'rgba(0,0,0,0.5)' }"
+      @tap="showShareCard = false"
+    >
+      <view @tap.stop>
+        <ShareCard
+          :title="caseData.title"
+          :summary="caseData.summary || ''"
+          :score-total="Math.round(caseData.score_total)"
+          @saved="showShareCard = false"
+        />
+      </view>
+    </view>
+
     <!-- Fixed bottom action bar -->
     <view
       v-if="caseData"
@@ -277,6 +294,7 @@ import { useLogin } from '@/composables/useLogin'
 import { useShare } from '@/composables/useShare'
 import { SCORE_DIMENSIONS, MORANDI_TAGS } from '@/utils/constants'
 import { parseSuitableFor } from '@/components/helpers'
+import ShareCard from '@/components/ShareCard.vue'
 
 const { caseData, isLoading, error, fetchDetail } = useCaseDetail()
 const collectionStore = useCollectionStore()
@@ -286,6 +304,9 @@ let caseId = ''
 
 // Steps completion tracking
 const completedSteps = ref<Record<number, boolean>>({})
+
+// Share card visibility
+const showShareCard = ref(false)
 
 // Score dimensions from constants
 const scoreDimensions = SCORE_DIMENSIONS
@@ -340,9 +361,8 @@ async function handleFavorite() {
 }
 
 function handleShare() {
-  // WeChat mini program share is triggered by onShareAppMessage
-  // Show a hint to user
-  uni.showToast({ title: '点击右上角分享', icon: 'none' })
+  if (!caseData.value) return
+  showShareCard.value = true
 }
 
 function handleStart() {
