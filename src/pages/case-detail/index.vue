@@ -38,6 +38,39 @@
         </text>
       </view>
 
+      <!-- Source info row -->
+      <view
+        v-if="caseData.source_account || caseData.source_url"
+        class="flex items-center justify-between mt-2 px-1"
+      >
+        <text class="text-sm" :style="{ color: '#4A4A68' }">
+          📌 {{ caseData.source_account || '' }}
+        </text>
+        <text
+          v-if="caseData.source_url"
+          class="text-sm"
+          :style="{ color: '#0369A1' }"
+          @tap="openUrl(caseData.source_url)"
+        >
+          ↗ 阅读原文
+        </text>
+      </view>
+
+      <!-- Case story (blue quote box) -->
+      <view
+        v-if="caseData.case_story"
+        class="mt-3 rounded-xl p-4"
+        :style="{
+          backgroundColor: '#F0F9FF',
+          border: '1px solid #BAE6FD'
+        }"
+      >
+        <text class="text-sm font-semibold block mb-2" :style="{ color: '#0369A1' }">📖 案例故事</text>
+        <text class="text-sm block leading-relaxed" :style="{ color: '#4A4A68' }">
+          {{ caseData.case_story }}
+        </text>
+      </view>
+
       <!-- Score visualization -->
       <view
         class="rounded-2xl p-4 mt-2"
@@ -107,6 +140,24 @@
             <view class="flex-1 min-w-0">
               <text class="text-[11px] block" :style="{ color: '#9B9A97' }">来源</text>
               <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.source_account || '--' }}</text>
+            </view>
+          </view>
+
+          <!-- Expected revenue -->
+          <view class="flex items-center gap-2">
+            <text class="text-sm" :style="{ color: '#F5A623' }">&#x1F4C8;</text>
+            <view class="flex-1 min-w-0">
+              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">预期收益</text>
+              <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.expected_revenue || '--' }}</text>
+            </view>
+          </view>
+
+          <!-- Cycle -->
+          <view class="flex items-center gap-2">
+            <text class="text-sm" :style="{ color: '#F5A623' }">&#x23F0;</text>
+            <view class="flex-1 min-w-0">
+              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">变现周期</text>
+              <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.cycle || '--' }}</text>
             </view>
           </view>
 
@@ -215,6 +266,36 @@
               查看链接
             </text>
           </view>
+        </view>
+      </view>
+
+      <!-- Pitfall guide (orange warning box) -->
+      <view
+        v-if="caseData.pitfalls"
+        class="mt-3 rounded-xl p-4"
+        :style="{
+          backgroundColor: '#FFF3E0',
+          border: '1px solid #FFE0B2'
+        }"
+      >
+        <text class="text-sm font-semibold block mb-2" :style="{ color: '#E65100' }">⚠️ 避坑指南</text>
+        <text class="text-sm block leading-relaxed" :style="{ color: '#BF360C' }">
+          {{ caseData.pitfalls }}
+        </text>
+      </view>
+
+      <!-- Risk tags (red pills) -->
+      <view
+        v-if="caseData.risk_tags?.length"
+        class="mt-3 flex flex-wrap gap-2"
+      >
+        <view
+          v-for="(tag, i) in caseData.risk_tags"
+          :key="i"
+          class="inline-flex items-center rounded-full px-[10px] py-[4px]"
+          :style="{ backgroundColor: '#FEE2E2' }"
+        >
+          <text class="text-[11px] font-semibold" :style="{ color: '#DC2626' }">{{ tag }}</text>
         </view>
       </view>
     </view>
