@@ -35,15 +35,15 @@
       <view
         v-for="i in 3"
         :key="i"
-        class="bg-white rounded-2xl p-4"
+        class="bg-surface rounded-2xl p-4"
         :style="{ border: '1px solid #E8E6E1', height: '120px' }"
       >
         <view class="flex gap-3">
           <view class="w-8 h-8 rounded-lg animate-pulse" style="background-color: #E8E6E1" />
           <view class="flex-1 space-y-2">
-            <view class="h-4 w-3/4 rounded animate-pulse" style="background-color: #E8E6E1" />
-            <view class="h-3 w-full rounded animate-pulse" style="background-color: #E8E6E1" />
-            <view class="h-3 w-1/2 rounded animate-pulse" style="background-color: #E8E6E1" />
+            <view class="h-4 rounded animate-pulse" style="background-color: #E8E6E1; width: 75%" />
+            <view class="h-3 rounded animate-pulse" style="background-color: #E8E6E1" />
+            <view class="h-3 rounded animate-pulse" style="background-color: #E8E6E1; width: 50%" />
           </view>
         </view>
       </view>

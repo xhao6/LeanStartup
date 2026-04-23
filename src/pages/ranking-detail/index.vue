@@ -2,7 +2,7 @@
   <scroll-view scroll-y class="h-screen" :style="{ backgroundColor: '#FAFAF8' }">
     <!-- Date Banner -->
     <view
-      class="flex items-center gap-2 mx-5 mt-4 mb-3 px-4 py-3 rounded-2xl bg-white"
+      class="flex items-center gap-2 mx-5 mt-4 mb-3 px-4 py-3 rounded-2xl bg-surface"
       :style="{ border: '1px solid #E8E6E1', boxShadow: '0 2px 12px rgba(26,26,46,0.06)' }"
     >
       <view class="pulse-dot" />
@@ -25,14 +25,14 @@
       <view
         v-for="i in 3"
         :key="i"
-        class="bg-white rounded-2xl p-4"
+        class="bg-surface rounded-2xl p-4"
         :style="{ border: '1px solid #E8E6E1', boxShadow: '0 2px 12px rgba(26,26,46,0.06)' }"
       >
         <view class="flex gap-3 items-center">
           <view class="w-8 h-8 rounded-lg animate-pulse" style="background-color: #E8E6E1" />
           <view class="flex-1 space-y-2">
-            <view class="h-4 w-3/4 rounded animate-pulse" style="background-color: #E8E6E1" />
-            <view class="h-3 w-1/2 rounded animate-pulse" style="background-color: #E8E6E1" />
+            <view class="h-4 rounded animate-pulse" style="background-color: #E8E6E1; width: 75%" />
+            <view class="h-3 rounded animate-pulse" style="background-color: #E8E6E1; width: 50%" />
           </view>
         </view>
       </view>

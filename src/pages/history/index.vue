@@ -24,14 +24,14 @@
       <view
         v-for="i in 5"
         :key="i"
-        class="bg-white rounded-xl p-4"
+        class="bg-surface rounded-xl p-4"
         :style="{ border: '1px solid #E8E6E1', height: '72px' }"
       >
         <view class="flex gap-3 items-center h-full">
           <view class="w-6 h-6 rounded-lg animate-pulse" style="background-color: #E8E6E1" />
           <view class="flex-1 space-y-2">
-            <view class="h-4 w-2/5 rounded animate-pulse" style="background-color: #E8E6E1" />
-            <view class="h-3 w-1/4 rounded animate-pulse" style="background-color: #E8E6E1" />
+            <view class="h-4 rounded animate-pulse" style="background-color: #E8E6E1; width: 40%" />
+            <view class="h-3 rounded animate-pulse" style="background-color: #E8E6E1; width: 25%" />
           </view>
         </view>
       </view>
@@ -73,7 +73,7 @@
           <view
             v-for="record in group.records"
             :key="record.id"
-            class="bg-white rounded-xl px-4 py-3 flex items-center justify-between"
+            class="bg-surface rounded-xl px-4 py-3 flex items-center justify-between"
             :style="{
               border: '1px solid #E8E6E1',
               boxShadow: '0 1px 4px rgba(26,26,46,0.04)'

@@ -1,8 +1,8 @@
 <template>
   <view
-    class="bg-white border border-solid rounded-2xl p-4 active:scale-[0.98] transition-transform"
+    class="bg-surface rounded-2xl p-4 transition-transform"
     :style="{
-      borderColor: '#E8E6E1',
+      border: '1px solid #E8E6E1',
       boxShadow: '0 2px 12px rgba(26,26,46,0.06)'
     }"
     @tap="handleTap"
@@ -43,11 +43,12 @@
 
           <!-- Cost tag -->
           <view
-            class="inline-flex items-center rounded-full px-[10px] py-[4px]"
-            :style="{ backgroundColor: costStyle.bg }"
+            class="inline-flex items-center rounded-full"
+            :style="{ backgroundColor: costStyle.bg, padding: '4px 10px' }"
           >
             <text
-              class="text-[11px] font-semibold"
+              class="font-semibold"
+              style="font-size: 11px"
               :style="{ color: costStyle.text }"
             >
               {{ caseData.cost }}

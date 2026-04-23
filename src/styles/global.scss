@@ -2,10 +2,8 @@
 // Global Styles — Design System
 // ============================================================
 
-// Tailwind CSS utilities are injected via src/styles/tailwind.css
-// which is imported in App.vue.
-
 @use './design-tokens' as *;
+@use './utilities' as *;
 
 // ── Base Reset (preflight is OFF for mini program compat) ──
 page {

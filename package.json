@@ -13,7 +13,7 @@
     "dev:mp-lark": "uni -p mp-lark",
     "dev:mp-qq": "uni -p mp-qq",
     "dev:mp-toutiao": "uni -p mp-toutiao",
-    "dev:mp-weixin": "tailwindcss -i src/styles/tailwind.css -o src/styles/tailwind-generated.css --no-autoprefixer && uni -p mp-weixin",
+    "dev:mp-weixin": "uni -p mp-weixin",
     "dev:mp-xhs": "uni -p mp-xhs",
     "dev:quickapp-webview": "uni -p quickapp-webview",
     "dev:quickapp-webview-huawei": "uni -p quickapp-webview-huawei",
@@ -28,7 +28,7 @@
     "build:mp-lark": "uni build -p mp-lark",
     "build:mp-qq": "uni build -p mp-qq",
     "build:mp-toutiao": "uni build -p mp-toutiao",
-    "build:mp-weixin": "tailwindcss -i src/styles/tailwind.css -o src/styles/tailwind-generated.css --no-autoprefixer && uni build -p mp-weixin",
+    "build:mp-weixin": "uni build -p mp-weixin",
     "build:mp-xhs": "uni build -p mp-xhs",
     "build:quickapp-webview": "uni build -p quickapp-webview",
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
@@ -61,7 +61,6 @@
     "autoprefixer": "^10.5.0",
     "pinia": "^3.0.4",
     "postcss": "^8.5.10",
-    "tailwindcss": "^3.4.19",
     "vue": "3.4.21",
     "vue-i18n": "9.14.4",
     "wot-design-uni": "^1.14.0"
@@ -82,7 +81,6 @@
     "typescript": "^4.9.4",
     "vite": "5.2.8",
     "vitest": "^4.1.5",
-    "vue-tsc": "^1.0.24",
-    "weapp-tailwindcss": "^4.11.2"
+    "vue-tsc": "^1.0.24"
   }
 }

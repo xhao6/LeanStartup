@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { initCloudBase, checkEnvironment } from "./utils/cloudbase";
-import './styles/tailwind-generated.css'
 
 onLaunch(async () => {
   console.log("App Launch");

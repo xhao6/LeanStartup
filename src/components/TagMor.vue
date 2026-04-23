@@ -1,10 +1,11 @@
 <template>
   <view
-    class="inline-flex items-center rounded-full px-[10px] py-[4px]"
-    :style="{ backgroundColor: color.bg }"
+    class="inline-flex items-center rounded-full"
+    :style="{ backgroundColor: color.bg, padding: '4px 10px' }"
   >
     <text
-      class="text-[11px] font-semibold leading-none"
+      class="font-semibold leading-none"
+      style="font-size: 11px"
       :style="{ color: color.text }"
     >
       {{ text }}

@@ -90,12 +90,12 @@
                 {{ Math.round(caseData.score_total) }}
               </text>
             </view>
-            <text class="text-[11px] mt-1" :style="{ color: '#9B9A97' }">AI评分</text>
+            <text style="font-size: 11px" class="mt-1" :style="{ color: '#9B9A97' }">AI评分</text>
           </view>
 
           <!-- Dimension progress bars -->
           <view class="flex-1">
-            <view v-for="dim in scoreDimensions" :key="dim.key" class="flex items-center mb-2 last:mb-0">
+            <view v-for="(dim, i) in scoreDimensions" :key="dim.key" class="flex items-center mb-2" :class="{ 'mb-0': i === scoreDimensions.length - 1 }">
               <text class="text-xs w-12 flex-shrink-0" :style="{ color: '#4A4A68' }">
                 {{ dim.label }}
               </text>
@@ -129,7 +129,7 @@
           <view class="flex items-center gap-2">
             <text class="text-sm" :style="{ color: '#F5A623' }">&#x1F4B0;</text>
             <view class="flex-1 min-w-0">
-              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">成本</text>
+              <text class="text-xs block" :style="{ color: '#9B9A97' }">成本</text>
               <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.cost || '--' }}</text>
             </view>
           </view>
@@ -138,7 +138,7 @@
           <view class="flex items-center gap-2">
             <text class="text-sm" :style="{ color: '#F5A623' }">&#x1F4F0;</text>
             <view class="flex-1 min-w-0">
-              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">来源</text>
+              <text class="text-xs block" :style="{ color: '#9B9A97' }">来源</text>
               <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.source_account || '--' }}</text>
             </view>
           </view>
@@ -147,7 +147,7 @@
           <view class="flex items-center gap-2">
             <text class="text-sm" :style="{ color: '#F5A623' }">&#x1F4C8;</text>
             <view class="flex-1 min-w-0">
-              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">预期收益</text>
+              <text class="text-xs block" :style="{ color: '#9B9A97' }">预期收益</text>
               <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.expected_revenue || '--' }}</text>
             </view>
           </view>
@@ -156,7 +156,7 @@
           <view class="flex items-center gap-2">
             <text class="text-sm" :style="{ color: '#F5A623' }">&#x23F0;</text>
             <view class="flex-1 min-w-0">
-              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">变现周期</text>
+              <text class="text-xs block" :style="{ color: '#9B9A97' }">变现周期</text>
               <text class="text-sm truncate" :style="{ color: '#1A1A2E' }">{{ caseData.cycle || '--' }}</text>
             </view>
           </view>
@@ -165,7 +165,7 @@
           <view v-if="suitableForList.length" class="col-span-2 flex items-start gap-2">
             <text class="text-sm flex-shrink-0" :style="{ color: '#F5A623' }">&#x1F465;</text>
             <view class="flex-1 min-w-0">
-              <text class="text-[11px] block" :style="{ color: '#9B9A97' }">适合人群</text>
+              <text class="text-xs block" :style="{ color: '#9B9A97' }">适合人群</text>
               <view class="flex flex-wrap gap-1 mt-1">
                 <view
                   v-for="(tag, i) in suitableForList"
@@ -173,7 +173,7 @@
                   class="inline-flex items-center rounded-full px-[10px] py-[4px]"
                   :style="{ backgroundColor: morandiColors[i % 5].bg }"
                 >
-                  <text class="text-[11px] font-semibold" :style="{ color: morandiColors[i % 5].text }">
+                  <text class="text-xs font-semibold" :style="{ color: morandiColors[i % 5].text }">
                     {{ tag }}
                   </text>
                 </view>
@@ -207,7 +207,7 @@
               }"
               @tap="toggleStep(i)"
             >
-              <text v-if="completedSteps[i]" class="text-white text-[10px]">&#10003;</text>
+              <text v-if="completedSteps[i]" class="text-white" style="font-size: 10px">&#10003;</text>
             </view>
 
             <view class="flex-1 min-w-0">
@@ -295,7 +295,7 @@
           class="inline-flex items-center rounded-full px-[10px] py-[4px]"
           :style="{ backgroundColor: '#FEE2E2' }"
         >
-          <text class="text-[11px] font-semibold" :style="{ color: '#DC2626' }">{{ tag }}</text>
+          <text class="text-xs font-semibold" :style="{ color: '#DC2626' }">{{ tag }}</text>
         </view>
       </view>
     </view>
@@ -334,7 +334,7 @@
         @tap="handleShare"
       >
         <text class="text-lg" :style="{ color: '#4A4A68' }">&#x2197;</text>
-        <text class="text-[11px] mt-1" :style="{ color: '#4A4A68' }">分享</text>
+        <text class="text-xs mt-1" :style="{ color: '#4A4A68' }">分享</text>
       </view>
 
       <!-- Favorite -->
@@ -345,7 +345,7 @@
         <text class="text-lg" :style="{ color: isFavorited ? '#E94560' : '#4A4A68' }">
           {{ isFavorited ? '&#9829;' : '&#9825;' }}
         </text>
-        <text class="text-[11px] mt-1" :style="{ color: isFavorited ? '#E94560' : '#4A4A68' }">
+        <text class="text-xs mt-1" :style="{ color: isFavorited ? '#E94560' : '#4A4A68' }">
           {{ isFavorited ? '已收藏' : '收藏' }}
         </text>
       </view>

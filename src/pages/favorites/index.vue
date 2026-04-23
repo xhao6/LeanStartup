@@ -48,7 +48,8 @@
         <!-- Title row -->
         <view class="flex flex-row items-center justify-between">
           <text
-            class="text-[15px] font-medium flex-1 mr-2"
+            class="font-medium flex-1 mr-2"
+            style="font-size: 15px"
             :style="{
               color: '#1A1A2E',
               overflow: 'hidden',
