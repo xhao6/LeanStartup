@@ -124,7 +124,7 @@ onShow(() => {
 })
 
 const goToDetail = (id: string) => {
-  uni.navigateTo({ url: `/pages/case-detail/index?id=${id}` })
+  uni.navigateTo({ url: `/pages/case-detail/index?case_id=${id}` })
 }
 
 const handleRetry = () => {

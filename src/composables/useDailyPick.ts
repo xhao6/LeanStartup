@@ -57,7 +57,7 @@ export function useDailyPick() {
         error.value = '获取数据失败'
       }
     } catch {
-      error.value = '网络错误，请稀后重试'
+      error.value = '网络错误，请稍后重试'
     } finally {
       isLoading.value = false
     }

@@ -38,11 +38,11 @@ export const RANK_BADGE_COLORS: Record<number, string> = {
 
 // Score dimensions (matching cloud function Case model)
 export const SCORE_DIMENSIONS = [
-  { key: 'score_feasibility', label: '可行性', max: 20 },
-  { key: 'score_profit', label: '盈利性', max: 20 },
+  { key: 'score_feasibility', label: '落地可行性', max: 20 },
+  { key: 'score_profit', label: '收益潜力', max: 20 },
   { key: 'score_timeliness', label: '时效性', max: 20 },
-  { key: 'score_detail', label: '详实度', max: 20 },
-  { key: 'score_fitness', label: '匹配度', max: 20 }
+  { key: 'score_detail', label: '实操细节', max: 20 },
+  { key: 'score_fitness', label: '用户适配度', max: 20 }
 ] as const
 
 // Cache config

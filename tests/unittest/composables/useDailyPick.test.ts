@@ -219,7 +219,7 @@ describe('useDailyPick', () => {
       mockCallFunction.mockRejectedValue(new Error('Network error'))
       const { fetchDailyPick, error } = useDailyPick()
       await fetchDailyPick('2026-04-23')
-      expect(error.value).toBe('网络错误，请稀后重试')
+      expect(error.value).toBe('网络错误，请稍后重试')
     })
 
     it('sets isLoading to false on exception', async () => {
