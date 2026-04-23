@@ -1,13 +1,22 @@
 # TODOS.md - 精益副业案例库
 
-> 最后更新：2026-04-22
+> 最后更新：2026-04-23
 
-## ✅ 已完成任务（2026-04-22）
+## ✅ 已完成任务
 
-### 后端云函数
+### 后端云函数（2026-04-22）
 - [x] syncCaseDataPublic 云函数开发
 - [x] 使用 @cloudbase/node-sdk 实现 NoSQL 写入
 - [x] Case 集合数据模型验证
+- [x] getDailyPick 云函数 — 单日/分页双模式
+- [x] getCaseDetail 云函数 — 按案例 ID 查询详情
+- [x] getUserCollections 云函数 — 用户收藏列表分页
+- [x] toggleCollection 云函数 — 收藏/取消收藏
+- [x] trackEvent 云函数 — 埋点事件追踪
+- [x] subscribeMessage 云函数 — 微信订阅消息推送（内部调用）
+- [x] generateDailyPick 定时任务 — 每天 6:00 触发，配置 cron 触发器
+- [x] API 测试覆盖（tests/api/）— 14 passed
+- [x] package.json 依赖修复 — 7 个云函数添加 @cloudbase/node-sdk
 
 ### 内容管道
 - [x] article-downloader 文章下载工具（Chrome CDP）
@@ -28,19 +37,12 @@
 - [ ] 历史榜单页
 - [ ] 个人中心页
 
-### 云函数开发
-- [ ] getDailyPick 云函数
-- [ ] getCaseDetail 云函数
-- [ ] getUserCollections 云函数
-- [ ] toggleCollection 云函数
-- [ ] generateDailyPick 定时任务
-
 ## 待办事项（按优先级）
 
 ### P0: 核心功能（MVP 必须完成）
 - [ ] 前端 4 个核心页面开发
-- [ ] 7 个云函数开发部署
-- [ ] 定时任务配置
+- [x] 7 个云函数开发部署 ✅
+- [x] 定时任务配置 ✅
 
 ---
 
