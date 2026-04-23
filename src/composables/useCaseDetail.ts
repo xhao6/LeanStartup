@@ -20,6 +20,13 @@ export interface CaseDetail {
   steps?: Array<{ title: string; description?: string }>
   tools?: Array<{ name: string; description?: string }>
   resources?: Array<{ name: string; url?: string }>
+  // 内容扩展字段（数据库已存在）
+  expected_revenue?: string     // 预期收益，如 "5000+/月"
+  cycle?: string                // 变现周期，如 "1-2周"
+  case_story?: string           // 案例故事（300-800字）
+  pitfalls?: string             // 避坑指南
+  risk_tags?: string[]          // 风险标签
+  tags?: string[]               // 眼睛标签（5个，2-6字）
 }
 
 /** Safely read a score dimension value from a CaseDetail object */
