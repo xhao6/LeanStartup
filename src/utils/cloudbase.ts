@@ -4,8 +4,8 @@ import adapter from '@cloudbase/adapter-uni-app'
 // 使用 UniApp 适配器
 cloudbase.useAdapters(adapter, { uni: uni });
 
-// 云开发环境ID，使用时请替换为您的环境ID
-const ENV_ID: string = import.meta.env.VITE_ENV_ID || 'your-env-id';
+// 云开发环境ID
+const ENV_ID: string = import.meta.env.VITE_ENV_ID || 'lean-startup-d2gkuop3af0aed5c0';
 
 // 检查环境ID是否已配置
 export const isValidEnvId = ENV_ID && ENV_ID !== 'your-env-id';
