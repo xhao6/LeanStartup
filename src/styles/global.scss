@@ -1,0 +1,92 @@
+// ============================================================
+// Global Styles — Tailwind + Design System
+// ============================================================
+
+// @use must come before all other rules
+@use './design-tokens' as *;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ── Base Reset (preflight is OFF for mini program compat) ──
+page {
+  background-color: #FAFAF8;
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1A1A2E;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Tailwind @layer components ──────────────────────────────
+@layer components {
+  // Score badge — used for AI total score display
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #F5A623, #FF8C00);
+    color: #FFFFFF;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  // Case card — base card style for case items
+  .case-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E8E6E1;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
+    overflow: hidden;
+    transition: box-shadow 200ms ease-out, transform 200ms ease-out;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  // Morandi tag styles (5 variants)
+  .tag-mor-1 {
+    background-color: $morandi-1-bg;
+    color: $morandi-1-text;
+  }
+
+  .tag-mor-2 {
+    background-color: $morandi-2-bg;
+    color: $morandi-2-text;
+  }
+
+  .tag-mor-3 {
+    background-color: $morandi-3-bg;
+    color: $morandi-3-text;
+  }
+
+  .tag-mor-4 {
+    background-color: $morandi-4-bg;
+    color: $morandi-4-text;
+  }
+
+  .tag-mor-5 {
+    background-color: $morandi-5-bg;
+    color: $morandi-5-text;
+  }
+}
+
+// ── Animations ─────────────────────────────────────────────
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}

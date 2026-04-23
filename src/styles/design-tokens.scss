@@ -1,0 +1,45 @@
+// ============================================================
+// Design Tokens — SCSS Variables (for use in scoped styles)
+// Aligned with DESIGN.md v2026-04-23
+// ============================================================
+
+// ── Morandi Tag Colors (5 pairs: bg / text) ────────────────
+$morandi-1-bg: #E8D5C4;
+$morandi-1-text: #5D4E37;
+
+$morandi-2-bg: #D4E2D4;
+$morandi-2-text: #3D5C3D;
+
+$morandi-3-bg: #D5D4E2;
+$morandi-3-text: #4A4D6E;
+
+$morandi-4-bg: #E2D4D5;
+$morandi-4-text: #6E4A4D;
+
+$morandi-5-bg: #DFDBD0;
+$morandi-5-text: #5C5A4F;
+
+// ── Rank Badge Gradients ───────────────────────────────────
+$rank-gold: linear-gradient(180deg, #FBBF24, #F97316);
+$rank-silver: linear-gradient(180deg, #94A3B8, #64748B);
+$rank-bronze: linear-gradient(180deg, #D4A574, #B8956C);
+
+// ── Score Dimensions ───────────────────────────────────────
+// Each item: (key, label, max)
+$score-dimensions: (
+  (feasibility, 可操作性, 10),
+  (profit, 盈利潜力, 10),
+  (threshold, 门槛高低, 10),
+  (growth, 增长空间, 10),
+  (risk, 风险可控, 10),
+);
+
+// ── Tag Palette Colors (cost tags: bg / text) ──────────────
+$tag-cost-zero-bg: #D1FAE5;
+$tag-cost-zero-text: #059669;
+
+$tag-cost-low-bg: #DBEAFE;
+$tag-cost-low-text: #2563EB;
+
+$tag-cost-default-bg: #FAFAF8;
+$tag-cost-default-text: #4A4A68;
