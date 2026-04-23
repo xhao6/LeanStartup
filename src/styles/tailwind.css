@@ -1,0 +1,4 @@
+/* Tailwind CSS injection point — processed by PostCSS */
+/* NOTE: Only components and utilities layers; base is skipped for mini program compat */
+@tailwind components;
+@tailwind utilities;

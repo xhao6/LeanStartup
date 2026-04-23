@@ -32,3 +32,6 @@ valid-cases.json
 # Cloud function lock files
 cloudfunctions/*/package-lock.json
 cloudfunctions/*/node_modules/
+
+# Generated Tailwind CSS (rebuilt on every build)
+src/styles/tailwind-generated.css

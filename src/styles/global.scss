@@ -1,13 +1,11 @@
 // ============================================================
-// Global Styles — Tailwind + Design System
+// Global Styles — Design System
 // ============================================================
 
-// @use must come before all other rules
-@use './design-tokens' as *;
+// Tailwind CSS utilities are injected via src/styles/tailwind.css
+// which is imported in App.vue.
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@use './design-tokens' as *;
 
 // ── Base Reset (preflight is OFF for mini program compat) ──
 page {
@@ -19,62 +17,63 @@ page {
   -webkit-font-smoothing: antialiased;
 }
 
-// ── Tailwind @layer components ──────────────────────────────
-@layer components {
-  // Score badge — used for AI total score display
-  .score-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #F5A623, #FF8C00);
-    color: #FFFFFF;
-    font-family: 'Roboto Mono', monospace;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1;
-  }
+// ── Component Classes ───────────────────────────────────────
+// NOTE: Using plain class selectors instead of @layer components
+// because WeChat mini program WXSS does not support @layer.
 
-  // Case card — base card style for case items
-  .case-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E8E6E1;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
-    overflow: hidden;
-    transition: box-shadow 200ms ease-out, transform 200ms ease-out;
+// Score badge — used for AI total score display
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #F5A623, #FF8C00);
+  color: #FFFFFF;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+}
 
-    &:active {
-      transform: scale(0.99);
-    }
-  }
+// Case card — base card style for case items
+.case-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E6E1;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
+  overflow: hidden;
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
 
-  // Morandi tag styles (5 variants)
-  .tag-mor-1 {
-    background-color: $morandi-1-bg;
-    color: $morandi-1-text;
+  &:active {
+    transform: scale(0.99);
   }
+}
 
-  .tag-mor-2 {
-    background-color: $morandi-2-bg;
-    color: $morandi-2-text;
-  }
+// Morandi tag styles (5 variants)
+.tag-mor-1 {
+  background-color: $morandi-1-bg;
+  color: $morandi-1-text;
+}
 
-  .tag-mor-3 {
-    background-color: $morandi-3-bg;
-    color: $morandi-3-text;
-  }
+.tag-mor-2 {
+  background-color: $morandi-2-bg;
+  color: $morandi-2-text;
+}
 
-  .tag-mor-4 {
-    background-color: $morandi-4-bg;
-    color: $morandi-4-text;
-  }
+.tag-mor-3 {
+  background-color: $morandi-3-bg;
+  color: $morandi-3-text;
+}
 
-  .tag-mor-5 {
-    background-color: $morandi-5-bg;
-    color: $morandi-5-text;
-  }
+.tag-mor-4 {
+  background-color: $morandi-4-bg;
+  color: $morandi-4-text;
+}
+
+.tag-mor-5 {
+  background-color: $morandi-5-bg;
+  color: $morandi-5-text;
 }
 
 // ── Animations ─────────────────────────────────────────────
