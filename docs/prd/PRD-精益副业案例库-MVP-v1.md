@@ -296,15 +296,48 @@
 
 | 页面 | 路径 | TabBar | 说明 |
 |------|------|--------|------|
-| 首页 | pages/index/index | 是 | 今日精选 Top3 + 历史榜单入口 |
-| 案例详情 | pages/case/detail | 否 | 评分+步骤+工具+避坑+分享+收藏 |
-| 历史榜单 | pages/history/index | 是 | 按日期倒序，分页加载 |
-| 个人中心 | pages/profile/index | 是 | 收藏列表+订阅状态 |
+| 首页（今日精选） | pages/index/index | 是 | 当日 Top 3 案例卡片 + 订阅横幅 |
+| 案例详情 | pages/case-detail/index | 否 | 五维评分 + Checklist + 工具/避坑 + 底部操作栏 |
+| 历史榜单 | pages/history/index | 是 | 按月份分组展示历史每日精选入口 |
+| 往期榜单详情 | pages/history/detail/index | 否 | 指定日期的 Top 3 案例列表 |
+| 个人中心 | pages/profile/index | 是 | 登录区 + 统计卡片 + 8项功能菜单 |
+| 收藏列表 | pages/profile/favorites/index | 否 | 用户收藏案例列表 + 实践进度 |
+| 隐私政策 | pages/profile/privacy/index | 否 | 隐私政策正文 + 底部同意按钮 |
+| 用户协议 | pages/profile/agreement/index | 否 | 用户协议正文 + 底部同意按钮 |
+| 关于 | pages/profile/about/index | 否 | Logo + 版本信息 + 功能介绍 + 联系方式 |
+| 订阅管理 | pages/profile/subscription/index | 否 | 订阅状态 + 订阅/退订操作 |
 
-### 3.2 项目目录结构
+### 3.2 TabBar 配置（4 个 Tab）
+
+| Tab | 页面路径 | 图标 |
+|-----|---------|------|
+| 首页 | pages/index/index | static/tabbar/today.png / today-active.png |
+| 榜单 | pages/history/index | static/tabbar/history.png / history-active.png |
+| 收藏 | pages/profile/favorites/index | static/tabbar/favorites.png / favorites-active.png |
+| 我的 | pages/profile/index | static/tabbar/profile.png / profile-active.png |
+
+**选中色**: #E94560（玫红）| **默认色**: #9B9A97（中性灰）
+
+### 3.3 导航结构
 
 ```
-src/
+TabBar
+├── 首页 (pages/index/index)
+│   ├── 点击案例卡片 → 案例详情 (navigateTo: /pages/case-detail/index?id=xxx)
+│   └── 点击订阅横幅 → 订阅管理 (navigateTo: /pages/profile/subscription/index)
+├── 榜单 (pages/history/index)
+│   └── 点击日期卡片 → 往期榜单详情 (navigateTo: /pages/history/detail/index?date=YYYY-MM-DD)
+├── 收藏 (pages/profile/favorites/index)
+│   └── 点击收藏卡片 → 案例详情 (navigateTo: /pages/case-detail/index?id=xxx)
+└── 我的 (pages/profile/index)
+    ├── 点击「我的收藏」→「收藏列表」(navigateTo) — 注：TabBar 收藏页已展示收藏列表，此菜单项为快捷入口
+    ├── 点击「订阅管理」→「订阅管理」(navigateTo)
+    ├── 点击「用户协议」→「用户协议」(navigateTo)
+    ├── 点击「隐私政策」→「隐私政策」(navigateTo)
+    └── 点击「关于」→「关于」(navigateTo)
+```
+
+### 3.4 项目目录结构
 ├── api/                     # API 层（数据访问）
 │   ├── core/                # 核心配置
 │   │   └── cloud.ts         # CloudBase SDK 实例 + 云函数调用封装
@@ -320,10 +353,18 @@ src/
 │   ├── useAuth.ts           # OpenID 静默登录
 │   └── useShareCard.ts      # Canvas 分享卡片生成
 ├── pages/                   # 页面
-│   ├── index/               # 首页（今日精选）
-│   ├── case/                # 案例详情
-│   ├── history/             # 历史榜单
-│   └── profile/             # 个人中心
+│   ├── index/               # 首页（今日精选 + HeroSection + DailyPickSection + SubscribeBanner）
+│   ├── case-detail/         # 案例详情（ScoreOverview + ChecklistSection + ToolsSection + PitfallWarning + RiskTags + FixedActionBar）
+│   ├── history/
+│   │   ├── index.vue        # 历史榜单（MonthGroup + DateCard）
+│   │   └── detail/index.vue  # 往期榜单详情
+│   └── profile/
+│       ├── index.vue        # 个人中心（StatsCard + MenuItem）
+│       ├── favorites/index.vue # 收藏列表
+│       ├── privacy/index.vue  # 隐私政策
+│       ├── agreement/index.vue # 用户协议
+│       ├── about/index.vue     # 关于
+│       └── subscription/index.vue # 订阅管理
 ├── store/                   # Pinia 状态管理
 │   ├── index.ts
 │   └── modules/
@@ -908,7 +949,7 @@ LLM 评分管道中增加正则脱敏步骤，过滤以下模式：
 
 ### 13.2 进行中 🔄
 
-- 前端页面开发（待启动）
+- 前端页面开发（已制定 10 页面实施计划，plan-0~plan-4）
 - 定时任务配置（待启动）
 
 ### 13.3 技术栈总结
