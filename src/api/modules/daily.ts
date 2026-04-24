@@ -9,6 +9,8 @@ export interface DailyCase {
   cost: string
   source_account: string
   suitable_for: string
+  tags?: string[]
+  cycle?: string
 }
 
 export interface DailyPickResponse {

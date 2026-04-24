@@ -8,14 +8,10 @@
 
     <!-- 内容区 -->
     <view class="rank-content">
-      <!-- 案例名 -->
+      <!-- 案例名 + 评分内联 -->
       <view class="case-name-row">
+        <text class="case-score-inline">{{ caseData.score_total }}★</text>
         <text class="case-name">{{ caseData.title }}</text>
-      </view>
-
-      <!-- 评分 - 独立一行 -->
-      <view class="score-row">
-        <text class="score-value">{{ caseData.score_total }}★</text>
       </view>
 
       <!-- 描述 -->
@@ -28,11 +24,11 @@
         <view v-if="caseData.cost" class="tag-item tag-cost">
           <text class="tag-text">{{ caseData.cost }}</text>
         </view>
-        <view v-if="caseData.source_account" class="tag-item tag-source">
-          <text class="tag-text">{{ caseData.source_account }}</text>
+        <view v-if="caseData.tags && caseData.tags.length > 0" class="tag-item tag-source">
+          <text class="tag-text">{{ caseData.tags[0] }}</text>
         </view>
-        <view v-if="caseData.suitable_for" class="tag-item tag-suitable">
-          <text class="tag-text">{{ caseData.suitable_for }}</text>
+        <view v-if="caseData.cycle" class="tag-item tag-time">
+          <text class="tag-text">{{ caseData.cycle }}</text>
         </view>
       </view>
     </view>
@@ -88,10 +84,10 @@ const handleClick = () => emit('click', props.caseData)
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 50px;
-  padding: 20px 8px;
-  font-family: 'Noto Sans SC', sans-serif;
-  font-size: 28px;
+  min-width: 36px;
+  padding: 12px 8px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 16px;
   font-weight: 700;
   color: white;
   background: #E8E6E1;
@@ -122,36 +118,39 @@ const handleClick = () => emit('click', props.caseData)
 /* 内容区 */
 .rank-content {
   flex: 1;
-  padding: 16px 4px 16px 10px;
+  padding: 16px 14px 16px 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-width: 0;
 }
 
-/* 案例名 */
+/* 案例名行（包含内联评分） */
 .case-name-row {
   margin-bottom: 6px;
+  position: relative;
+  padding-left: 0;
+}
+
+.case-score-inline {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #F5A623;
+  display: inline-block;
+  vertical-align: baseline;
 }
 
 .case-name {
-  font-family: 'Noto Sans SC', sans-serif;
-  font-size: 18px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px;
   font-weight: 700;
   color: #1A1A2E;
   line-height: 1.35;
-}
-
-/* 评分 */
-.score-row {
-  margin-bottom: 8px;
-}
-
-.score-value {
-  font-size: 13px;
-  color: #F5A623;
-  font-weight: 700;
-  line-height: 1.5;
+  display: inline;
+  /* 换行缩进技巧：给标题一个缩进，然后用负margin把第一行拉回来 */
+  padding-left: 50px;
+  text-indent: -50px;
 }
 
 /* 描述 */
@@ -199,7 +198,7 @@ const handleClick = () => emit('click', props.caseData)
 
 .tag-cost { background: #D1FAE5; color: #059669; }
 .tag-source { background: #FAFAF8; color: #4A4A68; border: 1px solid #E8E6E1; }
-.tag-suitable { background: #DBEAFE; color: #2563EB; }
+.tag-time { background: #DBEAFE; color: #2563EB; }
 
 /* 右侧箭头 */
 .rank-arrow {

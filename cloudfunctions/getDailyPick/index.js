@@ -127,7 +127,9 @@ function buildOrderedCases(caseIds, cases) {
       score_total: c.score_total,
       cost: c.cost,
       source_account: c.source_account,
-      suitable_for: c.suitable_for
+      suitable_for: c.suitable_for,
+      tags: c.tags || [],
+      cycle: c.cycle || ''
     }))
 }
 
