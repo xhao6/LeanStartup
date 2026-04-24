@@ -103,10 +103,27 @@ async function doUnsubscribe(event, deps) {
   }
 }
 
+/**
+ * getStatus 核心逻辑
+ *
+ * @param {object} event
+ * @param {string} event.action - 'getStatus'
+ * @param {object} deps - { collection, openid }
+ */
 async function doGetStatus(event, deps) {
-  // TODO: Implement getStatus logic
-  const { openid } = deps
-  return success({ openid, action: 'getStatus' })
+  const { collection: col, openid } = deps
+
+  try {
+    const { data: existing } = await col('PushSubscription').where({ openid }).get()
+
+    const isSubscribed = existing && existing.length > 0
+
+    return success({
+      isSubscribed
+    })
+  } catch (e) {
+    return error(e.message, 'INTERNAL_ERROR')
+  }
 }
 
 // Export functions for testing
