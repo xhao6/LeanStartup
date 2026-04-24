@@ -27,13 +27,10 @@ exports.main = async function (event, context) {
         return error('无效的 action 参数', 'INVALID_INPUT')
     }
   } catch (e) {
-    const msg = e.message || String(e)
-    if (msg.startsWith('UNAUTHORIZED')) {
-      const code = msg.split(':')[0].trim()
-      const message = msg.replace(/^UNAUTHORIZED:\s*/, '')
-      return error(message, code)
+    if (e.code === 'UNAUTHORIZED') {
+      return error(e.message, e.code)
     }
-    return error(msg, 'INTERNAL_ERROR')
+    return error(e.message || String(e), 'INTERNAL_ERROR')
   }
 }
 
