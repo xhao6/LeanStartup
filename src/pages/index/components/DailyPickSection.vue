@@ -11,7 +11,7 @@
         :key="item.id"
         :case="item"
         :rank="index + 1"
-        @click="navigateToDetail"
+        @click="(id: string) => navigateToDetail(id)"
       />
     </view>
 
