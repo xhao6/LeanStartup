@@ -103,7 +103,7 @@ import SubscribeBanner from '@/components/SubscribeBanner.vue'
     </view>
 
     <wd-loading v-if="loading" />
-    <wd-empty v-if="!loading && cases.length === 0" description="暂无数据" />
+    <wd-status-tip v-if="!loading && cases.length === 0" type="empty" text="暂无数据" />
   </view>
 </template>
 

@@ -560,7 +560,7 @@ defineEmits(['click'])
 
     <!-- 空状态 -->
     <view class="empty-state" v-if="!loading && collections.length === 0">
-      <wd-empty description="暂无收藏" />
+      <wd-status-tip type="empty" text="暂无收藏" />
       <view class="empty-action">
         <wd-button type="primary" size="small" round @click="goToHome">
           去首页看看
