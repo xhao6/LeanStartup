@@ -1,0 +1,63 @@
+// Design Tokens — 精益副业案例库
+// 从 preview.html 提取
+
+:root {
+  // 颜色
+  --color-primary: #1A1A2E;
+  --color-secondary: #4A4A68;
+  --color-accent: #E94560;
+  --color-gold: #F5A623;
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E6E1;
+  --color-muted: #9B9A97;
+
+  // 字体
+  --font-display: 'Noto Serif SC', 'Georgia', serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+
+  // 间距
+  --spacing-2xs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
+  // 圆角
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  // 阴影
+  --shadow-card: 0 2px 12px rgba(26, 26, 46, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(26, 26, 46, 0.12);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  // 过渡
+  --transition-fast: 150ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 250ms ease-out;
+}
+
+// 莫兰迪标签色
+$tag-mor-1-bg: #E8D5C4;
+$tag-mor-1-text: #5D4E37;
+$tag-mor-2-bg: #D4E2D4;
+$tag-mor-2-text: #3D5C3D;
+$tag-mor-3-bg: #D5D4E2;
+$tag-mor-3-text: #4A4D6E;
+$tag-mor-4-bg: #E2D4D5;
+$tag-mor-4-text: #6E4A4D;
+$tag-mor-5-bg: #DFDBD0;
+$tag-mor-5-text: #5C5A4F;
+
+// 排名徽章渐变
+$rank-gold: linear-gradient(180deg, #FBBF24, #F97316);
+$rank-silver: linear-gradient(180deg, #94A3B8, #64748B);
+$rank-bronze: linear-gradient(180deg, #D4A574, #B8956C);
