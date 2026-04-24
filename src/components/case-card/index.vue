@@ -19,16 +19,10 @@
         <text class="description">{{ caseData.summary }}</text>
       </view>
 
-      <!-- 标签 -->
+      <!-- 标签：最多显示3个tag -->
       <view class="tags-row">
-        <view v-if="caseData.cost" class="tag-item tag-cost">
-          <text class="tag-text">{{ caseData.cost }}</text>
-        </view>
-        <view v-if="caseData.tags && caseData.tags.length > 0" class="tag-item tag-source">
-          <text class="tag-text">{{ caseData.tags[0] }}</text>
-        </view>
-        <view v-if="caseData.cycle" class="tag-item tag-time">
-          <text class="tag-text">{{ caseData.cycle }}</text>
+        <view v-for="(tag, index) in displayTags" :key="index" :class="['tag-item', getTagClass(tag)]">
+          <text class="tag-text">{{ tag }}</text>
         </view>
       </view>
     </view>
@@ -55,6 +49,34 @@ const emit = defineEmits<{
 }>()
 
 const rankText = computed(() => String(props.rank))
+
+const displayTags = computed(() => {
+  const tags = props.caseData.tags || []
+  return tags.slice(0, 3)
+})
+
+// 14种马卡龙色（与LeanSkill一致）
+const TAG_COLORS = [
+  'tag-pink', 'tag-yellow', 'tag-blue', 'tag-green',
+  'tag-purple', 'tag-mint', 'tag-peach', 'tag-lavender',
+  'tag-coral', 'tag-lemon', 'tag-sky', 'tag-rose',
+  'tag-olive', 'tag-wine'
+]
+
+// 哈希函数（内联避免小程序模块路径问题）
+const hashCode = (str: string): number => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i)
+    hash = hash & hash
+  }
+  return Math.abs(hash)
+}
+
+const getTagClass = (tag: string): string => {
+  const index = hashCode(tag) % TAG_COLORS.length
+  return TAG_COLORS[index]
+}
 
 const handleClick = () => emit('click', props.caseData)
 </script>
@@ -84,10 +106,10 @@ const handleClick = () => emit('click', props.caseData)
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  padding: 12px 8px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 16px;
+  min-width: 28px;
+  padding: 10px 6px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 18px;
   font-weight: 700;
   color: white;
   background: #E8E6E1;
@@ -139,18 +161,20 @@ const handleClick = () => emit('click', props.caseData)
   color: #F5A623;
   display: inline-block;
   vertical-align: baseline;
+  margin-right: 4px;
+  padding: 1px 6px;
+  background: #FEF3C7;
+  border-radius: 10px;
+  border: 1px solid #FCD34D;
 }
 
 .case-name {
-  font-family: 'Noto Serif SC', serif;
+  font-family: 'Noto Sans SC', sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #1A1A2E;
   line-height: 1.35;
   display: inline;
-  /* 换行缩进技巧：给标题一个缩进，然后用负margin把第一行拉回来 */
-  padding-left: 50px;
-  text-indent: -50px;
 }
 
 /* 描述 */
@@ -196,9 +220,21 @@ const handleClick = () => emit('click', props.caseData)
   max-width: 100%;
 }
 
-.tag-cost { background: #D1FAE5; color: #059669; }
-.tag-source { background: #FAFAF8; color: #4A4A68; border: 1px solid #E8E6E1; }
-.tag-time { background: #DBEAFE; color: #2563EB; }
+/* Macaron配标签色系 - 浅色背景 + 彩色文字（与LeanSkill一致） */
+.tag-pink    { background: #FDF2F8; color: #DB2777; }
+.tag-yellow  { background: #FEF3C7; color: #B45309; }
+.tag-blue    { background: #DBEAFE; color: #2563EB; }
+.tag-green   { background: #D1FAE5; color: #059669; }
+.tag-purple  { background: #EDE9FE; color: #7C3AED; }
+.tag-mint    { background: #CCFBF1; color: #0D9488; }
+.tag-peach   { background: #FFEDD5; color: #EA580C; }
+.tag-lavender { background: #E0E7FF; color: #4F46E5; }
+.tag-coral   { background: #FFE4E6; color: #E11D48; }
+.tag-lemon   { background: #FEF9C3; color: #CA8A04; }
+.tag-sky     { background: #E0F2FE; color: #0284C7; }
+.tag-rose    { background: #FCE7F3; color: #DB2777; }
+.tag-olive   { background: #ECFCCB; color: #65A30D; }
+.tag-wine    { background: #FAE8F0; color: #9F1239; }
 
 /* 右侧箭头 */
 .rank-arrow {

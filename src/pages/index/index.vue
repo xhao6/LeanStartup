@@ -21,9 +21,6 @@
           <view class="dot"></view>
           <text class="header-label">今日精选</text>
         </view>
-        <view class="header-center">
-          <text class="header-title">每日更新</text>
-        </view>
         <view class="header-right">
           <text class="header-date">{{ todayText }}</text>
         </view>
@@ -92,13 +89,12 @@ const handleCardClick = (caseItem: DailyCase) => {
 /* Hero区域 */
 .hero-section {
   text-align: center;
-  padding: calc(20px + env(safe-area-inset-top)) 18px 12px;
-  padding-top: calc(20px + constant(safe-area-inset-top)); /* iOS 11.0-11.4 */
+  padding: 60px 18px 12px; /* 60px足够避开刘海 */
 }
 
 .hero-title {
   display: block;
-  font-family: 'Noto Serif SC', serif;
+  font-family: 'Noto Sans SC', sans-serif;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -156,8 +152,8 @@ const handleCardClick = (caseItem: DailyCase) => {
 }
 
 .header-left .header-label {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: #4A4A68;
 }
 

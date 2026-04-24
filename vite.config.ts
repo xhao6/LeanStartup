@@ -38,6 +38,15 @@ function copyStaticAssets() {
         require('fs').writeFileSync(mockJsPath, '// mock placeholder\n', 'utf-8')
       }
 
+      // 删除 wd-icon.wxss 中的 CDN @font-face（字体已用 base64 内嵌到 icon-local.scss）
+      const destWdIconWxss = resolve(__dirname, 'dist/build/mp-weixin/node-modules/wot-design-uni/components/wd-icon/wd-icon.wxss')
+      if (existsSync(destWdIconWxss)) {
+        let content = require('fs').readFileSync(destWdIconWxss, 'utf-8')
+        content = content.replace(/@font-face\{[^}]+\}/g, '')
+        require('fs').writeFileSync(destWdIconWxss, content, 'utf-8')
+        console.log('[copy-static] Cleaned wd-icon.wxss (CDN font-face removed)')
+      }
+
       console.log('[copy-static] done')
     }
   }
