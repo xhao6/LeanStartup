@@ -26,14 +26,15 @@ export const useCollectionStore = defineStore('collection', () => {
     } finally { loading.value = false }
   }
 
-  const toggle = async (caseId: string): Promise<boolean> => {
+  // toggle 重载：支持传入 step progress 用于增量更新
+  const toggle = async (caseId: string, progress?: Record<string, boolean>): Promise<boolean> => {
     const isCollected = collections.value.includes(caseId)
     const action = isCollected ? 'uncollect' : 'collect'
-    const res = await apiToggleCollection({ case_id: caseId, action })
+    const res = await apiToggleCollection({ case_id: caseId, action, progress })
     if (res.success) {
       if (!isCollected) {
         collections.value.push(caseId)
-        collectionMap.value[caseId] = { title: '', score_total: 0, progress: {}, steps_count: 0, completed_count: 0 }
+        collectionMap.value[caseId] = { title: '', score_total: 0, progress: progress || {}, steps_count: 0, completed_count: 0 }
       } else {
         collections.value = collections.value.filter(id => id !== caseId)
         delete collectionMap.value[caseId]

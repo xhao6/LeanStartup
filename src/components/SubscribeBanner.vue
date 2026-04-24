@@ -1,7 +1,7 @@
 <template>
   <view class="subscribe-banner" @click="handleClick">
     <view class="banner-content">
-      <wd-icon name="bell" size="18px" color="#FFFFFF" />
+      <wd-icon name="bell" size="18" color="#FFFFFF" />
       <text class="banner-title">订阅每日推送</text>
       <text class="banner-desc">每天早上 9 点，3 个新案例送上门</text>
     </view>
@@ -18,7 +18,7 @@ const handleClick = () => {
 <style lang="scss" scoped>
 .subscribe-banner {
   margin: 24rpx 32rpx;
-  background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2D2D44 100%);
   border-radius: 12rpx;
   padding: 28rpx 32rpx;
   display: flex;
@@ -46,7 +46,7 @@ const handleClick = () => {
 }
 
 .banner-cta {
-  background: #E94560;
+  background: var(--color-accent);
   color: #FFFFFF;
   font-size: 24rpx;
   padding: 12rpx 24rpx;

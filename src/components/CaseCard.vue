@@ -21,11 +21,11 @@ interface Props { case: CaseItem; rank: number }
 const props = defineProps<Props>()
 const emit = defineEmits<{ click: [id: string] }>()
 
-const rankColor = computed(() => RANK_COLORS[props.rank] || RANK_COLORS[4])
+const rankColor = computed(() => RANK_COLORS[props.rank] || 'var(--color-muted)')
 const costColor = computed(() => {
   if (props.case.cost === '零成本') return { bg: '#D1FAE5', text: '#059669' }
   if (props.case.cost === '低门槛') return { bg: '#DBEAFE', text: '#2563EB' }
-  return { bg: MORANDI_TAGS[0].bg, color: MORANDI_TAGS[0].text }
+  return { bg: MORANDI_TAGS[0].bg, text: MORANDI_TAGS[0].text }
 })
 </script>
 
