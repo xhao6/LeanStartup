@@ -16,7 +16,8 @@
       "path": "pages/index/index",
       "type": "home",
       "style": {
-        "navigationBarTitleText": "搞钱案例榜"
+        "navigationBarTitleText": "搞钱案例榜",
+        "navigationStyle": "custom"
       }
     },
     {
