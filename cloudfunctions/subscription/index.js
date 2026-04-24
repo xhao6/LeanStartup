@@ -3,16 +3,19 @@ const { getOpenid } = require('./utils/auth')
 const { collection } = require('./utils/db')
 const { success, error } = require('./utils/response')
 
-exports.main = async (event, context) => {
-  const { action } = event
-
-  // Prepare dependencies for core functions
-  const deps = {
-    collection,
-    openid: getOpenid(context)
-  }
-
+/**
+ * 云函数入口 - 路由分发
+ */
+exports.main = async function (event, context) {
   try {
+    const openid = getOpenid(context)
+    const { action } = event
+
+    const deps = {
+      collection,
+      openid
+    }
+
     switch (action) {
       case 'subscribe':
         return await doSubscribe(event, deps)
@@ -21,11 +24,16 @@ exports.main = async (event, context) => {
       case 'getStatus':
         return await doGetStatus(event, deps)
       default:
-        return error('Invalid action', 'INVALID_ACTION')
+        return error('无效的 action 参数', 'INVALID_INPUT')
     }
-  } catch (err) {
-    console.error('Subscription function error:', err)
-    return error(err.message || 'Internal server error', err.code || 'INTERNAL_ERROR')
+  } catch (e) {
+    const msg = e.message || String(e)
+    if (msg.startsWith('UNAUTHORIZED')) {
+      const code = msg.split(':')[0].trim()
+      const message = msg.replace(/^UNAUTHORIZED:\s*/, '')
+      return error(message, code)
+    }
+    return error(msg, 'INTERNAL_ERROR')
   }
 }
 
