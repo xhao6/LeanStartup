@@ -196,8 +196,9 @@ Plan 4（附加页面）
 | 2 | design | Border-radius inconsistency: 16rpx across all plans, but DESIGN.md specifies lg=12px | Replace 16rpx → 12rpx across all 4 plans (9 occurrences) | ✅ Fixed |
 | 3 | ux | Favorites empty state has no action | Add "去首页看看" button → calls `switchTab('/pages/index/index')` | ✅ Fixed |
 | 4 | design | ScoreBadge hardcoded `#FF8C00` instead of CSS variable | Replace with `var(--color-gold)` | ✅ Verified (not an error — in component spec) |
-| 5 | design | SubscribeBanner uses emoji 📬 — violates DESIGN.md "禁用: Emoji作为UI图标" | Changed to text "订阅每日推送" | ⚠️ Not yet fixed in plan |
+| 5 | design | SubscribeBanner uses emoji 📬 — violates DESIGN.md "禁用: Emoji作为UI图标" | Changed to `wd-icon name="bell"` | ✅ Fixed |
 | 6 | design | StatsCard uses inline shadow instead of `var(--shadow-card)` | Replaced with CSS variable | ✅ Fixed |
+| 7 | design | TabBar config referenced `home.png` / `star.png` but actual files are `today.png` / `favorites.png` | Updated config to match actual filenames | ✅ Fixed |
 
 ---
 
@@ -252,11 +253,13 @@ These decisions are documented here so implementors are aware before writing cod
 
 ### Recommendations for Implementor
 
-1. **Before running `npm run dev:mp-weixin`**: Fill in `envId` in `src/config/index.ts`
-2. **Before building**: Replace SubscribeBanner emoji with `wd-icon name="bell"`. The `wd-icon` component from wot-design-uni should have a bell icon.
-3. **On TabBar**: Confirm icon filenames match what's actually in `src/static/tabbar/`. The plan-1 config references `home.png` but the actual file is `today.png` — either rename or update config.
-4. **On profile page**: Accept readCount=0 limitation until tracking mechanism is built.
-5. **On subscription page**: Accept localStorage fallback until cloud function exists.
+> **已全部修复。以下是实施时检查清单：**
+
+1. **TabBar 图标文件**: plan-1 config 与 `src/static/tabbar/` 实际文件名已对齐（today.png / today-active.png / favorites.png / favorites-active.png）
+2. **envId**: `src/config/index.ts` 已配置为 `lean-startup-d2gkuop3af0aed5c0`（来自 .env）
+3. **SubscribeBanner**: 已用 `wd-icon name="bell"` 替换 emoji
+4. **readCount=0**: profile 页标记 TODO，暂无跟踪机制（post-MVP）
+5. **subscription 云函数**: 暂无，localStorage 降级可接受 MVP
 
 ---
 

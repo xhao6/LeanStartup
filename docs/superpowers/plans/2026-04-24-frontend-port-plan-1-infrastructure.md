@@ -289,19 +289,17 @@ git commit -m "feat: add design tokens and global styles"
 
 ## Task 1.4: 创建 API 层
 
-- [ ] **Step 1: 创建 src/config/index.ts**
+- [ ] **Step 1: 创建 src/config/index.ts（envId 从 .env 读取）**
 
 ```typescript
 // CloudBase 环境配置
-// 从 cloudbaserc.json 或环境变量读取 envId
+// 注意：.env 文件中 CLOUDBASE_ENV_ID=lean-startup-d2gkuop3af0aed5c0
 export const config = {
   cloud: {
-    envId: 'YOUR_ENV_ID', // 替换为实际环境 ID
+    envId: 'lean-startup-d2gkuop3af0aed5c0',
   }
 }
 ```
-
-**注意:** 如果 `cloudbaserc.json` 中已有 envId，直接使用其值。
 
 - [ ] **Step 2: 创建 src/api/core/cloud.ts**
 
@@ -905,7 +903,8 @@ git commit -m "feat: add common components (CaseCard, ScoreBadge, TagMor)"
 <template>
   <view class="subscribe-banner" @click="handleClick">
     <view class="banner-content">
-      <text class="banner-title">📬 订阅每日推送</text>
+      <wd-icon name="bell" size="20px" color="#FFFFFF" />
+      <text class="banner-title">订阅每日推送</text>
       <text class="banner-desc">每天早上 9 点，3 个新案例送上门</text>
     </view>
     <view class="banner-cta">立即订阅</view>
@@ -1055,9 +1054,9 @@ mkdir -p src/static/tabbar
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/index/index", "text": "首页", "iconPath": "static/tabbar/home.png", "selectedIconPath": "static/tabbar/home-active.png" },
+      { "pagePath": "pages/index/index", "text": "首页", "iconPath": "static/tabbar/today.png", "selectedIconPath": "static/tabbar/today-active.png" },
       { "pagePath": "pages/history/index", "text": "榜单", "iconPath": "static/tabbar/history.png", "selectedIconPath": "static/tabbar/history-active.png" },
-      { "pagePath": "pages/profile/favorites/index", "text": "收藏", "iconPath": "static/tabbar/star.png", "selectedIconPath": "static/tabbar/star-active.png" },
+      { "pagePath": "pages/profile/favorites/index", "text": "收藏", "iconPath": "static/tabbar/favorites.png", "selectedIconPath": "static/tabbar/favorites-active.png" },
       { "pagePath": "pages/profile/index", "text": "我的", "iconPath": "static/tabbar/profile.png", "selectedIconPath": "static/tabbar/profile-active.png" }
     ]
   }

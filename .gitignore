@@ -11,7 +11,6 @@ node_modules
 .DS_Store
 dist
 *.local
-coverage/
 
 # Editor directories and files
 .idea
@@ -21,17 +20,21 @@ coverage/
 *.sln
 *.sw?
 .gstack/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+.claude/
+.agents/
+.trae/
+
+# Git worktrees
+.worktrees/
 skills/
 .env
-
-# Temporary data files
-cases-batch.json
-cases-to-sync.json
-valid-cases.json
-
-# Cloud function lock files
-cloudfunctions/*/package-lock.json
-cloudfunctions/*/node_modules/
-
-# Generated Tailwind CSS (rebuilt on every build)
-src/styles/tailwind-generated.css
