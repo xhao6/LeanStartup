@@ -240,7 +240,7 @@ const weekday = computed(() => {
 .date-card {
   background: #FFFFFF;
   border: 1rpx solid #E8E6E1;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   padding: 24rpx;
   display: flex;
   align-items: center;
@@ -420,7 +420,7 @@ onMounted(loadStats)
 .menu-list {
   margin: 24rpx 32rpx;
   background: #FFFFFF;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   overflow: hidden;
 }
 </style>
@@ -448,7 +448,7 @@ onMounted(loadStats)
 .stats-card {
   margin: -32rpx 32rpx 24rpx;
   background: #FFFFFF;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   display: flex;
   box-shadow: var(--shadow-card);
 }
@@ -687,7 +687,7 @@ onMounted(loadInitial)
 }
 .favorite-card {
   background: #FFFFFF;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   padding: 24rpx;
   border: 1rpx solid #E8E6E1;
 }
