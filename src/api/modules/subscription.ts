@@ -1,36 +1,89 @@
-// 订阅管理 API（注意：云函数 subscribe/unsubscribe/getSubscriptionStatus 尚未创建，MVP 阶段先用 localStorage 占位）
+// src/api/modules/subscription.ts
 import { callFunction } from '../core/cloud'
 
-export interface SubscriptionStatus {
-  isSubscribed: boolean
-  history: { date: string; status: string }[]
+export interface SubscribeResponse {
+  success: boolean
+  message?: string
+  alreadySubscribed?: boolean
 }
 
-export const getSubscriptionStatus = async (): Promise<SubscriptionStatus> => {
-  // TODO: 云函数未创建前使用 localStorage 模拟
+export interface UnsubscribeResponse {
+  success: boolean
+  message?: string
+}
+
+export interface GetStatusResponse {
+  success: boolean
+  isSubscribed?: boolean
+}
+
+/**
+ * 用户订阅每日榜单提醒
+ */
+export const subscribe = async (): Promise<SubscribeResponse> => {
   try {
-    const res = await callFunction('getSubscriptionStatus', {})
-    if (res.success && res.data) return res.data
-  } catch (e) {
-    // 云函数不存在
+    const res = await callFunction('subscription', {
+      action: 'subscribe',
+      template_id: 'YOUR_TEMPLATE_ID' // TODO: 替换为实际的微信订阅消息模板 ID
+    })
+
+    if (res.success) {
+      return {
+        success: true,
+        message: res.data?.message || '订阅成功',
+        alreadySubscribed: res.data?.alreadySubscribed || false
+      }
+    }
+
+    return { success: false, message: res.error || '订阅失败' }
+  } catch (err: any) {
+    console.error('[subscribe] error:', err)
+    return { success: false, message: err.message || '订阅失败' }
   }
-  const cached = uni.getStorageSync('leanstartup_subscription')
-  return cached ? JSON.parse(cached) : { isSubscribed: false, history: [] }
 }
 
-export const subscribe = async (): Promise<void> => {
+/**
+ * 取消订阅
+ */
+export const unsubscribe = async (): Promise<UnsubscribeResponse> => {
   try {
-    await callFunction('subscribe', {})
-  } catch (e) {
-    // 云函数不存在时用 localStorage 模拟
-    uni.setStorageSync('leanstartup_subscription', JSON.stringify({ isSubscribed: true, history: [] }))
+    const res = await callFunction('subscription', {
+      action: 'unsubscribe'
+    })
+
+    if (res.success) {
+      return {
+        success: true,
+        message: res.data?.message || '已取消订阅'
+      }
+    }
+
+    return { success: false, message: res.error || '取消失败' }
+  } catch (err: any) {
+    console.error('[unsubscribe] error:', err)
+    return { success: false, message: err.message || '取消失败' }
   }
 }
 
-export const unsubscribe = async (): Promise<void> => {
+/**
+ * 查询订阅状态
+ */
+export const getSubscriptionStatus = async (): Promise<GetStatusResponse> => {
   try {
-    await callFunction('unsubscribe', {})
-  } catch (e) {
-    uni.setStorageSync('leanstartup_subscription', JSON.stringify({ isSubscribed: false, history: [] }))
+    const res = await callFunction('subscription', {
+      action: 'getStatus'
+    })
+
+    if (res.success) {
+      return {
+        success: true,
+        isSubscribed: res.data?.isSubscribed || false
+      }
+    }
+
+    return { success: false, isSubscribed: false }
+  } catch (err: any) {
+    console.error('[getSubscriptionStatus] error:', err)
+    return { success: false, isSubscribed: false }
   }
 }
