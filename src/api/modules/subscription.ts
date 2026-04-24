@@ -24,7 +24,7 @@ export const subscribe = async (): Promise<SubscribeResponse> => {
   try {
     const res = await callFunction('subscription', {
       action: 'subscribe',
-      template_id: 'YOUR_TEMPLATE_ID' // TODO: 替换为实际的微信订阅消息模板 ID
+      template_id: 'POdB9EzzVCyvfHrJSgmG8vnXLkKiiIWPRC35qjv4wH4'
     })
 
     if (res.success) {
