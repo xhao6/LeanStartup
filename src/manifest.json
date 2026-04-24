@@ -1,6 +1,6 @@
 {
   "name": "精益副业案例库",
-  "appid": "wxYOURAPPID",
+  "appid": "wxc65f29000694748f",
   "description": "每天拆解 3 个搞钱案例",
   "versionName": "1.0.0",
   "versionCode": "100",
@@ -26,7 +26,7 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wxYOURAPPID",
+    "appid": "wxc65f29000694748f",
     "setting": {
       "urlCheck": false
     },

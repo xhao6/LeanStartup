@@ -3,9 +3,9 @@
     <view class="rank-badge" :style="{ background: rankColor }">{{ rank }}</view>
     <view class="card-content">
       <text class="card-title">{{ props.case.title }}</text>
-      <view class="card-meta">
+      <view class="card-tags">
         <text class="score-inline">★ {{ props.case.score_total }}</text>
-        <text class="cost-tag" :style="{ background: costColor.bg, color: costColor.text }">{{ props.case.cost }}</text>
+        <text class="tag-pill tag-source">{{ props.case.source_account }}</text>
       </view>
       <text class="card-summary">{{ props.case.summary }}</text>
     </view>
@@ -14,29 +14,71 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RANK_COLORS, MORANDI_TAGS } from '@/utils/constants'
+import { RANK_COLORS } from '@/utils/constants'
 
-interface CaseItem { id: string; title: string; summary: string; score_total: number; cost: string }
+interface CaseItem { id: string; title: string; summary: string; score_total: number; cost: string; source_account: string }
 interface Props { case: CaseItem; rank: number }
 const props = defineProps<Props>()
 const emit = defineEmits<{ click: [id: string] }>()
 
-const rankColor = computed(() => RANK_COLORS[props.rank] || 'var(--color-muted)')
-const costColor = computed(() => {
-  if (props.case.cost === '零成本') return { bg: '#D1FAE5', text: '#059669' }
-  if (props.case.cost === '低门槛') return { bg: '#DBEAFE', text: '#2563EB' }
-  return { bg: MORANDI_TAGS[0].bg, text: MORANDI_TAGS[0].text }
-})
+const rankColor = computed(() => RANK_COLORS[props.rank] || '#9B9A97')
 </script>
 
 <style scoped>
-.case-card { display: flex; gap: 12px; background: var(--color-surface); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-card); transition: all var(--transition-base); cursor: pointer; }
-.case-card:active { transform: scale(0.99); }
-.rank-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
-.card-content { flex: 1; min-width: 0; }
-.card-title { display: block; font-family: var(--font-display); font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.score-inline { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--color-gold); }
-.cost-tag { padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
-.card-summary { font-size: 13px; color: var(--color-secondary); line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.case-card {
+  display: flex;
+  align-items: stretch;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+.case-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2rpx); }
+.case-card:active { transform: translateY(0) scale(0.99); }
+.rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72rpx;
+  padding: 24rpx 16rpx;
+  font-family: var(--font-mono);
+  font-size: 32rpx;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.card-content {
+  flex: 1;
+  padding: 32rpx 28rpx 32rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.35;
+  margin-bottom: 12rpx;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.card-tags {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+  flex-wrap: wrap;
+}
+.score-inline { font-family: var(--font-mono); font-size: 30rpx; font-weight: 700; color: var(--color-gold); margin-right: 4rpx; }
+.tag-pill { display: inline-block; padding: 8rpx 20rpx; border-radius: 9999px; font-size: 22rpx; font-weight: 600; }
+.tag-source { background: var(--color-bg); color: var(--color-secondary); border: 1px solid var(--color-border); }
+.card-summary { font-size: 26rpx; color: var(--color-secondary); line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 </style>

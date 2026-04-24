@@ -1,7 +1,6 @@
 <template>
   <view class="subscribe-banner" @click="handleClick">
     <view class="banner-content">
-      <wd-icon name="bell" size="18" color="#FFFFFF" />
       <text class="banner-title">订阅每日推送</text>
       <text class="banner-desc">每天早上 9 点，3 个新案例送上门</text>
     </view>
@@ -17,13 +16,15 @@ const handleClick = () => {
 
 <style lang="scss" scoped>
 .subscribe-banner {
-  margin: 24rpx 32rpx;
-  background: linear-gradient(135deg, var(--color-primary) 0%, #2D2D44 100%);
-  border-radius: 12rpx;
+  margin: 0 28rpx 32rpx;
+  background: linear-gradient(135deg, #E94560 0%, #FF6B8A 50%, #F5A623 100%);
+  border-radius: 16rpx;
   padding: 28rpx 32rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24rpx;
+  box-shadow: 0 8rpx 40rpx rgba(233,69,96,0.3);
   position: relative;
   overflow: hidden;
 }
@@ -35,22 +36,24 @@ const handleClick = () => {
 }
 
 .banner-title {
-  font-size: 28rpx;
-  font-weight: 600;
+  font-size: 26rpx;
+  font-weight: 700;
   color: #FFFFFF;
 }
 
 .banner-desc {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .banner-cta {
-  background: var(--color-accent);
-  color: #FFFFFF;
-  font-size: 24rpx;
-  padding: 12rpx 24rpx;
-  border-radius: 24rpx;
+  background: #FFFFFF;
+  color: #E94560;
+  font-size: 26rpx;
+  font-weight: 700;
+  padding: 20rpx 36rpx;
+  border-radius: 9999rpx;
   flex-shrink: 0;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
 }
 </style>

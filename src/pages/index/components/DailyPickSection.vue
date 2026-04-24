@@ -1,8 +1,9 @@
 <template>
   <view class="daily-pick">
-    <view class="section-header">
-      <text class="section-title">今日精选</text>
-      <text class="section-date">{{ displayDate }}</text>
+    <view class="home-header">
+      <view class="home-dot" />
+      <text class="home-logo-area">今日精选</text>
+      <text class="home-date">{{ displayDate }}</text>
     </view>
 
     <view class="case-list">
@@ -15,7 +16,7 @@
       />
     </view>
 
-<LoadingSpinner v-if="loading" />
+    <LoadingSpinner v-if="loading" />
     <EmptyTip v-if="!loading && cases.length === 0" text="暂无数据" />
   </view>
 </template>
@@ -56,28 +57,41 @@ onMounted(loadDailyPick)
 
 <style lang="scss" scoped>
 .daily-pick {
-  padding: 0 32rpx;
+  padding: 0 14rpx;
 }
-.section-header {
+.home-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 24rpx;
+  gap: 6rpx;
+  padding: 20rpx 4rpx;
+  margin-bottom: 12rpx;
 }
-.section-title {
+.home-dot {
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: #E94560;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+.home-logo-area {
   font-family: 'Noto Serif SC', serif;
-  font-size: 36rpx;
-  font-weight: 600;
+  font-size: 30rpx;
+  font-weight: 700;
   color: #1A1A2E;
 }
-.section-date {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 24rpx;
+.home-date {
+  font-size: 22rpx;
   color: #9B9A97;
+  font-family: 'Roboto Mono', monospace;
+  margin-left: auto;
 }
 .case-list {
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: 20rpx;
 }
 </style>
