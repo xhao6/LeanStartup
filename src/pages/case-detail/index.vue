@@ -1,10 +1,5 @@
 <template>
   <scroll-view class="detail-page" scroll-y>
-    <!-- DEBUG -->
-    <view class="debug-info">
-      <text class="debug-text">detail.id={{ detail.id }} | loading={{ !detail.id }}</text>
-    </view>
-
     <view class="share-btn-wrapper">
       <wd-icon name="share" size="20px" @click="handleShare" />
     </view>
@@ -76,24 +71,13 @@ const collectionStore = useCollectionStore()
 const isFavorited = computed(() => collectionStore.isCollected(detail.value.id))
 
 const loadDetail = async () => {
-  console.log('[case-detail] loadDetail start')
   const pages = getCurrentPages()
   const current = pages[pages.length - 1]
-  console.log('[case-detail] current pages:', pages.length, 'options:', (current as any)?.options)
   const id = (current as any)?.options?.id
-  console.log('[case-detail] id:', id)
-  if (!id) {
-    console.log('[case-detail] no id, skip')
-    return
-  }
-  console.log('[case-detail] calling getCaseDetail...')
+  if (!id) return
   const res = await getCaseDetail(id)
-  console.log('[case-detail] getCaseDetail result:', JSON.stringify(res))
   if (res.success && res.data) {
     detail.value = res.data.case || res.data
-    console.log('[case-detail] detail set, keys:', Object.keys(detail.value))
-  } else {
-    console.log('[case-detail] getCaseDetail failed:', res)
   }
 }
 
@@ -105,7 +89,6 @@ const goBack = () => uni.navigateBack()
 const handleShare = () => {}
 
 onMounted(() => {
-  console.log('[case-detail] onMounted')
   loadDetail()
 })
 </script>
@@ -115,12 +98,6 @@ onMounted(() => {
   min-height: 100vh;
   background: #FAFAF8;
   padding-bottom: 140rpx;
-}
-.debug-info {
-  background: #ff0;
-  padding: 8rpx 32rpx;
-  font-size: 24rpx;
-  color: #000;
 }
 .share-btn-wrapper {
   display: flex;

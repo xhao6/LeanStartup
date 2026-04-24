@@ -1,6 +1,5 @@
 <template>
   <view class="score-overview">
-    <text class="debug-so">ScoreOverview: score_total={{ caseData.score_total }}</text>
     <view class="score-main">
       <text class="score-number">{{ caseData.score_total }}</text>
       <text class="score-max">/10</text>
@@ -37,11 +36,9 @@
 
 <script setup lang="ts">
 const props = defineProps<{ caseData: any }>()
-console.log('[ScoreOverview] mounted, caseData:', JSON.stringify(props?.caseData))
 </script>
 
 <style lang="scss" scoped>
-.debug-so { display: block; background: #0ff; color: #000; font-size: 20rpx; padding: 4rpx 8rpx; }
 .score-overview {
   background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
   padding: 48rpx 32rpx;

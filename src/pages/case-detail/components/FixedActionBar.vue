@@ -1,6 +1,5 @@
 <template>
   <view class="fixed-action-bar">
-    <text class="debug-bar">FixedActionBar: caseId={{ caseId }} isFavorited={{ isFavorited }}</text>
     <button class="action-btn" @click="onShare">
       <wd-icon name="share" size="18px" />
       <text>分享</text>
@@ -19,7 +18,6 @@
 <script setup lang="ts">
 defineProps<{ caseId: string; isFavorited: boolean }>()
 defineEmits<{ 'toggle-favorite': []; share: [] }>()
-console.log('[FixedActionBar] mounted, props:', { caseId: undefined, isFavorited: undefined })
 const onShare = () => uni.share({ type: 0 })
 const onSaveImage = () => {
   uni.showToast({ title: '功能开发中', icon: 'none' })
@@ -32,17 +30,6 @@ const onSaveImage = () => {
   background: #FFFFFF; border-top: 1rpx solid #E8E6E1;
   display: flex; justify-content: center; align-items: center; gap: 120rpx;
   padding-bottom: env(safe-area-inset-bottom);
-}
-.debug-bar {
-  position: fixed;
-  bottom: 200rpx;
-  left: 0;
-  right: 0;
-  background: #f0f;
-  color: #000;
-  font-size: 20rpx;
-  text-align: center;
-  z-index: 9999;
 }
 .action-btn {
   display: flex; flex-direction: column; align-items: center; gap: 4rpx;
