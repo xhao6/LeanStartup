@@ -37,10 +37,10 @@
 import { ref, computed, onMounted } from 'vue'
 import CaseCard from '@/components/CaseCard.vue'
 import { getDailyPick } from '@/api/modules/daily'
-import type { CaseItem } from '@/components/CaseCard.vue'
+import type { DailyCase } from '@/api/modules/daily'
 
 const loading = ref(true)
-const cases = ref<CaseItem[]>([])
+const cases = ref<DailyCase[]>([])
 
 const pages = getCurrentPages()
 const current = pages[pages.length - 1]
