@@ -34,7 +34,10 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   }
 
   const doSubscribe = async () => {
-    if (!canPerformAction.value) return
+    if (!canPerformAction.value) {
+      uni.showToast({ title: '操作过于频繁', icon: 'none' })
+      return
+    }
     try {
       loading.value = true
       lastActionTime.value = Date.now()
@@ -48,7 +51,10 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   }
 
   const doUnsubscribe = async () => {
-    if (!canPerformAction.value) return
+    if (!canPerformAction.value) {
+      uni.showToast({ title: '操作过于频繁', icon: 'none' })
+      return
+    }
     try {
       loading.value = true
       lastActionTime.value = Date.now()
