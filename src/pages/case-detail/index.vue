@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import ScoreOverview from './components/ScoreOverview.vue'
 import TagMor from '@/components/TagMor.vue'
 import BaseInfoGrid from './components/BaseInfoGrid.vue'
@@ -72,9 +72,11 @@ import PitfallWarning from './components/PitfallWarning.vue'
 import RiskTags from './components/RiskTags.vue'
 import FixedActionBar from './components/FixedActionBar.vue'
 import { getCaseDetail } from '@/api/modules/case'
+import { useCollectionStore } from '@/store/collection'
 
 const detail = ref<any>({})
-const isFavorited = ref(false)
+const collectionStore = useCollectionStore()
+const isFavorited = computed(() => collectionStore.isCollected(detail.value.id))
 
 const loadDetail = async () => {
   const pages = getCurrentPages()
@@ -88,7 +90,7 @@ const loadDetail = async () => {
 }
 
 const toggleFavorite = async () => {
-  isFavorited.value = !isFavorited.value
+  await collectionStore.toggle(detail.value.id)
 }
 
 const goBack = () => uni.navigateBack()

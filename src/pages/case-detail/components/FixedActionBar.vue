@@ -8,6 +8,10 @@
       <wd-icon :name="isFavorited ? 'star-fill' : 'star'" size="18px" />
       <text>收藏</text>
     </button>
+    <button class="action-btn" @click="onSaveImage">
+      <wd-icon name="image" size="18px" />
+      <text>存图</text>
+    </button>
   </view>
 </template>
 
@@ -15,6 +19,9 @@
 defineProps<{ caseId: string; isFavorited: boolean }>()
 defineEmits<{ 'toggle-favorite': []; share: [] }>()
 const onShare = () => uni.share({ type: 0 })
+const onSaveImage = () => {
+  uni.showToast({ title: '功能开发中', icon: 'none' })
+}
 </script>
 
 <style lang="scss" scoped>

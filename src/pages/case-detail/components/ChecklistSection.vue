@@ -25,14 +25,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getUserCollections, toggleCollection } from '@/api/modules/collection'
+import { useCollectionStore } from '@/store/collection'
+import { toggleCollection } from '@/api/modules/collection'
 
 const props = defineProps<{ caseId: string; steps: string[] }>()
+const collectionStore = useCollectionStore()
 const progress = ref<Record<string, boolean>>({})
 const checkedCount = computed(() => Object.values(progress.value).filter(Boolean).length)
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
-const pendingUpdates: Record<string, boolean> = {}
+let pendingUpdates: Record<string, boolean> = {}
 
 const toggleStep = async (order: number) => {
   const key = `step_${order}`
@@ -43,23 +45,29 @@ const toggleStep = async (order: number) => {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(async () => {
     try {
+      // Always use 'collect' — cloud function does spread-merge on progress
       const res = await toggleCollection({ case_id: props.caseId, action: 'collect', progress: { ...pendingUpdates } })
       if (res.success && res.data?.progress) {
-        progress.value = { ...res.data.progress }
+        // Merge response progress into local state (reactivity-safe key assignment)
+        Object.keys(res.data.progress).forEach(k => {
+          progress.value[k] = res.data.progress[k]
+        })
       }
+    } catch (e) {
+      // rollback on error
+      Object.keys(pendingUpdates).forEach(k => {
+        progress.value[k] = !pendingUpdates[k]
+      })
     } finally {
       Object.keys(pendingUpdates).forEach(k => { delete pendingUpdates[k] })
     }
   }, 500)
 }
 
-onMounted(async () => {
-  const res = await getUserCollections({ page: 1, pageSize: 50 })
-  if (res.success && res.data) {
-    const myCollection = res.data.list.find((c: any) => c.case_id === props.caseId)
-    if (myCollection?.progress) {
-      progress.value = myCollection.progress
-    }
+onMounted(() => {
+  const myCollection = collectionStore.getCollection(props.caseId)
+  if (myCollection?.progress) {
+    progress.value = myCollection.progress
   }
 })
 </script>
