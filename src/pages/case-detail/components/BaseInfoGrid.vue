@@ -2,25 +2,25 @@
   <view class="base-info-grid">
     <view class="info-item">
       <text class="info-label">启动成本</text>
-      <text class="info-value">{{ case.cost }}</text>
+      <text class="info-value">{{ caseData.cost }}</text>
     </view>
     <view class="info-item">
       <text class="info-label">预期收益</text>
-      <text class="info-value">{{ case.expected_revenue }}</text>
+      <text class="info-value">{{ caseData.expected_revenue }}</text>
     </view>
     <view class="info-item">
       <text class="info-label">变现周期</text>
-      <text class="info-value">{{ case.cycle }}</text>
+      <text class="info-value">{{ caseData.cycle }}</text>
     </view>
     <view class="info-item">
       <text class="info-label">适合人群</text>
-      <text class="info-value">{{ case.suitable_for }}</text>
+      <text class="info-value">{{ caseData.suitable_for }}</text>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-defineProps<{ case: any }>()
+defineProps<{ caseData: any }>()
 </script>
 
 <style lang="scss" scoped>

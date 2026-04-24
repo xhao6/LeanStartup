@@ -12,7 +12,7 @@
       </template>
     </wd-navbar>
 
-    <ScoreOverview v-if="detail.id" :case="detail" />
+    <ScoreOverview v-if="detail.id" :caseData="detail" />
 
     <view class="source-row" v-if="detail.id">
       <text class="source-account">来源：{{ detail.source_account }}</text>
@@ -37,7 +37,7 @@
       <view class="story-quote">{{ detail.story }}</view>
     </view>
 
-    <BaseInfoGrid v-if="detail.id" :case="detail" />
+    <BaseInfoGrid v-if="detail.id" :caseData="detail" />
 
     <ChecklistSection
       v-if="detail.steps?.length"
