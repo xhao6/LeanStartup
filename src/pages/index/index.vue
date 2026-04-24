@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import HeroSection from './components/HeroSection.vue'
 import DailyPickSection from './components/DailyPickSection.vue'
-import SubscribeBanner from '@/components/SubscribeBanner.vue'
+import SubscribeBanner from '@/components/subscribe-banner/index.vue'
 </script>
 
 <style lang="scss" scoped>
