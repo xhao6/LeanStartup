@@ -67,10 +67,40 @@ async function doSubscribe(event, deps) {
   }
 }
 
+/**
+ * unsubscribe 核心逻辑
+ *
+ * @param {object} event
+ * @param {string} event.action - 'unsubscribe'
+ * @param {object} deps - { collection, openid }
+ */
 async function doUnsubscribe(event, deps) {
-  // TODO: Implement unsubscribe logic
-  const { openid } = deps
-  return success({ openid, action: 'unsubscribe' })
+  const { collection: col, openid } = deps
+
+  try {
+    // 检查是否有订阅记录
+    const { data: existing } = await col('PushSubscription').where({ openid }).get()
+
+    if (!existing || existing.length === 0) {
+      // 未订阅，返回成功
+      return success({
+        isSubscribed: false,
+        message: '未订阅'
+      })
+    }
+
+    // 删除所有该 openid 的订阅记录
+    for (const record of existing) {
+      await col('PushSubscription').doc(record._id).remove()
+    }
+
+    return success({
+      isSubscribed: false,
+      message: '已取消订阅'
+    })
+  } catch (e) {
+    return error(e.message, 'INTERNAL_ERROR')
+  }
 }
 
 async function doGetStatus(event, deps) {
