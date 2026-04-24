@@ -24,8 +24,12 @@
       />
     </view>
 
-    <LoadingSpinner v-if="loading" />
-    <EmptyTip v-if="!loading && cases.length === 0" text="暂无数据" />
+    <view v-if="loading" class="loading-state">
+      <text class="loading-text">加载中...</text>
+    </view>
+    <view v-if="!loading && cases.length === 0" class="empty-state">
+      <text class="empty-text">暂无数据</text>
+    </view>
 
     <view class="footer-tip">
       <text>查看更多案例可前往「历史榜单」</text>
@@ -36,8 +40,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import CaseCard from '@/components/case-card/index.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import EmptyTip from '@/components/EmptyTip.vue'
 import { getDailyPick } from '@/api/modules/daily'
 import type { DailyCase } from '@/api/modules/daily'
 
@@ -120,6 +122,24 @@ onMounted(loadData)
   text-align: center;
   padding: 40rpx 0;
   font-size: 26rpx;
+  color: #9B9A97;
+}
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+.loading-text {
+  font-size: 28rpx;
+  color: #9B9A97;
+}
+.empty-state {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+.empty-text {
+  font-size: 28rpx;
   color: #9B9A97;
 }
 </style>
