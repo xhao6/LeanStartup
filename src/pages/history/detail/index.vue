@@ -24,8 +24,8 @@
       />
     </view>
 
-    <wd-loading v-if="loading" />
-    <wd-status-tip v-if="!loading && cases.length === 0" type="empty" text="暂无数据" />
+    <LoadingSpinner v-if="loading" />
+    <EmptyTip v-if="!loading && cases.length === 0" text="暂无数据" />
 
     <view class="footer-tip">
       <text>查看更多案例可前往「历史榜单」</text>
@@ -36,6 +36,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import CaseCard from '@/components/CaseCard.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import EmptyTip from '@/components/EmptyTip.vue'
 import { getDailyPick } from '@/api/modules/daily'
 import type { DailyCase } from '@/api/modules/daily'
 

@@ -15,14 +15,16 @@
       />
     </view>
 
-    <wd-loading v-if="loading" />
-    <wd-status-tip v-if="!loading && cases.length === 0" type="empty" text="暂无数据" />
+<LoadingSpinner v-if="loading" />
+    <EmptyTip v-if="!loading && cases.length === 0" text="暂无数据" />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CaseCard from '@/components/CaseCard.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import EmptyTip from '@/components/EmptyTip.vue'
 import { getDailyPick } from '@/api/modules/daily'
 import type { DailyCase } from '@/api/modules/daily'
 

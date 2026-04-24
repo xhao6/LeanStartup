@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CaseCard: typeof import('./components/CaseCard.vue')['default']
+    EmptyTip: typeof import('./components/EmptyTip.vue')['default']
+    LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScoreBadge: typeof import('./components/ScoreBadge.vue')['default']
