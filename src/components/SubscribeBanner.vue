@@ -1,8 +1,8 @@
 <template>
   <view class="subscribe-banner" @click="handleClick">
     <view class="banner-content">
-      <text class="banner-title">订阅每日推送</text>
-      <text class="banner-desc">每天早上 9 点，3 个新案例送上门</text>
+      <text class="banner-title">订阅每日提醒</text>
+      <text class="banner-desc">第一时间收到最新 TOP3 推送</text>
     </view>
     <view class="banner-cta">立即订阅</view>
   </view>
@@ -16,23 +16,25 @@ const handleClick = () => {
 
 <style lang="scss" scoped>
 .subscribe-banner {
-  margin: 0 28rpx 32rpx;
+  margin: 0 14rpx 16rpx;
   background: linear-gradient(135deg, #E94560 0%, #FF6B8A 50%, #F5A623 100%);
   border-radius: 16rpx;
-  padding: 28rpx 32rpx;
+  padding: 14rpx 16rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24rpx;
-  box-shadow: 0 8rpx 40rpx rgba(233,69,96,0.3);
+  gap: 12rpx;
+  box-shadow: 0 4rpx 20rpx rgba(233,69,96,0.3);
   position: relative;
   overflow: hidden;
 }
 
 .banner-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
+  gap: 2rpx;
 }
 
 .banner-title {
@@ -54,6 +56,9 @@ const handleClick = () => {
   padding: 20rpx 36rpx;
   border-radius: 9999rpx;
   flex-shrink: 0;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
 }
 </style>
