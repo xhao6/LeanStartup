@@ -28,6 +28,20 @@ function copyStaticAssets() {
         console.log('[copy-static] tabbar icons copied')
       }
 
+      // 复制 static/images 目录
+      const imagesSrc = resolve(__dirname, 'static/images')
+      const imagesDest = resolve(__dirname, 'dist/build/mp-weixin/static/images')
+      if (existsSync(imagesSrc)) {
+        if (!existsSync(imagesDest)) {
+          mkdirSync(imagesDest, { recursive: true })
+        }
+        const files = readdirSync(imagesSrc)
+        for (const file of files) {
+          copyFileSync(join(imagesSrc, file), join(imagesDest, file))
+        }
+        console.log('[copy-static] images copied')
+      }
+
       // 创建空的 mock.js 占位符（避免微信开发者工具报错）
       const dataDir = resolve(__dirname, 'dist/build/mp-weixin/data')
       if (!existsSync(dataDir)) {

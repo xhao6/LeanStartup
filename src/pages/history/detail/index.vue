@@ -1,13 +1,5 @@
 <template>
   <view class="history-detail-page">
-    <wd-navbar
-      left-arrow
-      fixed
-      placeholder
-      @click-left="goBack"
-      title="往期榜单"
-    />
-
     <view class="date-banner">
       <view class="date-dot" />
       <text class="date-text">{{ displayDate }}</text>
@@ -72,7 +64,6 @@ const loadData = async () => {
   }
 }
 
-const goBack = () => uni.navigateBack()
 const navigateToDetail = (id: string) => {
   uni.navigateTo({ url: `/pages/case-detail/index?id=${id}` })
 }
