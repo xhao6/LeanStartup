@@ -7,13 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    CaseCard: typeof import('./components/CaseCard.vue')['default']
-    EmptyTip: typeof import('./components/EmptyTip.vue')['default']
-    LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
+    CaseCard: typeof import('./components/case-card/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScoreBadge: typeof import('./components/ScoreBadge.vue')['default']
-    SubscribeBanner: typeof import('./components/SubscribeBanner.vue')['default']
+    SkeletonCard: typeof import('./components/skeleton-card/index.vue')['default']
+    SubscribeBanner: typeof import('./components/subscribe-banner/index.vue')['default']
     TagMor: typeof import('./components/TagMor.vue')['default']
   }
 }
