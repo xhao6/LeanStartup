@@ -38,3 +38,4 @@ coverage/
 .worktrees/
 skills/
 .env
+src/components.d.ts
