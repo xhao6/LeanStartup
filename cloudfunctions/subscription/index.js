@@ -6,14 +6,20 @@ const { success, error } = require('./utils/response')
 exports.main = async (event, context) => {
   const { action } = event
 
+  // Prepare dependencies for core functions
+  const deps = {
+    collection,
+    openid: getOpenid(context)
+  }
+
   try {
     switch (action) {
       case 'subscribe':
-        return await handleSubscribe(event, context)
+        return await doSubscribe(event, deps)
       case 'unsubscribe':
-        return await handleUnsubscribe(event, context)
+        return await doUnsubscribe(event, deps)
       case 'getStatus':
-        return await handleGetStatus(event, context)
+        return await doGetStatus(event, deps)
       default:
         return error('Invalid action', 'INVALID_ACTION')
     }
@@ -23,20 +29,25 @@ exports.main = async (event, context) => {
   }
 }
 
-async function handleSubscribe(event, context) {
+async function doSubscribe(event, deps) {
   // TODO: Implement subscribe logic
-  const openid = getOpenid(context)
+  const { openid } = deps
   return success({ openid, action: 'subscribe' })
 }
 
-async function handleUnsubscribe(event, context) {
+async function doUnsubscribe(event, deps) {
   // TODO: Implement unsubscribe logic
-  const openid = getOpenid(context)
+  const { openid } = deps
   return success({ openid, action: 'unsubscribe' })
 }
 
-async function handleGetStatus(event, context) {
+async function doGetStatus(event, deps) {
   // TODO: Implement getStatus logic
-  const openid = getOpenid(context)
+  const { openid } = deps
   return success({ openid, action: 'getStatus' })
 }
+
+// Export functions for testing
+exports.doSubscribe = doSubscribe
+exports.doUnsubscribe = doUnsubscribe
+exports.doGetStatus = doGetStatus
