@@ -10,9 +10,9 @@
       <CaseCard
         v-for="(item, index) in cases"
         :key="item.id"
-        :case="item"
+        :case-data="item"
         :rank="index + 1"
-        @click="(id: string) => navigateToDetail(id)"
+        @click="(data: DailyCase) => navigateToDetail(data.id)"
       />
     </view>
 
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import CaseCard from '@/components/CaseCard.vue'
+import CaseCard from '@/components/case-card/index.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import EmptyTip from '@/components/EmptyTip.vue'
 import { getDailyPick } from '@/api/modules/daily'
