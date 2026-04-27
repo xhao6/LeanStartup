@@ -17,7 +17,8 @@
       "type": "home",
       "style": {
         "navigationBarTitleText": "搞钱案例榜",
-        "navigationStyle": "custom"
+        "navigationBarBackgroundColor": "#FAFAF8",
+        "navigationBarTextStyle": "black"
       }
     },
     {

@@ -89,7 +89,7 @@ const handleCardClick = (caseItem: DailyCase) => {
 /* Hero区域 */
 .hero-section {
   text-align: center;
-  padding: 60px 18px 12px; /* 60px足够避开刘海 */
+  padding: 24px 18px 12px;
 }
 
 .hero-title {
