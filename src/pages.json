@@ -16,7 +16,7 @@
       "path": "pages/index/index",
       "type": "home",
       "style": {
-        "navigationBarTitleText": "搞钱案例榜",
+        "navigationBarTitleText": "轻选案例",
         "navigationBarBackgroundColor": "#FAFAF8",
         "navigationBarTextStyle": "black"
       }
@@ -81,14 +81,14 @@
   ],
   "subPackages": [],
   "tabBar": {
-    "color": "#9B9A97",
-    "selectedColor": "#E94560",
+    "color": "#9CA3AF",
+    "selectedColor": "#2563EB",
     "backgroundColor": "#FFFFFF",
-    "borderStyle": "black",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页",
+        "text": "今日",
         "iconPath": "static/tabbar/today.png",
         "selectedIconPath": "static/tabbar/today-active.png"
       },
@@ -97,12 +97,6 @@
         "text": "榜单",
         "iconPath": "static/tabbar/history.png",
         "selectedIconPath": "static/tabbar/history-active.png"
-      },
-      {
-        "pagePath": "pages/profile/favorites/index",
-        "text": "收藏",
-        "iconPath": "static/tabbar/favorites.png",
-        "selectedIconPath": "static/tabbar/favorites-active.png"
       },
       {
         "pagePath": "pages/profile/index",
