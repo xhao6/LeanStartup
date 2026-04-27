@@ -15,6 +15,29 @@ const ERROR_MESSAGES = {
 }
 
 /**
+ * 获取案例详情（用于收藏时返回完整数据）
+ */
+const getCaseDetail = async (case_id) => {
+  try {
+    const caseData = await db.collection('Case').doc(case_id).get()
+    if (caseData.data) {
+      return {
+        title: caseData.data.title || '',
+        desc: caseData.data.summary || caseData.data.story || '',
+        tags: caseData.data.tags || [],
+        score_total: caseData.data.score_total || 0,
+        url: caseData.data.source_url || caseData.data.url || '',
+        image: caseData.data.image || '',
+        steps_count: Array.isArray(caseData.data.steps) ? caseData.data.steps.length : 0
+      }
+    }
+  } catch (e) {
+    console.warn('[toggleCollection] 获取case详情失败', e)
+  }
+  return null
+}
+
+/**
  * toggleCollection 云函数 - 收藏/取消收藏案例
  * 使用 upsert 原子操作避免唯一索引冲突
  *
@@ -109,8 +132,7 @@ exports.main = async (event, context) => {
     }
 
     // action === 'collect'
-    // 使用 doc().set() 模式（参考 LeanSkill 的 upsert 模式）
-    // 用 _openid_case_id 作为 _id，避免 add() 生成随机 _id 导致的唯一索引冲突
+    const caseDetail = await getCaseDetail(case_id)
     const docId = `${_openid}_${case_id}`
     const recordData = {
       _openid,
@@ -144,7 +166,8 @@ exports.main = async (event, context) => {
         data: {
           case_id,
           action: 'updated',
-          progress: progress || {}
+          progress: progress || {},
+          ...(caseDetail || {})
         }
       }
     } else {
@@ -161,7 +184,8 @@ exports.main = async (event, context) => {
         data: {
           case_id,
           action: 'created',
-          progress: progress || {}
+          progress: progress || {},
+          ...(caseDetail || {})
         }
       }
     }
