@@ -116,10 +116,20 @@ const loadDetail = async () => {
     if (res.success && res.data) {
       const data = res.data.case || res.data
       // 兼容处理：case_story -> story, 各种可能的tools字段
+      const rawTools = data.tools || data.tool || data.resources || data.case_tools || []
+      // 转换tools格式：字符串数组 -> 对象数组
+      const parsedTools = rawTools.map((tool: string) => {
+        const match = tool.match(/^(.+?)（(.+?)）$/)
+        if (match) {
+          return { name: match[1], desc: match[2] }
+        }
+        // 如果没有括号格式，整个字符串作为name，desc为空
+        return { name: tool, desc: '' }
+      })
       detail.value = {
         ...data,
         story: data.story || data.case_story || '',
-        tools: data.tools || data.tool || data.resources || data.case_tools || []
+        tools: parsedTools
       }
     } else {
       error.value = true
