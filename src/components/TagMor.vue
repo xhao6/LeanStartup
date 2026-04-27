@@ -1,16 +1,48 @@
 <template>
-  <view class="tag-mor" :style="{ background: tag.bg, color: tag.text }">
+  <view class="tag-mor" :class="getTagClass()">
     <text>{{ text }}</text>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { MORANDI_TAGS } from '@/utils/constants'
 const props = defineProps<{ text: string; variant?: 1 | 2 | 3 | 4 | 5 }>()
-const tag = computed(() => MORANDI_TAGS[(props.variant || 1) - 1])
+
+// 与首页CaseCard一致的14种马卡龙色系
+const TAG_COLORS = [
+  'tag-pink', 'tag-yellow', 'tag-blue', 'tag-green',
+  'tag-purple', 'tag-mint', 'tag-peach', 'tag-lavender',
+  'tag-coral', 'tag-lemon', 'tag-sky', 'tag-rose',
+  'tag-olive', 'tag-wine'
+]
+
+const getTagClass = () => {
+  const index = ((props.variant || 1) - 1) % TAG_COLORS.length
+  return TAG_COLORS[index]
+}
 </script>
 
 <style scoped>
-.tag-mor { display: inline-flex; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+.tag-mor {
+  display: inline-flex;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+/* Macaron配标签色系 - 与首页CaseCard一致 */
+.tag-pink    { background: #FDF2F8; color: #DB2777; }
+.tag-yellow  { background: #FEF3C7; color: #B45309; }
+.tag-blue    { background: #DBEAFE; color: #2563EB; }
+.tag-green   { background: #D1FAE5; color: #059669; }
+.tag-purple  { background: #EDE9FE; color: #7C3AED; }
+.tag-mint    { background: #CCFBF1; color: #0D9488; }
+.tag-peach   { background: #FFEDD5; color: #EA580C; }
+.tag-lavender { background: #E0E7FF; color: #4F46E5; }
+.tag-coral   { background: #FFE4E6; color: #E11D48; }
+.tag-lemon   { background: #FEF9C3; color: #CA8A04; }
+.tag-sky     { background: #E0F2FE; color: #0284C7; }
+.tag-rose    { background: #FCE7F3; color: #DB2777; }
+.tag-olive   { background: #ECFCCB; color: #65A30D; }
+.tag-wine    { background: #FAE8F0; color: #9F1239; }
 </style>
