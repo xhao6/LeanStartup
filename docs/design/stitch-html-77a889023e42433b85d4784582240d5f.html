@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&amp;family=Noto+Sans+SC:wght@400;500;600&amp;family=Roboto+Mono:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#1A1A2E",
+                        "secondary": "#4A4A68",
+                        "accent": "#E94560",
+                        "gold": "#F5A623",
+                        "bg-paper": "#FAFAF8",
+                        "surface": "#FFFFFF",
+                        "border-light": "#E8E6E1",
+                        "muted": "#9B9A97"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "4px",
+                        "lg": "8px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "display": ["Noto Serif SC", "serif"],
+                        "body": ["Noto Sans SC", "sans-serif"],
+                        "mono": ["Roboto Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { 
+            background-color: #FAFAF8; 
+            color: #1A1A2E; 
+            -webkit-font-smoothing: antialiased; 
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-scale:active { transform: scale(0.95); transition: transform 0.1s; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .detail-title { font-family: 'Noto Serif SC', serif; }
+    </style>
+</head>
+<body class="flex justify-center">
+<!-- Main Canvas -->
+<div class="w-[390px] min-h-screen bg-bg-paper relative pb-24 shadow-xl flex flex-col">
+<!-- Top Navigation -->
+<nav class="sticky top-0 w-full z-50 flex justify-between items-center px-4 h-12 bg-white border-b border-border-light">
+<button class="active-scale flex items-center">
+<span class="material-symbols-outlined text-accent text-2xl">chevron_left</span>
+</button>
+<span class="text-[13px] font-medium text-primary">案例详情</span>
+<button class="active-scale flex items-center">
+<span class="material-symbols-outlined text-accent text-xl">ios_share</span>
+</button>
+</nav>
+<!-- Main Content Scrollable -->
+<div class="flex-1 overflow-y-auto px-4 pt-6 space-y-6">
+<!-- Title -->
+<h1 class="detail-title text-[22px] font-bold leading-tight text-primary">
+                周末写的小项目，每月赚得比 996 工资还高
+            </h1>
+<!-- Source Info -->
+<div class="flex justify-between items-center py-3 border-b border-border-light">
+<span class="text-[13px] text-secondary font-medium">📌 API 赚钱派</span>
+<a class="text-[12px] text-primary font-medium flex items-center gap-1" href="#">阅读原文 <span class="material-symbols-outlined text-[14px]">north_east</span></a>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-[#E8D5C4] text-[#5D4E37]">#API开发</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-[#D4E2D4] text-[#3D5C3D]">#副业</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-[#D5D4E2] text-[#4A4D6E]">#程序员</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-[#E2D4D5] text-[#6E4A4D]">#零成本</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-[#DFDBD0] text-[#5C5A4F]">#被动收入</span>
+</div>
+<!-- Summary -->
+<p class="text-[14px] leading-[1.7] text-secondary">
+                通过 API 服务变现，零成本启动，月入过万。适合有编程基础的职场人，利用业余时间开发实用工具出售订阅。完整技术栈+部署+推广方案。
+            </p>
+<!-- Case Story -->
+<div class="bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] border border-[#BAE6FD] rounded-xl p-4">
+<div class="text-[11px] font-bold text-[#0369A1] mb-2 flex items-center gap-1">
+                    📖 案例故事
+                </div>
+<p class="text-[13px] leading-[1.7] text-[#0C4A6E] italic">
+                    "我是某互联网公司的后端开发，利用周末时间写了一个图片压缩 API。最初只是为了解决自己项目的需求，后来把接口放到 RapidAPI 上，没想到第一个月就有 50 多个订阅，收入 3000+。现在每月稳定收入 8000+，比我工资还高。"
+                </p>
+</div>
+<!-- Score Visualization -->
+<div class="bg-white border border-border-light rounded-xl p-3 flex gap-3 items-center">
+<div class="text-center min-w-[52px]">
+<div class="font-mono text-[28px] font-bold text-gold leading-none">8.5</div>
+<div class="text-[11px] text-muted font-mono">/10</div>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-[9px] text-secondary w-14">落地可行性</span>
+<div class="flex-1 h-[3px] bg-border-light rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gold to-accent" style="width: 83%"></div>
+</div>
+<span class="text-[9px] font-mono text-muted w-7 text-right">2.5/3</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[9px] text-secondary w-14">收益潜力</span>
+<div class="flex-1 h-[3px] bg-border-light rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gold to-accent" style="width: 75%"></div>
+</div>
+<span class="text-[9px] font-mono text-muted w-7 text-right">1.5/2</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[9px] text-secondary w-14">时效性</span>
+<div class="flex-1 h-[3px] bg-border-light rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gold to-accent" style="width: 75%"></div>
+</div>
+<span class="text-[9px] font-mono text-muted w-7 text-right">1.5/2</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[9px] text-secondary w-14">实操细节</span>
+<div class="flex-1 h-[3px] bg-border-light rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gold to-accent" style="width: 75%"></div>
+</div>
+<span class="text-[9px] font-mono text-muted w-7 text-right">1.5/2</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[9px] text-secondary w-14">用户适配度</span>
+<div class="flex-1 h-[3px] bg-border-light rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-gold to-accent" style="width: 100%"></div>
+</div>
+<span class="text-[9px] font-mono text-muted w-7 text-right">1/1</span>
+</div>
+</div>
+</div>
+<!-- Basic Info Grid -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-white border border-border-light rounded-lg p-2 flex items-center gap-2">
+<span class="text-[12px]">💰</span>
+<div class="flex-1">
+<div class="text-[9px] text-muted leading-tight">启动成本</div>
+<div class="text-[11px] font-bold text-primary">零成本</div>
+</div>
+</div>
+<div class="bg-white border border-border-light rounded-lg p-2 flex items-center gap-2">
+<span class="text-[12px]">📈</span>
+<div class="flex-1">
+<div class="text-[9px] text-muted leading-tight">预期收益</div>
+<div class="text-[11px] font-bold text-primary">5000+/月</div>
+</div>
+</div>
+<div class="bg-white border border-border-light rounded-lg p-2 flex items-center gap-2">
+<span class="text-[12px]">⏰</span>
+<div class="flex-1">
+<div class="text-[9px] text-muted leading-tight">变现周期</div>
+<div class="text-[11px] font-bold text-primary">1-2周</div>
+</div>
+</div>
+<div class="bg-white border border-border-light rounded-lg p-2 flex items-center gap-2">
+<span class="text-[12px]">👥</span>
+<div class="flex-1">
+<div class="text-[9px] text-muted leading-tight">适合人群</div>
+<div class="text-[11px] font-bold text-primary">职场人/学生</div>
+</div>
+</div>
+</div>
+<!-- Practice Steps -->
+<div class="bg-white border border-border-light rounded-xl p-3">
+<div class="flex justify-between items-center mb-3">
+<span class="text-[11px] font-bold text-primary uppercase tracking-wider">实践步骤</span>
+<span class="text-[10px] font-semibold text-accent">2/5 完成</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-start gap-2">
+<div class="w-[18px] h-[18px] rounded-full bg-accent flex items-center justify-center text-[9px] text-white font-bold shrink-0">✓</div>
+<p class="text-[11px] leading-tight text-muted line-through">注册开发者账号并完成认证</p>
+</div>
+<div class="flex items-start gap-2">
+<div class="w-[18px] h-[18px] rounded-full bg-accent flex items-center justify-center text-[9px] text-white font-bold shrink-0">✓</div>
+<p class="text-[11px] leading-tight text-muted line-through">选择一个有需求的垂直赛道</p>
+</div>
+<div class="flex items-start gap-2">
+<div class="w-[18px] h-[18px] rounded-full border border-border-light bg-bg-paper flex items-center justify-center text-[9px] text-muted font-bold shrink-0">3</div>
+<p class="text-[11px] leading-tight text-primary">开发一个解决该需求的 API 服务</p>
+</div>
+<div class="flex items-start gap-2">
+<div class="w-[18px] h-[18px] rounded-full border border-border-light bg-bg-paper flex items-center justify-center text-[9px] text-muted font-bold shrink-0">4</div>
+<p class="text-[11px] leading-tight text-primary">部署到云服务器并配置 HTTPS</p>
+</div>
+<div class="flex items-start gap-2">
+<div class="w-[18px] h-[18px] rounded-full border border-border-light bg-bg-paper flex items-center justify-center text-[9px] text-muted font-bold shrink-0">5</div>
+<p class="text-[11px] leading-tight text-primary">在 V2EX/掘金发布并持续优化</p>
+</div>
+</div>
+</div>
+<!-- Tools & Resources Grid -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-bg-paper border border-border-light rounded-lg p-2.5">
+<div class="text-[13px] font-semibold text-primary leading-tight">Python 3.x</div>
+<div class="text-[11px] text-muted">后端开发</div>
+</div>
+<div class="bg-bg-paper border border-border-light rounded-lg p-2.5">
+<div class="text-[13px] font-semibold text-primary leading-tight">FastAPI</div>
+<div class="text-[11px] text-muted">API 框架</div>
+</div>
+<div class="bg-bg-paper border border-border-light rounded-lg p-2.5">
+<div class="text-[13px] font-semibold text-primary leading-tight">阿里云/腾讯云</div>
+<div class="text-[11px] text-muted">云服务器</div>
+</div>
+<div class="bg-bg-paper border border-border-light rounded-lg p-2.5">
+<div class="text-[13px] font-semibold text-primary leading-tight">Docker</div>
+<div class="text-[11px] text-muted">容器部署</div>
+</div>
+</div>
+<!-- Warning Box -->
+<div class="bg-[#FFF3E0] border border-[#FFE0B2] rounded-lg p-3">
+<div class="text-[10px] font-bold text-[#E65100] mb-1 flex items-center gap-1">
+                    ⚠️ 避坑指南
+                </div>
+<p class="text-[10px] leading-normal text-[#BF360C]">
+                    前期需要一定技术基础，建议先学习 Python 基础。API 限频可能导致服务不稳定，需要提前做好容灾方案。
+                </p>
+</div>
+<!-- Risk Tags -->
+<div class="flex flex-wrap gap-2 pb-6">
+<span class="px-3 py-1 rounded-full text-[11px] font-medium bg-[#FEE2E2] text-[#DC2626]">需编程基础</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-medium bg-[#FEE2E2] text-[#DC2626]">竞争激烈</span>
+<span class="px-3 py-1 rounded-full text-[11px] font-medium bg-[#FEE2E2] text-[#DC2626]">前期收入不稳定</span>
+</div>
+</div>
+<!-- Fixed Footer Actions -->
+<footer class="fixed bottom-0 w-[390px] h-14 bg-white/90 backdrop-blur-md border-t border-border-light flex items-center px-4 gap-2 z-50">
+<button class="flex-1 flex items-center justify-center gap-1.5 h-10 bg-bg-paper rounded-full text-[13px] font-medium active-scale">
+<span class="material-symbols-outlined text-[18px]">image</span>
+                存为图片
+            </button>
+<button class="flex-1 flex items-center justify-center gap-1.5 h-10 bg-bg-paper rounded-full text-[13px] font-medium active-scale">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                分享
+            </button>
+<button class="flex-[1.2] flex items-center justify-center gap-1.5 h-10 bg-gradient-to-r from-accent to-[#FF6B8A] text-white rounded-full text-[13px] font-medium shadow-lg shadow-accent/20 active-scale">
+<span class="material-symbols-outlined text-[18px] fill-1">favorite</span>
+                收藏
+            </button>
+</footer>
+</div>
+</body></html>
