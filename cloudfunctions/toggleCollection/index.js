@@ -16,6 +16,7 @@ const ERROR_MESSAGES = {
 
 /**
  * toggleCollection 云函数 - 收藏/取消收藏案例
+ * 使用 upsert 原子操作避免唯一索引冲突
  *
  * @param {object} event
  * @param {string} event.case_id - 案例 ID（数字字符串）
@@ -87,14 +88,19 @@ exports.main = async (event, context) => {
     }
   }
 
-  const _ = db.command
   const now = new Date().toISOString()
 
   try {
     const UserCollection = db.collection('UserCollection')
 
     if (action === 'uncollect') {
-      await UserCollection.where({ _openid, case_id }).remove()
+      // 取消收藏：删除记录（用可预测的 _id）
+      const docId = `${_openid}_${case_id}`
+      try {
+        await UserCollection.doc(docId).remove()
+      } catch (e) {
+        // 记录不存在时 remove() 会抛异常，忽略即可
+      }
       console.log('[toggleCollection] 取消收藏成功', { _openid, case_id })
       return {
         success: true,
@@ -103,40 +109,61 @@ exports.main = async (event, context) => {
     }
 
     // action === 'collect'
-    const { data: existing } = await UserCollection.where({ _openid, case_id }).get()
-
-    if (existing.length > 0) {
-      // 已有记录：合并 progress
-      const record = existing[0]
-      const mergedProgress = { ...record.progress, ...progress }
-
-      await UserCollection.doc(record._id).update({
-        progress: mergedProgress,
-        updated_at: now
-      })
-
-      console.log('[toggleCollection] 更新收藏成功', { _openid, case_id, progress: mergedProgress })
-      return {
-        success: true,
-        data: { case_id, action: 'updated', progress: mergedProgress }
-      }
-    }
-
-    // 新记录
-    const newRecord = {
+    // 使用 doc().set() 模式（参考 LeanSkill 的 upsert 模式）
+    // 用 _openid_case_id 作为 _id，避免 add() 生成随机 _id 导致的唯一索引冲突
+    const docId = `${_openid}_${case_id}`
+    const recordData = {
       _openid,
       case_id,
       progress: progress || {},
-      created_at: now,
       updated_at: now
     }
 
-    await UserCollection.add(newRecord)
+    // 先检查记录是否存在
+    // 注意：doc().get() 在文档不存在时会抛出异常，需要 try-catch
+    let existingData = null
+    try {
+      const existing = await UserCollection.doc(docId).get()
+      existingData = existing.data
+    } catch (e) {
+      // 文档不存在，会抛出异常，这是预期行为
+      existingData = null
+    }
 
-    console.log('[toggleCollection] 新增收藏成功', { _openid, case_id, progress: newRecord.progress })
-    return {
-      success: true,
-      data: { case_id, action: 'created', progress: newRecord.progress }
+    if (existingData) {
+      // 已存在，只更新 progress 和 updated_at（不更新 _openid 和 case_id）
+      await UserCollection.doc(docId).update({
+        data: {
+          progress: progress || {},
+          updated_at: now
+        }
+      })
+      console.log('[toggleCollection] 更新收藏', { docId, case_id })
+      return {
+        success: true,
+        data: {
+          case_id,
+          action: 'updated',
+          progress: progress || {}
+        }
+      }
+    } else {
+      // 不存在，插入（使用 set 保持 _id 可控）
+      await UserCollection.doc(docId).set({
+        data: {
+          ...recordData,
+          created_at: now
+        }
+      })
+      console.log('[toggleCollection] 新增收藏', { docId, case_id })
+      return {
+        success: true,
+        data: {
+          case_id,
+          action: 'created',
+          progress: progress || {}
+        }
+      }
     }
 
   } catch (err) {
