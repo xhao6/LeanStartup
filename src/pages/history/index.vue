@@ -137,7 +137,12 @@ const formatDate = (dateStr: string): string => {
 const getCaseDisplay = (caseId: string): string => {
   const caseItem = store.getCaseById(caseId)
   if (!caseItem) return '加载中...'
-  return caseItem.title || '未知案例'
+  const title = caseItem.title || '未知案例'
+  // 如果有评分，显示 "案例名 (评分分)"
+  if (caseItem.score_total) {
+    return `${title} (${caseItem.score_total}分)`
+  }
+  return title
 }
 
 const getRankClass = (rank: number) => {
