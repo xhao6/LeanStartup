@@ -93,12 +93,13 @@ import RiskTags from './components/RiskTags.vue'
 import FixedActionBar from './components/FixedActionBar.vue'
 import { getCaseDetail } from '@/api/modules/case'
 import { useCollectionStore } from '@/store/collection'
+import { getFavorite, updateFavorite, isFavorited } from '@/utils/favorites'
 
 const detail = ref<any>({})
 const loading = ref(true)
 const error = ref(false)
 const collectionStore = useCollectionStore()
-const isFavorited = computed(() => collectionStore.isCollected(detail.value.id))
+const isFavoritedState = computed(() => collectionStore.isCollected(detail.value.id))
 
 const loadDetail = async () => {
   loading.value = true
@@ -110,31 +111,42 @@ const loadDetail = async () => {
     loading.value = false
     return
   }
+
+  // 优先从本地收藏读取（秒开）
+  const local = getFavorite(id)
+  if (local) {
+    detail.value = local
+  }
+
+  // 再从云端同步最新数据
   try {
     const res = await getCaseDetail(id)
     if (res.success && res.data) {
       const data = res.data.case || res.data
-      // 兼容处理：case_story -> story, 各种可能的tools字段
       const rawTools = data.tools || data.tool || data.resources || data.case_tools || []
-      // 转换tools格式：字符串数组 -> 对象数组
       const parsedTools = rawTools.map((tool: string) => {
         const match = tool.match(/^(.+?)（(.+?)）$/)
         if (match) {
           return { name: match[1], desc: match[2] }
         }
-        // 如果没有括号格式，整个字符串作为name，desc为空
         return { name: tool, desc: '' }
       })
-      detail.value = {
+      const cloudData = {
         ...data,
         story: data.story || data.case_story || '',
         tools: parsedTools
       }
+      // 合并数据：本地缓存优先，云端补充
+      detail.value = { ...detail.value, ...cloudData }
+      // 如果已收藏，更新本地缓存（保持本地数据结构完整）
+      if (isFavorited(id)) {
+        updateFavorite(id, { ...detail.value })
+      }
     } else {
-      error.value = true
+      if (!local) error.value = true
     }
   } catch (e) {
-    error.value = true
+    if (!local) error.value = true
     console.error('Failed to load case detail:', e)
   } finally {
     loading.value = false
@@ -142,7 +154,7 @@ const loadDetail = async () => {
 }
 
 const toggleFavorite = async () => {
-  const isAdding = !isFavorited.value
+  const isAdding = !isFavoritedState.value
 
   const result = await collectionStore.toggle(detail.value.id)
 
@@ -184,8 +196,6 @@ const handleReadOriginal = () => {
 
 onMounted(() => {
   loadDetail()
-  // 加载收藏列表以更新收藏状态
-  collectionStore.fetchCollections()
 })
 
 // 微信分享给朋友
