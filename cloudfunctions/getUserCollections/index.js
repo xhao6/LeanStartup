@@ -52,11 +52,15 @@ exports.main = async (event, context) => {
     }
 
     // 查当前页，按 updated_at 倒序
+    // 注意：_id 格式为 "${_openid}_${case_id}"
     const skip = Math.max(0, (parseInt(page) - 1)) * parseInt(pageSize)
     const limit = Math.min(50, Math.max(1, parseInt(pageSize)))
 
+    // 由于 _id 包含 openid，无法直接用 _id 查询
+    // 继续用 _openid 字段查询（需要保留索引）
     const { data: collections } = await UserCollection
       .where({ _openid })
+      .field({ _id: true, case_id: true, progress: true, updated_at: true })
       .orderBy('updated_at', 'desc')
       .skip(skip)
       .limit(limit)

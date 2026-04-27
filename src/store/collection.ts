@@ -1,13 +1,28 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getUserCollections, toggleCollection as apiToggleCollection } from '@/api/modules/collection'
+import { useUserStore } from '@/store'
 
 export const useCollectionStore = defineStore('collection', () => {
+  const userStore = useUserStore()
   const collections = ref<string[]>([]) // caseId list
   const collectionMap = ref<Record<string, { title: string; score_total: number; progress: Record<string, boolean>; steps_count: number; completed_count: number }>>({})
   const loading = ref(false)
   const hasMore = ref(true)
   const page = ref(1)
+
+  // 自动登录：确保用户上下文已建立（微信环境下 openid 由云函数自动获取）
+  const ensureLogin = async (): Promise<boolean> => {
+    if (userStore.isLoggedIn) return true
+    try {
+      const res = await getUserCollections({ page: 1, pageSize: 1 })
+      if (res.success) {
+        userStore.setUser({ id: 'wechat_user' })
+        return true
+      }
+    } catch {}
+    return false
+  }
 
   const fetchCollections = async (reset = false) => {
     if (loading.value) return
@@ -27,6 +42,7 @@ export const useCollectionStore = defineStore('collection', () => {
   }
 
   // toggle 重载：支持传入 step progress 用于增量更新
+  // 自动登录：未登录状态下会自动初始化用户上下文并重试
   const toggle = async (caseId: string, progress?: Record<string, boolean>): Promise<boolean> => {
     const isCollected = collections.value.includes(caseId)
     const action = isCollected ? 'uncollect' : 'collect'
@@ -39,7 +55,17 @@ export const useCollectionStore = defineStore('collection', () => {
       collections: collections.value
     })
 
-    const res = await apiToggleCollection({ case_id: caseId, action, progress })
+    let res = await apiToggleCollection({ case_id: caseId, action, progress })
+
+    // 如果是未登录错误，自动登录后重试（微信环境下 openid 由云函数自动获取）
+    if (!res.success && (res.error?.includes('UNAUTHORIZED') || res.error?.includes('用户身份'))) {
+      console.log('[Collection Store] 检测到未登录，自动初始化...')
+      const loginOk = await ensureLogin()
+      if (loginOk) {
+        console.log('[Collection Store] 自动登录成功，重试 toggle')
+        res = await apiToggleCollection({ case_id: caseId, action, progress })
+      }
+    }
 
     console.log('[Collection Store] API 返回', {
       success: res.success,
