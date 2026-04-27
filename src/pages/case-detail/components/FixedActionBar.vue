@@ -4,16 +4,50 @@
       <wd-icon name="share" size="16px" />
       <text>分享</text>
     </button>
-    <button class="action-btn primary" @click="$emit('toggle-favorite')">
-      <wd-icon :name="isFavorited ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
-      <text>{{ isFavorited ? '已收藏' : '收藏' }}</text>
+    <button class="action-btn primary" @click="onToggleFavorite">
+      <wd-icon :name="isFavoritedComputed ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
+      <text>{{ isFavoritedComputed ? '已收藏' : '收藏' }}</text>
     </button>
   </view>
 </template>
 
 <script setup lang="ts">
-defineProps<{ caseId: string; isFavorited: boolean }>()
-defineEmits<{ 'toggle-favorite': [] }>()
+import { computed } from 'vue'
+import { toggleFavorite, isFavorited } from '@/utils/favorites'
+
+const props = defineProps<{
+  caseId: string
+  detail?: any
+}>()
+
+defineEmits<{ 'toggle-favorite': [boolean] }>()
+
+const isFavoritedComputed = computed(() => isFavorited(props.caseId))
+
+const onToggleFavorite = async () => {
+  if (!props.detail) return
+
+  // Build the item from detail data
+  const item = {
+    title: props.detail?.title || '',
+    desc: props.detail?.summary || props.detail?.story || '',
+    tags: props.detail?.tags || [],
+    score_total: props.detail?.score_total || 0,
+    url: props.detail?.source_url || '',
+    image: props.detail?.image || '',
+    progress: props.detail?.progress || {},
+    steps_count: props.detail?.steps?.length || 0,
+    completed_count: Object.values(props.detail?.progress || {}).filter(Boolean).length
+  }
+
+  try {
+    const result = await toggleFavorite(props.caseId, item)
+    emit('toggle-favorite', result)
+  } catch (e) {
+    console.error('[FixedActionBar] 收藏操作失败', e)
+    uni.showToast({ title: '操作失败，请检查网络后重试', icon: 'none', duration: 2000 })
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -63,9 +97,5 @@ defineEmits<{ 'toggle-favorite': [] }>()
     transform: scale(0.98);
     opacity: 0.9;
   }
-}
-.btn-icon {
-  width: 20rpx;
-  height: 20rpx;
 }
 </style>
