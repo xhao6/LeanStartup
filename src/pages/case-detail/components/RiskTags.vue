@@ -12,15 +12,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ tags: string[] }>()
+import { TAG_COLORS } from '@/utils/constants'
 
-// 与首页CaseCard一致的14种马卡龙色系
-const TAG_COLORS = [
-  'tag-pink', 'tag-yellow', 'tag-blue', 'tag-green',
-  'tag-purple', 'tag-mint', 'tag-peach', 'tag-lavender',
-  'tag-coral', 'tag-lemon', 'tag-sky', 'tag-rose',
-  'tag-olive', 'tag-wine'
-]
+defineProps<{ tags: string[] }>()
 
 const getTagClass = (index: number) => {
   return TAG_COLORS[index % TAG_COLORS.length]

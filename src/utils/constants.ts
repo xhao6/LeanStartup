@@ -10,6 +10,13 @@ export const COLORS = {
   MUTED: '#9B9A97',
 }
 
+export const TAG_COLORS = [
+  'tag-pink', 'tag-yellow', 'tag-blue', 'tag-green',
+  'tag-purple', 'tag-mint', 'tag-peach', 'tag-lavender',
+  'tag-coral', 'tag-lemon', 'tag-sky', 'tag-rose',
+  'tag-olive', 'tag-wine'
+]
+
 export const MORANDI_TAGS = [
   { bg: '#E8D5C4', text: '#5D4E37' },
   { bg: '#D4E2D4', text: '#3D5C3D' },

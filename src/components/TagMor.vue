@@ -5,15 +5,9 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ text: string; variant?: 1 | 2 | 3 | 4 | 5 }>()
+import { TAG_COLORS } from '@/utils/constants'
 
-// 与首页CaseCard一致的14种马卡龙色系
-const TAG_COLORS = [
-  'tag-pink', 'tag-yellow', 'tag-blue', 'tag-green',
-  'tag-purple', 'tag-mint', 'tag-peach', 'tag-lavender',
-  'tag-coral', 'tag-lemon', 'tag-sky', 'tag-rose',
-  'tag-olive', 'tag-wine'
-]
+const props = defineProps<{ text: string; variant?: 1 | 2 | 3 | 4 | 5 }>()
 
 const getTagClass = () => {
   const index = ((props.variant || 1) - 1) % TAG_COLORS.length
