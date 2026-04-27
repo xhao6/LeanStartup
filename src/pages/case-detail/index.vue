@@ -109,6 +109,7 @@ const loadDetail = async () => {
   const id = (current as any)?.options?.id
   if (!id) {
     loading.value = false
+    error.value = false
     return
   }
 
