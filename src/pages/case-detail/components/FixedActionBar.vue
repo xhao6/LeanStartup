@@ -1,9 +1,7 @@
 <template>
   <view class="fixed-action-bar">
     <button class="action-btn secondary" @click="onSaveImage">
-      <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M10 3a.75.75 0 01.75.75v5.69l1.28-1.28a.75.75 0 111.06 1.06l-2.5 2.5a.75.75 0 01-1.06 0l-2.5-2.5a.75.75 0 011.06-1.06l1.28 1.28V3.75A.75.75 0 0110 3zM3.75 15a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.5a.75.75 0 01-.75-.75z"/>
-      </svg>
+      <text class="btn-icon">⬇</text>
       <text>存为图片</text>
     </button>
     <button class="action-btn secondary" @click="onShare">

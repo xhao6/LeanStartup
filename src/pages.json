@@ -24,7 +24,8 @@
       "path": "pages/case-detail/index",
       "style": {
         "navigationBarTitleText": "案例详情",
-        "navigationStyle": "custom"
+        "navigationBarBackgroundColor": "#FFFFFF",
+        "navigationBarTextStyle": "black"
       }
     },
     {

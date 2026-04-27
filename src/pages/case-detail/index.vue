@@ -1,16 +1,5 @@
 <template>
   <scroll-view class="detail-page" scroll-y>
-    <!-- Top Navigation -->
-    <view class="nav-bar">
-      <view class="nav-btn safe-left" @click="goBack" aria-label="返回">
-        <wd-icon name="arrow-left" size="20px" color="#E94560" />
-      </view>
-      <text class="nav-title">案例详情</text>
-      <view class="nav-btn safe-right" @click="handleShare" aria-label="分享">
-        <wd-icon name="share" size="18px" color="#E94560" />
-      </view>
-    </view>
-
     <!-- Loading State -->
     <view v-if="loading" class="loading-state">
       <text class="loading-text">加载中...</text>
@@ -126,11 +115,11 @@ const loadDetail = async () => {
     const res = await getCaseDetail(id)
     if (res.success && res.data) {
       const data = res.data.case || res.data
-      // 兼容处理：case_story -> story, tool -> tools
+      // 兼容处理：case_story -> story, 各种可能的tools字段
       detail.value = {
         ...data,
         story: data.story || data.case_story || '',
-        tools: data.tools || data.tool || data.resources || []
+        tools: data.tools || data.tool || data.resources || data.case_tools || []
       }
     } else {
       error.value = true
@@ -170,45 +159,7 @@ onMounted(() => {
 .detail-page {
   min-height: 100vh;
   background: #FAFAF8;
-  padding-bottom: 140rpx;
-}
-.nav-bar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 32rpx;
-  height: 96rpx;
-  padding-top: calc(env(safe-area-inset-top) + 44rpx);
-  background: #FFFFFF;
-  border-bottom: 1rpx solid #E8E6E1;
-}
-.nav-btn {
-  display: flex;
-  align-items: center;
-  width: 64rpx;
-  height: 64rpx;
-  flex-shrink: 0;
-  transition: all 150ms ease-out;
-  &.safe-left {
-    margin-left: env(safe-area-inset-left);
-  }
-  &.safe-right {
-    margin-right: env(safe-area-inset-right);
-  }
-  &:active {
-    transform: scale(0.95);
-    opacity: 0.7;
-  }
-}
-.nav-title {
-  font-size: 26rpx;
-  font-weight: 500;
-  color: #1A1A2E;
-  flex: 1;
-  text-align: center;
+  padding-bottom: 200rpx;
 }
 .loading-state,
 .error-state {
