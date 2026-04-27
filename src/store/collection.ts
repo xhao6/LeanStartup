@@ -47,31 +47,15 @@ export const useCollectionStore = defineStore('collection', () => {
     const isCollected = collections.value.includes(caseId)
     const action = isCollected ? 'uncollect' : 'collect'
 
-    console.log('[Collection Store] toggle 开始', {
-      caseId,
-      isCollected,
-      action,
-      progress,
-      collections: collections.value
-    })
-
     let res = await apiToggleCollection({ case_id: caseId, action, progress })
 
     // 如果是未登录错误，自动登录后重试（微信环境下 openid 由云函数自动获取）
     if (!res.success && (res.error?.includes('UNAUTHORIZED') || res.error?.includes('用户身份'))) {
-      console.log('[Collection Store] 检测到未登录，自动初始化...')
       const loginOk = await ensureLogin()
       if (loginOk) {
-        console.log('[Collection Store] 自动登录成功，重试 toggle')
         res = await apiToggleCollection({ case_id: caseId, action, progress })
       }
     }
-
-    console.log('[Collection Store] API 返回', {
-      success: res.success,
-      data: res.data,
-      error: res.error
-    })
 
     if (res.success) {
       if (!isCollected) {
@@ -81,7 +65,6 @@ export const useCollectionStore = defineStore('collection', () => {
         collections.value = collections.value.filter(id => id !== caseId)
         delete collectionMap.value[caseId]
       }
-      console.log('[Collection Store] 操作成功，返回', !isCollected)
       return !isCollected
     }
 

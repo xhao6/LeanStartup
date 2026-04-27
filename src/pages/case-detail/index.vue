@@ -144,15 +144,7 @@ const loadDetail = async () => {
 const toggleFavorite = async () => {
   const isAdding = !isFavorited.value
 
-  console.log('[收藏] 开始操作', {
-    caseId: detail.value.id,
-    isAdding,
-    isFavorited: isFavorited.value
-  })
-
   const result = await collectionStore.toggle(detail.value.id)
-
-  console.log('[收藏] 操作结果', { result, isAdding })
 
   // result 返回的是操作后的状态（true=已收藏，false=未收藏）
   // 如果操作成功，result 应该等于 isAdding
