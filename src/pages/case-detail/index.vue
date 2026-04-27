@@ -1,48 +1,90 @@
 <template>
   <scroll-view class="detail-page" scroll-y>
-    <view class="share-btn-wrapper">
-      <wd-icon name="share" size="20px" @click="handleShare" />
+    <!-- Top Navigation -->
+    <view class="nav-bar">
+      <view class="nav-btn safe-left" @click="goBack" aria-label="返回">
+        <wd-icon name="arrow-left" size="20px" color="#E94560" />
+      </view>
+      <text class="nav-title">案例详情</text>
+      <view class="nav-btn safe-right" @click="handleShare" aria-label="分享">
+        <wd-icon name="share" size="18px" color="#E94560" />
+      </view>
     </view>
 
-    <ScoreOverview v-if="detail.id" :caseData="detail" />
-
-    <view class="source-row" v-if="detail.id">
-      <text class="source-account">来源：{{ detail.source_account }}</text>
+    <!-- Loading State -->
+    <view v-if="loading" class="loading-state">
+      <text class="loading-text">加载中...</text>
     </view>
 
-    <view class="tag-list" v-if="detail.tags?.length">
-      <TagMor
-        v-for="(tag, i) in detail.tags"
-        :key="i"
-        :text="tag"
-        :variant="((i % 5) + 1) as 1 | 2 | 3 | 4 | 5"
+    <!-- Error State -->
+    <view v-else-if="error" class="error-state">
+      <text class="error-text">加载失败</text>
+      <button class="retry-btn" @click="loadDetail">重试</button>
+    </view>
+
+    <!-- Main Content -->
+    <view v-else class="content-wrap">
+      <!-- Title -->
+      <text class="detail-title">{{ detail.title }}</text>
+
+      <!-- Source Info -->
+      <view class="source-row">
+        <text class="source-account">
+          <svg class="source-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M5.5 8a.5.5 0 0 1 .5-.5h8.5a.5.5 0 0 1 0 1H5.5a.5.5 0 0 1-.5-.5v-8a.5.5 0 0 1 .5-.5h8.5a.5.5 0 0 1 0 1H5.5a.5.5 0 0 1-.5-.5v-8ZM8 6a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V6Z"/>
+          </svg>
+          {{ detail.source_account }}
+        </text>
+        <view class="source-link" @click="handleReadOriginal">
+          <text class="link-text">阅读原文</text>
+          <svg class="link-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M6 12.796c.735.064 1.48 1.107 2.234l.648.063c.46.046.063.928.127 1.396.195.468.063.94.143 1.414.232 2.124.232.232 0 0 1 .063-.647l.647-.647c.046-.063.093-.127.14-.195.046-.063.093-.127.14-.195-.063-.463-.127-.695-.232-.045-.14-.088-.372-.127-.695-.046-.064-.093-.127-.14-.195-.046-.463-.093-.695-.232-.045-.14-.088-.372-.127-.695C9.976 9.71 9 8.94 9 8c0-.957.023-1.894.093-2.796.195-.232.463-.14.928.127-1.396.318a.5.5 0 0 1 .5-.5c0-.557.287-1.08.543-1.543.518-.548.97-1.033 1.396-1.396.463-.064.928-.127 1.396-.195.468-.063.94-.143 1.414-.232 2.124-.232.232 0 0 1 .063-.647l.647-.647c.046-.063.093-.127.14-.195.046-.063.093-.127.14-.195.063-.463-.127-.695-.232-.045-.14-.088-.372-.127-.695-.046-.064-.093-.127-.14-.195-.063-.463-.093-.695-.232-.045-.14-.088-.372-.127-.695C9.976 9.71 9 8.94 9 8c0-.957.023-1.894.093-2.796.195Zm3.906 2.032a.5.5 0 0 1 0 .707-.707L12 11l1.414 1.414-2.393 2.393a.5.5 0 0 1 0-.707-.707l1.647-1.646a.5.5 0 0 1 .708 0Z"/>
+          </svg>
+        </view>
+      </view>
+
+      <!-- Tags -->
+      <view class="tag-list" v-if="detail.tags?.length">
+        <TagMor
+          v-for="(tag, i) in detail.tags"
+          :key="i"
+          :text="tag"
+          :variant="((i % 5) + 1) as 1 | 2 | 3 | 4 | 5"
+        />
+      </view>
+
+      <!-- Summary -->
+      <view v-if="detail.summary" class="summary-section">
+        <text class="summary-text">{{ detail.summary }}</text>
+      </view>
+
+      <!-- Story -->
+      <StorySection v-if="detail.story" :content="detail.story" />
+
+      <!-- Score Overview -->
+      <ScoreOverview v-if="detail.id" :caseData="detail" />
+
+      <!-- Base Info Grid -->
+      <BaseInfoGrid v-if="detail.id" :caseData="detail" />
+
+      <!-- Practice Steps -->
+      <ChecklistSection
+        v-if="detail.steps?.length"
+        :case-id="detail.id"
+        :steps="detail.steps"
       />
+
+      <!-- Tools & Resources -->
+      <ToolsSection v-if="detail.tools?.length" :tools="detail.tools" />
+
+      <!-- Pitfall Warning -->
+      <PitfallWarning v-if="detail.pitfalls" :content="detail.pitfalls" />
+
+      <!-- Risk Tags -->
+      <RiskTags v-if="detail.risk_tags?.length" :tags="detail.risk_tags" />
     </view>
 
-    <view class="summary-section" v-if="detail.summary">
-      <text class="section-title">核心摘要</text>
-      <text class="summary-text">{{ detail.summary }}</text>
-    </view>
-
-    <view class="story-section" v-if="detail.story">
-      <text class="section-title">案例故事</text>
-      <view class="story-quote">{{ detail.story }}</view>
-    </view>
-
-    <BaseInfoGrid v-if="detail.id" :caseData="detail" />
-
-    <ChecklistSection
-      v-if="detail.steps?.length"
-      :case-id="detail.id"
-      :steps="detail.steps"
-    />
-
-    <ToolsSection v-if="detail.tools?.length" :tools="detail.tools" />
-
-    <PitfallWarning v-if="detail.pitfalls" :content="detail.pitfalls" />
-
-    <RiskTags v-if="detail.risk_tags?.length" :tags="detail.risk_tags" />
-
+    <!-- Fixed Footer Actions -->
     <FixedActionBar
       v-if="detail.id"
       :case-id="detail.id"
@@ -56,6 +98,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import ScoreOverview from './components/ScoreOverview.vue'
+import StorySection from './components/StorySection.vue'
 import TagMor from '@/components/TagMor.vue'
 import BaseInfoGrid from './components/BaseInfoGrid.vue'
 import ChecklistSection from './components/ChecklistSection.vue'
@@ -67,17 +110,38 @@ import { getCaseDetail } from '@/api/modules/case'
 import { useCollectionStore } from '@/store/collection'
 
 const detail = ref<any>({})
+const loading = ref(true)
+const error = ref(false)
 const collectionStore = useCollectionStore()
 const isFavorited = computed(() => collectionStore.isCollected(detail.value.id))
 
 const loadDetail = async () => {
+  loading.value = true
+  error.value = false
   const pages = getCurrentPages()
   const current = pages[pages.length - 1]
   const id = (current as any)?.options?.id
-  if (!id) return
-  const res = await getCaseDetail(id)
-  if (res.success && res.data) {
-    detail.value = res.data.case || res.data
+  if (!id) {
+    loading.value = false
+    return
+  }
+  try {
+    const res = await getCaseDetail(id)
+    if (res.success && res.data) {
+      const data = res.data.case || res.data
+      // 兼容处理：case_story -> story
+      detail.value = {
+        ...data,
+        story: data.story || data.case_story || ''
+      }
+    } else {
+      error.value = true
+    }
+  } catch (e) {
+    error.value = true
+    console.error('Failed to load case detail:', e)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -87,6 +151,17 @@ const toggleFavorite = async () => {
 
 const goBack = () => uni.navigateBack()
 const handleShare = () => {}
+const handleReadOriginal = () => {
+  if (detail.value.source_url) {
+    // 复制链接或打开浏览器
+    uni.setClipboardData({
+      data: detail.value.source_url,
+      success: () => {
+        uni.showToast({ title: '链接已复制', icon: 'none' })
+      }
+    })
+  }
+}
 
 onMounted(() => {
   loadDetail()
@@ -99,47 +174,131 @@ onMounted(() => {
   background: #FAFAF8;
   padding-bottom: 140rpx;
 }
-.share-btn-wrapper {
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
-  justify-content: flex-end;
-  padding: 16rpx 32rpx 0;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32rpx;
+  height: 96rpx;
+  padding-top: env(safe-area-inset-top);
+  background: #FFFFFF;
+  border-bottom: 1rpx solid #E8E6E1;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  width: 64rpx;
+  height: 64rpx;
+  flex-shrink: 0;
+  transition: all 150ms ease-out;
+  &.safe-left {
+    margin-left: env(safe-area-inset-left);
+  }
+  &.safe-right {
+    margin-right: env(safe-area-inset-right);
+  }
+  &:active {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+.nav-title {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #1A1A2E;
+  flex: 1;
+  text-align: center;
+}
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400rpx;
+  gap: 24rpx;
+}
+.loading-text,
+.error-text {
+  font-size: 30rpx;
+  color: #4A4A68;
+}
+.retry-btn {
+  padding: 16rpx 32rpx;
+  background: #E94560;
+  color: #FFFFFF;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  border: none;
+}
+.content-wrap {
+  padding: 24rpx 32rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.detail-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 44rpx;
+  font-weight: 600;
+  color: #1A1A2A;
+  line-height: 1.4;
 }
 .source-row {
   display: flex;
   justify-content: space-between;
-  padding: 24rpx 32rpx;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #E8E6E1;
+}
+.source-account {
   font-size: 24rpx;
-  color: #9B9A97;
+  color: #4A4A68;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+.source-icon {
+  width: 20rpx;
+  height: 20rpx;
+  color: #E94560;
+  flex-shrink: 0;
+}
+.source-link {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  transition: opacity 150ms ease-out;
+  &:active {
+    opacity: 0.7;
+  }
+}
+.link-text {
+  font-size: 24rpx;
+  color: #1A1A2E;
+  font-weight: 500;
+}
+.link-arrow {
+  width: 20rpx;
+  height: 20rpx;
+  color: #E94560;
+  flex-shrink: 0;
 }
 .tag-list {
   display: flex;
   flex-wrap: wrap;
   gap: 16rpx;
-  padding: 0 32rpx 32rpx;
 }
-.summary-section, .story-section {
-  padding: 32rpx;
-}
-.section-title {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #1A1A2E;
-  margin-bottom: 16rpx;
-  display: block;
+.summary-section {
+  padding: 0;
 }
 .summary-text {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #4A4A68;
-  line-height: 1.8;
-}
-.story-quote {
-  background: #F0F7FF;
-  border-left: 6rpx solid #4A90D9;
-  padding: 24rpx;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  color: #4A4A68;
-  line-height: 1.8;
+  line-height: 1.6;
 }
 </style>

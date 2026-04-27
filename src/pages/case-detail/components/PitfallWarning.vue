@@ -1,10 +1,12 @@
 <template>
   <view class="pitfall-warning">
-    <wd-icon name="warning-circle" color="#F5A623" size="20px" />
-    <view class="pitfall-content">
-      <text class="pitfall-title">避坑指南</text>
-      <text class="pitfall-text">{{ content }}</text>
+    <view class="warning-header">
+      <svg class="warning-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+      </svg>
+      <text class="warning-label">避坑指南</text>
     </view>
+    <text class="warning-text">{{ content }}</text>
   </view>
 </template>
 
@@ -14,9 +16,32 @@ defineProps<{ content: string }>()
 
 <style lang="scss" scoped>
 .pitfall-warning {
-  margin: 0 32rpx 32rpx; background: #FFF8E6; border: 1rpx solid #F5A623;
-  border-radius: 12rpx; padding: 24rpx; display: flex; gap: 16rpx;
+  background: #FFF3E0;
+  border: 1rpx solid #FFE0B2;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin: 0 32rpx;
 }
-.pitfall-title { font-size: 28rpx; font-weight: 600; color: #F5A623; display: block; margin-bottom: 8rpx; }
-.pitfall-text { font-size: 26rpx; color: #4A4A68; line-height: 1.6; }
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 8rpx;
+}
+.warning-icon {
+  width: 20rpx;
+  height: 20rpx;
+  color: #E65100;
+  flex-shrink: 0;
+}
+.warning-label {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #E65100;
+}
+.warning-text {
+  font-size: 30rpx;
+  color: #BF360C;
+  line-height: 1.6;
+}
 </style>

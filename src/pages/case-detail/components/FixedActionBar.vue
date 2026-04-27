@@ -1,24 +1,36 @@
 <template>
   <view class="fixed-action-bar">
-    <button class="action-btn" @click="onShare">
-      <wd-icon name="share" size="18px" />
+    <button class="action-btn secondary" @click="onSaveImage">
+      <wd-icon name="image" size="16px" />
+      <text>存为图片</text>
+    </button>
+    <button class="action-btn secondary" @click="onShare">
+      <wd-icon name="share" size="16px" />
       <text>分享</text>
     </button>
-    <button class="action-btn" @click="$emit('toggle-favorite')">
-      <wd-icon :name="isFavorited ? 'star-fill' : 'star'" size="18px" />
+    <button class="action-btn primary" @click="$emit('toggle-favorite')">
+      <wd-icon :name="isFavorited ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
       <text>收藏</text>
-    </button>
-    <button class="action-btn" @click="onSaveImage">
-      <wd-icon name="image" size="18px" />
-      <text>存图</text>
     </button>
   </view>
 </template>
 
 <script setup lang="ts">
 defineProps<{ caseId: string; isFavorited: boolean }>()
-defineEmits<{ 'toggle-favorite': []; share: [] }>()
-const onShare = () => uni.share({ type: 0 })
+defineEmits<{ 'toggle-favorite': []; share:[] }>()
+const onShare = () => {
+  // 分享功能
+  uni.showActionSheet({
+    itemList: ['转发给朋友', '生成海报'],
+    success: (res) => {
+      if (res.tapIndex === 0) {
+        uni.share({ type: 0 })
+      } else if (res.tapIndex === 1) {
+        uni.showToast({ title: '海报生成中', icon: 'loading' })
+      }
+    }
+  })
+}
 const onSaveImage = () => {
   uni.showToast({ title: '功能开发中', icon: 'none' })
 }
@@ -26,14 +38,51 @@ const onSaveImage = () => {
 
 <style lang="scss" scoped>
 .fixed-action-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 120rpx;
-  background: #FFFFFF; border-top: 1rpx solid #E8E6E1;
-  display: flex; justify-content: center; align-items: center; gap: 120rpx;
-  padding-bottom: env(safe-area-inset-bottom);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 16rpx 32rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border-top: 1rpx solid #E8E6E1;
+  z-index: 100;
 }
 .action-btn {
-  display: flex; flex-direction: column; align-items: center; gap: 4rpx;
-  font-size: 22rpx; color: #4A4A68; background: none;
-  &.active { color: #E94560; }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  height: 88rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  border: none;
+  padding: 0;
+  margin: 0;
+  &.secondary {
+    flex: 1;
+    background: #FAFAF8;
+    color: #1A1A2E;
+    border: 1.5rpx solid #E8E6E1;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  }
+  &.primary {
+    flex: 1.2;
+    background: linear-gradient(135deg, #E94560, #FF6B8A);
+    color: #FFFFFF;
+    box-shadow: 0 4rpx 16rpx rgba(233, 69, 96, 0.25);
+  }
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
 }
 </style>
