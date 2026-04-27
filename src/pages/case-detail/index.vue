@@ -74,7 +74,7 @@
     <FixedActionBar
       v-if="detail.id"
       :case-id="detail.id"
-      :is-favorited="isFavorited"
+      :detail="detail"
       @toggle-favorite="toggleFavorite"
     />
   </scroll-view>
