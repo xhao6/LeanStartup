@@ -31,6 +31,31 @@ const collectionStore = useCollectionStore()
 const progress = ref<Record<string, boolean>>({})
 const checkedCount = computed(() => Object.values(progress.value).filter(Boolean).length)
 
+// 本地存储 key
+const STORAGE_KEY = `checklist_progress_${props.caseId}`
+
+// 保存进度到本地存储
+const saveToStorage = (data: Record<string, boolean>) => {
+  try {
+    uni.setStorageSync(STORAGE_KEY, JSON.stringify(data))
+  } catch (e) {
+    console.error('保存进度失败:', e)
+  }
+}
+
+// 从本地存储加载进度
+const loadFromStorage = (): Record<string, boolean> => {
+  try {
+    const data = uni.getStorageSync(STORAGE_KEY)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (e) {
+    console.error('加载进度失败:', e)
+  }
+  return {}
+}
+
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 let pendingUpdates: Record<string, boolean> = {}
 
@@ -40,6 +65,9 @@ const toggleStep = async (order: number) => {
   progress.value[key] = newValue
   pendingUpdates[key] = newValue
 
+  // 立即保存到本地存储
+  saveToStorage(progress.value)
+
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(async () => {
     try {
@@ -48,11 +76,12 @@ const toggleStep = async (order: number) => {
         Object.keys(res.data.progress).forEach(k => {
           progress.value[k] = res.data.progress[k]
         })
+        // 同步云端数据到本地存储
+        saveToStorage(progress.value)
       }
     } catch (e) {
-      Object.keys(pendingUpdates).forEach(k => {
-        progress.value[k] = !pendingUpdates[k]
-      })
+      // API 失败不影响本地存储，用户可以继续使用
+      console.error('同步进度到云端失败:', e)
     } finally {
       Object.keys(pendingUpdates).forEach(k => { delete pendingUpdates[k] })
     }
@@ -60,9 +89,18 @@ const toggleStep = async (order: number) => {
 }
 
 onMounted(() => {
-  const myCollection = collectionStore.getCollection(props.caseId)
-  if (myCollection?.progress) {
-    progress.value = myCollection.progress
+  // 优先从本地存储加载进度
+  const localProgress = loadFromStorage()
+  if (Object.keys(localProgress).length > 0) {
+    progress.value = localProgress
+  } else {
+    // 如果本地没有数据，从云端加载
+    const myCollection = collectionStore.getCollection(props.caseId)
+    if (myCollection?.progress) {
+      progress.value = myCollection.progress
+      // 保存到本地存储
+      saveToStorage(progress.value)
+    }
   }
 })
 </script>

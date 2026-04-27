@@ -76,7 +76,6 @@
       :case-id="detail.id"
       :is-favorited="isFavorited"
       @toggle-favorite="toggleFavorite"
-      @share="handleShare"
     />
   </scroll-view>
 </template>
@@ -143,11 +142,28 @@ const loadDetail = async () => {
 }
 
 const toggleFavorite = async () => {
-  await collectionStore.toggle(detail.value.id)
+  const isAdding = !isFavorited.value
+  const result = await collectionStore.toggle(detail.value.id)
+
+  // result 返回的是操作后的状态（true=已收藏，false=未收藏）
+  // 如果操作成功，result 应该等于 isAdding
+  if (result === isAdding) {
+    // 操作成功
+    uni.showToast({
+      title: isAdding ? '收藏成功' : '已取消收藏',
+      icon: 'success'
+    })
+  } else {
+    // 操作失败（API 调用失败）
+    uni.showToast({
+      title: '操作失败，请检查网络后重试',
+      icon: 'none',
+      duration: 2000
+    })
+  }
 }
 
 const goBack = () => uni.navigateBack()
-const handleShare = () => {}
 const handleReadOriginal = () => {
   if (detail.value.source_url) {
     // 复制链接或打开浏览器
@@ -162,6 +178,27 @@ const handleReadOriginal = () => {
 
 onMounted(() => {
   loadDetail()
+  // 加载收藏列表以更新收藏状态
+  collectionStore.fetchCollections()
+})
+
+// 微信分享给朋友
+defineExpose({
+  onShareAppMessage: () => {
+    return {
+      title: detail.value.title || '精益副业案例',
+      path: `/pages/case-detail/index?id=${detail.value.id}`,
+      imageUrl: ''
+    }
+  },
+  // 微信分享到朋友圈
+  onShareTimeline: () => {
+    return {
+      title: detail.value.title || '精益副业案例',
+      query: `id=${detail.value.id}`,
+      imageUrl: ''
+    }
+  }
 })
 </script>
 

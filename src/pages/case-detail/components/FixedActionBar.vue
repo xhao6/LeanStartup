@@ -1,39 +1,19 @@
 <template>
   <view class="fixed-action-bar">
-    <button class="action-btn secondary" @click="onSaveImage">
-      <text class="btn-icon">⬇</text>
-      <text>存为图片</text>
-    </button>
-    <button class="action-btn secondary" @click="onShare">
+    <button class="action-btn secondary" open-type="share">
       <wd-icon name="share" size="16px" />
       <text>分享</text>
     </button>
     <button class="action-btn primary" @click="$emit('toggle-favorite')">
       <wd-icon :name="isFavorited ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
-      <text>收藏</text>
+      <text>{{ isFavorited ? '已收藏' : '收藏' }}</text>
     </button>
   </view>
 </template>
 
 <script setup lang="ts">
 defineProps<{ caseId: string; isFavorited: boolean }>()
-defineEmits<{ 'toggle-favorite': []; share:[] }>()
-const onShare = () => {
-  // 分享功能
-  uni.showActionSheet({
-    itemList: ['转发给朋友', '生成海报'],
-    success: (res) => {
-      if (res.tapIndex === 0) {
-        uni.share({ type: 0 })
-      } else if (res.tapIndex === 1) {
-        uni.showToast({ title: '海报生成中', icon: 'loading' })
-      }
-    }
-  })
-}
-const onSaveImage = () => {
-  uni.showToast({ title: '功能开发中', icon: 'none' })
-}
+defineEmits<{ 'toggle-favorite': [] }>()
 </script>
 
 <style lang="scss" scoped>
@@ -74,7 +54,7 @@ const onSaveImage = () => {
     border: 0.5rpx solid #E8E6E1;
   }
   &.primary {
-    flex: 1.2;
+    flex: 1;
     background: linear-gradient(135deg, #E94560, #FF6B8A);
     color: #FFFFFF;
     box-shadow: 0 2rpx 12rpx rgba(233, 69, 96, 0.2);

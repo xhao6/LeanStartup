@@ -6,7 +6,7 @@
     </view>
     <view class="score-dimensions">
       <view class="dim-item">
-        <text class="dim-label">落地可行性</text>
+        <text class="dim-label">落地可行</text>
         <view class="dim-track">
           <view class="dim-fill" :style="{ width: `${(caseData.score_feasibility / 3) * 100}%` }"></view>
         </view>
