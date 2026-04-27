@@ -310,7 +310,9 @@ const getRankClass = (rank: number) => {
   color: #1A1A2E;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   line-height: 1.4;
 }
 
