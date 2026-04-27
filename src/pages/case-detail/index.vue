@@ -143,7 +143,16 @@ const loadDetail = async () => {
 
 const toggleFavorite = async () => {
   const isAdding = !isFavorited.value
+
+  console.log('[收藏] 开始操作', {
+    caseId: detail.value.id,
+    isAdding,
+    isFavorited: isFavorited.value
+  })
+
   const result = await collectionStore.toggle(detail.value.id)
+
+  console.log('[收藏] 操作结果', { result, isAdding })
 
   // result 返回的是操作后的状态（true=已收藏，false=未收藏）
   // 如果操作成功，result 应该等于 isAdding
@@ -155,6 +164,11 @@ const toggleFavorite = async () => {
     })
   } else {
     // 操作失败（API 调用失败）
+    console.error('[收藏] 操作失败', {
+      result,
+      isAdding,
+      expected: isAdding ? 'should return true' : 'should return false'
+    })
     uni.showToast({
       title: '操作失败，请检查网络后重试',
       icon: 'none',

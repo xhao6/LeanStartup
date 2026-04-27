@@ -1,137 +1,141 @@
-// cloudfunctions/subscription/index.js
-const { getOpenid } = require('./utils/auth')
-const { collection } = require('./utils/db')
-const { success, error } = require('./utils/response')
+const cloud = require('wx-server-sdk')
+
+// 初始化 CloudBase
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
+
+const db = cloud.database()
 
 /**
- * 云函数入口 - 路由分发
+ * 订阅管理云函数
+ *
+ * @param {object} event
+ * @param {string} event.action - 操作类型: subscribe / unsubscribe / getStatus
+ * @param {string} [event.template_id] - 模板ID (subscribe 时需要)
+ * @returns {object} { success: boolean, data?: object, error?: string }
  */
-exports.main = async function (event, context) {
-  try {
-    const openid = getOpenid(context)
-    const { action } = event
+exports.main = async (event, context) => {
+  const { action, template_id } = event
 
-    const deps = {
-      collection,
-      openid
+  console.log('[subscription] 收到请求', { action, template_id })
+
+  // 获取用户 OPENID（wx-server-sdk 自动处理）
+  // 微信小程序规范使用 _openid 字段（带下划线前缀）
+  const wxContext = cloud.getWXContext()
+  const _openid = wxContext.OPENID
+
+  console.log('[subscription] 用户身份', { _openid, wxContext: Object.keys(wxContext) })
+
+  if (!_openid) {
+    return {
+      success: false,
+      error: '无法获取用户身份，请重新登录',
+      code: 'UNAUTHORIZED'
     }
+  }
+
+  try {
+    const PushSubscription = db.collection('PushSubscription')
 
     switch (action) {
       case 'subscribe':
-        return await doSubscribe(event, deps)
+        if (!template_id) {
+          return {
+            success: false,
+            error: 'template_id 为必填',
+            code: 'INVALID_INPUT'
+          }
+        }
+
+        // 检查是否已订阅
+        const { data: existing } = await PushSubscription.where({ _openid }).get()
+
+        if (existing && existing.length > 0) {
+          // 已订阅，返回成功但提示已订阅
+          console.log('[subscription] 已订阅', { _openid })
+          return {
+            success: true,
+            data: {
+              isSubscribed: true,
+              alreadySubscribed: true,
+              message: '已订阅每日提醒'
+            }
+          }
+        }
+
+        // 新增订阅记录
+        await PushSubscription.add({
+          _openid,
+          template_id,
+          subscribed_at: new Date().toISOString()
+        })
+
+        console.log('[subscription] 订阅成功', { _openid, template_id })
+        return {
+          success: true,
+          data: {
+            isSubscribed: true,
+            alreadySubscribed: false,
+            message: '订阅成功'
+          }
+        }
+
       case 'unsubscribe':
-        return await doUnsubscribe(event, deps)
+        // 检查是否有订阅记录
+        const { data: subs } = await PushSubscription.where({ _openid }).get()
+
+        if (!subs || subs.length === 0) {
+          // 未订阅，返回成功
+          console.log('[subscription] 未订阅，无需取消', { _openid })
+          return {
+            success: true,
+            data: {
+              isSubscribed: false,
+              message: '未订阅'
+            }
+          }
+        }
+
+        // 删除所有该 openid 的订阅记录
+        for (const record of subs) {
+          await PushSubscription.doc(record._id).remove()
+        }
+
+        console.log('[subscription] 取消订阅成功', { _openid })
+        return {
+          success: true,
+          data: {
+            isSubscribed: false,
+            message: '已取消订阅'
+          }
+        }
+
       case 'getStatus':
-        return await doGetStatus(event, deps)
+        const { data: statusData } = await PushSubscription.where({ _openid }).get()
+
+        const isSubscribed = statusData && statusData.length > 0
+
+        console.log('[subscription] 查询状态', { _openid, isSubscribed })
+        return {
+          success: true,
+          data: {
+            isSubscribed
+          }
+        }
+
       default:
-        return error('无效的 action 参数', 'INVALID_INPUT')
+        return {
+          success: false,
+          error: '无效的 action 参数',
+          code: 'INVALID_INPUT'
+        }
     }
-  } catch (e) {
-    if (e.code === 'UNAUTHORIZED') {
-      return error(e.message, e.code)
+
+  } catch (err) {
+    console.error('[subscription] 操作失败', err)
+    return {
+      success: false,
+      error: err.message || '网络异常，请稍后重试',
+      code: 'OPERATION_FAILED'
     }
-    return error(e.message || String(e), 'INTERNAL_ERROR')
   }
 }
-
-async function doSubscribe(event, deps) {
-  const { collection: col, openid } = deps
-  const { template_id } = event
-
-  if (!template_id) {
-    return error('template_id 为必填', 'INVALID_INPUT')
-  }
-
-  try {
-    // 检查是否已订阅
-    const { data: existing } = await col('PushSubscription').where({ openid }).get()
-
-    if (existing && existing.length > 0) {
-      // 已订阅，返回成功但提示已订阅
-      return success({
-        isSubscribed: true,
-        alreadySubscribed: true,
-        message: '已订阅每日提醒'
-      })
-    }
-
-    // 新增订阅记录
-    await col('PushSubscription').add({
-      openid,
-      template_id,
-      subscribed_at: new Date().toISOString()
-    })
-
-    return success({
-      isSubscribed: true,
-      alreadySubscribed: false,
-      message: '订阅成功'
-    })
-  } catch (e) {
-    return error(e.message, 'INTERNAL_ERROR')
-  }
-}
-
-/**
- * unsubscribe 核心逻辑
- *
- * @param {object} event
- * @param {string} event.action - 'unsubscribe'
- * @param {object} deps - { collection, openid }
- */
-async function doUnsubscribe(event, deps) {
-  const { collection: col, openid } = deps
-
-  try {
-    // 检查是否有订阅记录
-    const { data: existing } = await col('PushSubscription').where({ openid }).get()
-
-    if (!existing || existing.length === 0) {
-      // 未订阅，返回成功
-      return success({
-        isSubscribed: false,
-        message: '未订阅'
-      })
-    }
-
-    // 删除所有该 openid 的订阅记录
-    for (const record of existing) {
-      await col('PushSubscription').doc(record._id).remove()
-    }
-
-    return success({
-      isSubscribed: false,
-      message: '已取消订阅'
-    })
-  } catch (e) {
-    return error(e.message, 'INTERNAL_ERROR')
-  }
-}
-
-/**
- * getStatus 核心逻辑
- *
- * @param {object} event
- * @param {string} event.action - 'getStatus'
- * @param {object} deps - { collection, openid }
- */
-async function doGetStatus(event, deps) {
-  const { collection: col, openid } = deps
-
-  try {
-    const { data: existing } = await col('PushSubscription').where({ openid }).get()
-
-    const isSubscribed = existing && existing.length > 0
-
-    return success({
-      isSubscribed
-    })
-  } catch (e) {
-    return error(e.message, 'INTERNAL_ERROR')
-  }
-}
-
-// Export functions for testing
-exports.doSubscribe = doSubscribe
-exports.doUnsubscribe = doUnsubscribe
-exports.doGetStatus = doGetStatus

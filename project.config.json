@@ -21,6 +21,15 @@
     "include": []
   },
   "cloudfunctionRoot": "cloudfunctions/",
+  "cloudbaseRoot": "./",
   "appid": "wxc65f29000694748f",
-  "editorSetting": {}
+  "editorSetting": {},
+  "cloudbase": {
+    "envList": [
+      {
+        "envId": "lean-startup-d2gkuop3af0aed5c0",
+        "alias": "lean-startup"
+      }
+    ]
+  }
 }

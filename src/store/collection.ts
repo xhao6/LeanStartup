@@ -30,7 +30,23 @@ export const useCollectionStore = defineStore('collection', () => {
   const toggle = async (caseId: string, progress?: Record<string, boolean>): Promise<boolean> => {
     const isCollected = collections.value.includes(caseId)
     const action = isCollected ? 'uncollect' : 'collect'
+
+    console.log('[Collection Store] toggle 开始', {
+      caseId,
+      isCollected,
+      action,
+      progress,
+      collections: collections.value
+    })
+
     const res = await apiToggleCollection({ case_id: caseId, action, progress })
+
+    console.log('[Collection Store] API 返回', {
+      success: res.success,
+      data: res.data,
+      error: res.error
+    })
+
     if (res.success) {
       if (!isCollected) {
         collections.value.push(caseId)
@@ -39,8 +55,11 @@ export const useCollectionStore = defineStore('collection', () => {
         collections.value = collections.value.filter(id => id !== caseId)
         delete collectionMap.value[caseId]
       }
+      console.log('[Collection Store] 操作成功，返回', !isCollected)
       return !isCollected
     }
+
+    console.error('[Collection Store] 操作失败，返回原状态', isCollected, '错误:', res.error)
     return isCollected
   }
 
