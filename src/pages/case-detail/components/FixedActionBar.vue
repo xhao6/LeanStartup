@@ -56,11 +56,11 @@ const onSaveImage = () => {
 }
 .action-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
-  height: 88rpx;
+  gap: 6rpx;
+  height: 72rpx;
   border-radius: 999rpx;
   font-size: 24rpx;
   font-weight: 500;
@@ -71,14 +71,13 @@ const onSaveImage = () => {
     flex: 1;
     background: #FAFAF8;
     color: #1A1A2E;
-    border: 1.5rpx solid #E8E6E1;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+    border: 0.5rpx solid #E8E6E1;
   }
   &.primary {
     flex: 1.2;
     background: linear-gradient(135deg, #E94560, #FF6B8A);
     color: #FFFFFF;
-    box-shadow: 0 4rpx 16rpx rgba(233, 69, 96, 0.25);
+    box-shadow: 0 2rpx 12rpx rgba(233, 69, 96, 0.2);
   }
   &:active {
     transform: scale(0.98);

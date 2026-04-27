@@ -20,7 +20,7 @@
         <text class="dim-value">{{ caseData.score_profit }}/2</text>
       </view>
       <view class="dim-item">
-        <text class="dim-label">时效性</text>
+        <text class="dim-label">时间时效</text>
         <view class="dim-track">
           <view class="dim-fill" :style="{ width: `${(caseData.score_timeliness / 2) * 100}%` }"></view>
         </view>
@@ -34,7 +34,7 @@
         <text class="dim-value">{{ caseData.score_detail }}/2</text>
       </view>
       <view class="dim-item">
-        <text class="dim-label">用户适配度</text>
+        <text class="dim-label">人群适配</text>
         <view class="dim-track">
           <view class="dim-fill" :style="{ width: `${(caseData.score_fitness / 1) * 100}%` }"></view>
         </view>

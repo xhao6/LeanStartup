@@ -16,8 +16,8 @@ defineProps<{ content?: string }>()
 
 <style lang="scss" scoped>
 .story-section {
-  background: #FAFAF8;
-  border: 1rpx solid #E8E6E1;
+  background: #FFF5F7;
+  border: 1rpx solid #FADADD;
   border-radius: 24rpx;
   padding: 24rpx;
   margin: 0 32rpx;

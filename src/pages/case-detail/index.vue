@@ -37,9 +37,7 @@
         </text>
         <view class="source-link" @click="handleReadOriginal">
           <text class="link-text">阅读原文</text>
-          <svg class="link-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M6 12.796c.735.064 1.48 1.107 2.234l.648.063c.46.046.063.928.127 1.396.195.468.063.94.143 1.414.232 2.124.232.232 0 0 1 .063-.647l.647-.647c.046-.063.093-.127.14-.195.046-.063.093-.127.14-.195-.063-.463-.127-.695-.232-.045-.14-.088-.372-.127-.695-.046-.064-.093-.127-.14-.195-.046-.463-.093-.695-.232-.045-.14-.088-.372-.127-.695C9.976 9.71 9 8.94 9 8c0-.957.023-1.894.093-2.796.195-.232.463-.14.928.127-1.396.318a.5.5 0 0 1 .5-.5c0-.557.287-1.08.543-1.543.518-.548.97-1.033 1.396-1.396.463-.064.928-.127 1.396-.195.468-.063.94-.143 1.414-.232 2.124-.232.232 0 0 1 .063-.647l.647-.647c.046-.063.093-.127.14-.195.046-.063.093-.127.14-.195.063-.463-.127-.695-.232-.045-.14-.088-.372-.127-.695-.046-.064-.093-.127-.14-.195-.063-.463-.093-.695-.232-.045-.14-.088-.372-.127-.695C9.976 9.71 9 8.94 9 8c0-.957.023-1.894.093-2.796.195Zm3.906 2.032a.5.5 0 0 1 0 .707-.707L12 11l1.414 1.414-2.393 2.393a.5.5 0 0 1 0-.707-.707l1.647-1.646a.5.5 0 0 1 .708 0Z"/>
-          </svg>
+          <text class="link-arrow">→</text>
         </view>
       </view>
 
@@ -129,10 +127,11 @@ const loadDetail = async () => {
     const res = await getCaseDetail(id)
     if (res.success && res.data) {
       const data = res.data.case || res.data
-      // 兼容处理：case_story -> story
+      // 兼容处理：case_story -> story, tool -> tools
       detail.value = {
         ...data,
-        story: data.story || data.case_story || ''
+        story: data.story || data.case_story || '',
+        tools: data.tools || data.tool || data.resources || []
       }
     } else {
       error.value = true
@@ -183,7 +182,7 @@ onMounted(() => {
   align-items: center;
   padding: 0 32rpx;
   height: 96rpx;
-  padding-top: env(safe-area-inset-top);
+  padding-top: calc(env(safe-area-inset-top) + 8rpx);
   background: #FFFFFF;
   border-bottom: 1rpx solid #E8E6E1;
 }
