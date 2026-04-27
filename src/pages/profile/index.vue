@@ -169,7 +169,7 @@ const handleLogout = () => {
 }
 
 const goToFavorites = () => {
-  uni.navigateTo({ url: '/pages/profile/favorites/index' })
+  uni.switchTab({ url: '/pages/profile/favorites/index' })
 }
 
 const goToSubscription = () => {
