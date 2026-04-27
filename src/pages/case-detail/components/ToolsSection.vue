@@ -15,7 +15,6 @@ defineProps<{ tools: { name: string; desc: string }[] }>()
 
 <style lang="scss" scoped>
 .tools-section {
-  padding: 0 32rpx;
 }
 .tools-grid {
   display: grid;

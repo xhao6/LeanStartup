@@ -54,7 +54,6 @@ const props = defineProps<{ caseData: any }>()
   border: 1rpx solid #E8E6E1;
   border-radius: 24rpx;
   padding: 24rpx;
-  margin: 0 32rpx;
   display: flex;
   gap: 24rpx;
   align-items: center;

@@ -48,7 +48,6 @@ defineProps<{ caseData: any }>()
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16rpx;
-  padding: 0 32rpx;
 }
 .info-item {
   background: #FFFFFF;

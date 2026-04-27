@@ -20,7 +20,6 @@ defineProps<{ content: string }>()
   border: 1rpx solid #FFE0B2;
   border-radius: 12rpx;
   padding: 20rpx;
-  margin: 0 32rpx;
 }
 .warning-header {
   display: flex;

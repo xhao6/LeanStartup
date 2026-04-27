@@ -20,7 +20,6 @@ defineProps<{ content?: string }>()
   border: 1rpx solid #FADADD;
   border-radius: 24rpx;
   padding: 24rpx;
-  margin: 0 32rpx;
 }
 .story-header {
   display: flex;

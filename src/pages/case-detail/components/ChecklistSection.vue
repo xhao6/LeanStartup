@@ -73,7 +73,6 @@ onMounted(() => {
   border: 1rpx solid #E8E6E1;
   border-radius: 24rpx;
   padding: 24rpx;
-  margin: 0 32rpx;
 }
 .section-header {
   display: flex;

@@ -37,7 +37,6 @@
         </text>
         <view class="source-link" @click="handleReadOriginal">
           <text class="link-text">阅读原文</text>
-          <text class="link-arrow">→</text>
         </view>
       </view>
 
@@ -182,7 +181,7 @@ onMounted(() => {
   align-items: center;
   padding: 0 32rpx;
   height: 96rpx;
-  padding-top: calc(env(safe-area-inset-top) + 8rpx);
+  padding-top: calc(env(safe-area-inset-top) + 44rpx);
   background: #FFFFFF;
   border-bottom: 1rpx solid #E8E6E1;
 }
@@ -270,22 +269,20 @@ onMounted(() => {
 .source-link {
   display: flex;
   align-items: center;
-  gap: 4rpx;
-  transition: opacity 150ms ease-out;
+  padding: 8rpx 20rpx;
+  background: #FFFFFF;
+  border: 1rpx solid #E8E6E1;
+  border-radius: 999rpx;
+  transition: all 150ms ease-out;
   &:active {
     opacity: 0.7;
+    transform: scale(0.98);
   }
 }
 .link-text {
   font-size: 24rpx;
   color: #1A1A2E;
   font-weight: 500;
-}
-.link-arrow {
-  width: 20rpx;
-  height: 20rpx;
-  color: #E94560;
-  flex-shrink: 0;
 }
 .tag-list {
   display: flex;
