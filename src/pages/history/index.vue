@@ -139,7 +139,7 @@ const getCaseDisplay = (caseId: string): string => {
   if (!caseItem) return '加载中...'
   const title = caseItem.title || '未知案例'
   // 如果有评分，显示 "案例名 (评分分)"
-  if (caseItem.score_total) {
+  if (caseItem.score_total != null) {
     return `${title} (${caseItem.score_total}分)`
   }
   return title
