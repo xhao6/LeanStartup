@@ -40,7 +40,13 @@ const onToggleFavorite = async () => {
     completed_count: Object.values(props.detail?.progress || {}).filter(Boolean).length
   }
 
-  const result = await toggleFavorite(props.caseId, item)
+  try {
+    const result = await toggleFavorite(props.caseId, item)
+    emit('toggle-favorite', result)
+  } catch (e) {
+    console.error('[FixedActionBar] 收藏操作失败', e)
+    uni.showToast({ title: '操作失败，请检查网络后重试', icon: 'none', duration: 2000 })
+  }
 }
 </script>
 
@@ -91,9 +97,5 @@ const onToggleFavorite = async () => {
     transform: scale(0.98);
     opacity: 0.9;
   }
-}
-.btn-icon {
-  width: 20rpx;
-  height: 20rpx;
 }
 </style>
