@@ -47,7 +47,10 @@ exports.main = async (event, context) => {
         }
 
         // 检查是否已订阅
-        const { data: existing } = await PushSubscription.where({ _openid }).get()
+        const { data: existing } = await PushSubscription
+          .where({ _openid })
+          .field({ _id: true, template_id: true })
+          .get()
 
         if (existing && existing.length > 0) {
           // 已订阅，返回成功但提示已订阅
@@ -81,7 +84,10 @@ exports.main = async (event, context) => {
 
       case 'unsubscribe':
         // 检查是否有订阅记录
-        const { data: subs } = await PushSubscription.where({ _openid }).get()
+        const { data: subs } = await PushSubscription
+          .where({ _openid })
+          .field({ _id: true })
+          .get()
 
         if (!subs || subs.length === 0) {
           // 未订阅，返回成功
@@ -110,7 +116,10 @@ exports.main = async (event, context) => {
         }
 
       case 'getStatus':
-        const { data: statusData } = await PushSubscription.where({ _openid }).get()
+        const { data: statusData } = await PushSubscription
+          .where({ _openid })
+          .field({ _id: true })
+          .get()
 
         const isSubscribed = statusData && statusData.length > 0
 
