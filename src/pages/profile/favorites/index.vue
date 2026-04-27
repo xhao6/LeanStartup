@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { getFavorites, removeFavorite, toggleFavorite } from '@/utils/favorites'
+import { getFavorites, toggleFavorite } from '@/utils/favorites'
 import { getTagClass } from '@/composables/useTagColors'
 import type { FavoriteItem } from '@/types/favorites'
 
@@ -83,10 +83,15 @@ const handleRemove = async (id: string) => {
       if (res.confirm) {
         const item = favoritesList.value.find(f => f.id === id)
         if (item) {
-          await toggleFavorite(id, item)
+          const { id: _, addedAt: __, lastModifiedAt: ___, ...rest } = item
+          try {
+            await toggleFavorite(id, rest)
+            favoritesList.value = getFavorites()
+            uni.showToast({ title: '已取消收藏', icon: 'none' })
+          } catch (e) {
+            uni.showToast({ title: '操作失败', icon: 'none' })
+          }
         }
-        favoritesList.value = getFavorites()
-        uni.showToast({ title: '已取消收藏', icon: 'none' })
       }
     }
   })
