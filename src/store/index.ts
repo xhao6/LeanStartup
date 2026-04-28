@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
           avatar: data.avatar,
           level: data.level,
           exp: data.exp,
-          viewedRankingsCount: data.viewedRankingsCount
+          viewedRankingsCount: Math.max(data.viewedRankingsCount || 0, userInfo.value?.viewedRankingsCount || 0)
         }
       }
       return response
