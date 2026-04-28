@@ -5,14 +5,14 @@
       <text>分享</text>
     </button>
     <button class="action-btn primary" @click="onToggleFavorite">
-      <wd-icon :name="isFavoritedComputed ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
-      <text>{{ isFavoritedComputed ? '已收藏' : '收藏' }}</text>
+      <wd-icon :name="isFavoritedLocal ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
+      <text>{{ isFavoritedLocal ? '已收藏' : '收藏' }}</text>
     </button>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, watch } from 'vue'
 import { toggleFavorite, isFavorited } from '@/utils/favorites'
 
 const props = defineProps<{
@@ -22,7 +22,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'toggle-favorite': [boolean] }>()
 
-const isFavoritedComputed = computed(() => isFavorited(props.caseId))
+// 本地响应式状态，确保按钮状态立即更新
+const isFavoritedLocal = ref(isFavorited(props.caseId))
+
+// 监听 caseId 变化，重新初始化状态
+watch(() => props.caseId, (newId) => {
+  isFavoritedLocal.value = isFavorited(newId)
+}, { immediate: true })
 
 const onToggleFavorite = async () => {
   if (!props.detail) return
@@ -42,6 +48,8 @@ const onToggleFavorite = async () => {
 
   try {
     const result = await toggleFavorite(props.caseId, item)
+    // 立即更新本地状态，确保按钮状态同步变化
+    isFavoritedLocal.value = result
     emit('toggle-favorite', result)
   } catch (e) {
     console.error('[FixedActionBar] 收藏操作失败', e)

@@ -154,32 +154,13 @@ const loadDetail = async () => {
   }
 }
 
-const toggleFavorite = async () => {
-  const isAdding = !isFavoritedState.value
-
-  const result = await collectionStore.toggle(detail.value.id)
-
-  // result 返回的是操作后的状态（true=已收藏，false=未收藏）
-  // 如果操作成功，result 应该等于 isAdding
-  if (result === isAdding) {
-    // 操作成功
-    uni.showToast({
-      title: isAdding ? '收藏成功' : '已取消收藏',
-      icon: 'success'
-    })
-  } else {
-    // 操作失败（API 调用失败）
-    console.error('[收藏] 操作失败', {
-      result,
-      isAdding,
-      expected: isAdding ? 'should return true' : 'should return false'
-    })
-    uni.showToast({
-      title: '操作失败，请检查网络后重试',
-      icon: 'none',
-      duration: 2000
-    })
-  }
+const toggleFavorite = async (result: boolean) => {
+  // result 是操作后的状态（true=已收藏，false=未收藏）
+  // FixedActionBar 已完成实际的收藏操作，这里只显示提示
+  uni.showToast({
+    title: result ? '收藏成功' : '已取消收藏',
+    icon: 'success'
+  })
 }
 
 const goBack = () => uni.navigateBack()
