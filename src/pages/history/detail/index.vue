@@ -34,9 +34,11 @@ import { ref, computed, onMounted } from 'vue'
 import CaseCard from '@/components/case-card/index.vue'
 import { getDailyPick } from '@/api/modules/daily'
 import type { DailyCase } from '@/api/modules/daily'
+import { useUserStore } from '@/store'
 
 const loading = ref(true)
 const cases = ref<DailyCase[]>([])
+const userStore = useUserStore()
 const date = ref<string>('')
 
 // 从 URL 参数获取日期
@@ -76,6 +78,9 @@ const navigateToDetail = (id: string) => {
 onMounted(() => {
   initDate()
   loadData()
+  if (date.value) {
+    userStore.recordRankingView(date.value)
+  }
 })
 </script>
 
