@@ -111,6 +111,39 @@ export const useCaseStore = defineStore('case', () => {
         historyPage.value = res.data.page || page
         historyPageSize.value = res.data.pageSize || pageSize
         historyTotal.value = res.data.total || 0
+
+        // 加载历史案例详情到 casesMap
+        const newCaseIds = new Set<string>()
+        for (const item of res.data.list) {
+          for (const caseId of item.case_ids || []) {
+            // 只加载尚未缓存的案例
+            if (!casesMap.value[caseId]) {
+              newCaseIds.add(caseId)
+            }
+          }
+        }
+
+        // 批量加载案例详情（并发，但控制并发数）
+        if (newCaseIds.size > 0) {
+          const caseIds = Array.from(newCaseIds)
+          // 分批加载，每批3个，避免过快请求
+          for (let i = 0; i < caseIds.length; i += 3) {
+            const batch = caseIds.slice(i, i + 3)
+            await Promise.all(
+              batch.map(async (caseId) => {
+                try {
+                  const caseRes = await getCaseDetail(caseId)
+                  if (caseRes.success && caseRes.data) {
+                    casesMap.value[caseId] = caseRes.data
+                  }
+                } catch (err) {
+                  console.warn(`Failed to fetch case ${caseId}:`, err)
+                }
+              })
+            )
+          }
+          saveCaseCache()
+        }
       }
     } finally {
       historyLoading.value = false
