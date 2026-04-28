@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { login as apiLogin, getProfile as apiGetProfile, updateProfile as apiUpdateProfile } from '@/api/modules/user'
+import { login as apiLogin, getProfile as apiGetProfile, updateProfile as apiUpdateProfile, viewRanking as apiViewRanking } from '@/api/modules/user'
 
 interface WeChatUserInfo {
   nickName?: string
@@ -20,12 +20,7 @@ interface SuccessResponse {
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref<{ id: string; name?: string; avatar?: string; level?: number; exp?: number; viewedRankingsCount?: number } | null>(null)
   const isLoggedIn = computed(() => userInfo.value !== null)
-  const viewedCount = ref(0)
-  const favoritesCount = ref(0)
-
   const setUser = (info: typeof userInfo.value) => { userInfo.value = info }
-  const incrementViewed = () => viewedCount.value++
-  const setFavoritesCount = (n: number) => favoritesCount.value = n
   const logout = () => { userInfo.value = null }
 
   /**
@@ -111,17 +106,28 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const recordRankingView = async (date: string) => {
+    if (!isLoggedIn.value) return
+    try {
+      const res = await apiViewRanking(date)
+      if (res.success && res.data && typeof res.data.count === 'number') {
+        if (userInfo.value) {
+          userInfo.value.viewedRankingsCount = res.data.count
+        }
+      }
+    } catch (e) {
+      console.warn('[recordRankingView] Failed:', e)
+    }
+  }
+
   return {
     userInfo,
     isLoggedIn,
-    viewedCount,
-    favoritesCount,
     setUser,
-    incrementViewed,
-    setFavoritesCount,
     logout,
     fetchProfile,
     login,
-    updateUserInfo
+    updateUserInfo,
+    recordRankingView
   }
 })
