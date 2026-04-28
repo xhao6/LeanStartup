@@ -71,7 +71,7 @@ export const toggleFavorite = async (id: string, item: Omit<FavoriteItem, 'id' |
     toggleCollection({ case_id: id, action: 'uncollect' }).catch(e => console.warn('[favorites] 云端移除失败', e))
     return false
   } else {
-    addFavorite({ ...item, id })
+    addFavorite({ ...item, id, addedAt: Date.now(), lastModifiedAt: Date.now() })
     toggleCollection({ case_id: id, action: 'collect', progress: item.progress }).catch(e => console.warn('[favorites] 云端添加失败', e))
     return true
   }

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { login as apiLogin, getProfile, updateProfile } from '@/api/modules/user'
 
 export const useUserStore = defineStore('user', () => {
-  const userInfo = ref<{ id: string; name?: string; avatar?: string } | null>(null)
+  const userInfo = ref<{ id: string; name?: string; avatar?: string; viewedRankingsCount?: number } | null>(null)
   const isLoggedIn = ref(false)
   const viewedCount = ref(0)
   const favoritesCount = ref(0)

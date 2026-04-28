@@ -145,7 +145,7 @@ const { userInfo, isLoggedIn } = storeToRefs(userStore)
 
 // 收藏数量
 const favoritesCount = ref(getFavoritesCount())
-const viewedCount = computed(() => userInfo.value.viewedRankingsCount || 0)
+const viewedCount = computed(() => userInfo.value?.viewedRankingsCount || 0)
 
 onShow(() => {
   // 每次页面显示时刷新收藏数量

@@ -38,7 +38,10 @@ export function useBackButtonRedirect(targetPagePath: string = '/pages/index/ind
 
   // CRITICAL FIX: Clean up on unmount to prevent memory leak
   onUnmounted(() => {
-    removeBackPressListener?.()
+    // Verify cleanup function exists before calling
+    if (typeof removeBackPressListener === 'function') {
+      removeBackPressListener()
+    }
   })
 
   // Return cleanup function for manual removal if needed
