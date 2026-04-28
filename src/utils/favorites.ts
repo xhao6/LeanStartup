@@ -1,8 +1,25 @@
 // src/utils/favorites.ts
-import type { FavoriteItem } from '@/types/favorites'
+import type { FavoriteItem, CloudFavoriteItem } from '@/types/favorites'
 import { toggleCollection } from '@/api/modules/collection'
+import { reactive, shallowRef } from 'vue'
 
 const STORAGE_KEY = 'favorites'
+
+// 响应式收藏状态追踪器
+const favoriteIds = shallowRef<Set<string>>(new Set())
+const favoritesVersion = reactive({ value: 0 })
+
+// 初始化加载收藏 ID
+const loadFavoriteIds = () => {
+  const list = getFavorites()
+  favoriteIds.value = new Set(list.map(item => item.id))
+}
+
+// 触发收藏状态更新
+export const refreshFavoriteStatus = () => {
+  loadFavoriteIds()
+  favoritesVersion.value++
+}
 
 // 获取收藏列表
 export const getFavorites = (): FavoriteItem[] => {
@@ -30,6 +47,7 @@ export const addFavorite = (item: FavoriteItem): boolean => {
   if (favorites.some(f => f.id === item.id)) return false
   favorites.unshift({ ...item, addedAt: Date.now(), lastModifiedAt: Date.now() })
   saveFavorites(favorites)
+  refreshFavoriteStatus()
   return true
 }
 
@@ -40,6 +58,7 @@ export const removeFavorite = (id: string): boolean => {
   if (idx === -1) return false
   favorites.splice(idx, 1)
   saveFavorites(favorites)
+  refreshFavoriteStatus()
   return true
 }
 
@@ -52,7 +71,7 @@ export const toggleFavorite = async (id: string, item: Omit<FavoriteItem, 'id' |
     toggleCollection({ case_id: id, action: 'uncollect' }).catch(e => console.warn('[favorites] 云端移除失败', e))
     return false
   } else {
-    addFavorite({ ...item, id })
+    addFavorite({ ...item, id, addedAt: Date.now(), lastModifiedAt: Date.now() })
     toggleCollection({ case_id: id, action: 'collect', progress: item.progress }).catch(e => console.warn('[favorites] 云端添加失败', e))
     return true
   }
@@ -60,7 +79,9 @@ export const toggleFavorite = async (id: string, item: Omit<FavoriteItem, 'id' |
 
 // 是否已收藏
 export const isFavorited = (id: string): boolean => {
-  return getFavorites().some(f => f.id === id)
+  // 访问 favoritesVersion 以追踪依赖
+  void favoritesVersion.value
+  return favoriteIds.value.has(id)
 }
 
 // 获取单个收藏
@@ -75,10 +96,72 @@ export const updateFavorite = (id: string, updates: Partial<FavoriteItem>): bool
   if (idx === -1) return false
   favorites[idx] = { ...favorites[idx], ...updates, lastModifiedAt: Date.now() }
   saveFavorites(favorites)
+  refreshFavoriteStatus()
   return true
+}
+
+// 获取收藏数量（过滤掉没有标题的无效收藏）
+export const getFavoritesCount = (): number => {
+  return getFavorites().filter(item => item.title).length
 }
 
 // 清空所有收藏（仅本地）
 export const clearFavorites = (): void => {
   saveFavorites([])
+  refreshFavoriteStatus()
+}
+
+// 初始化（在模块加载时执行）
+if (typeof uni !== 'undefined') {
+  loadFavoriteIds()
+}
+
+// 从云端同步收藏数据
+// 云端返回完整数据（包括 title, desc, url, image, tags）
+// 合并云端和本地数据（取并集），使用时间戳比较解决冲突
+export const syncFavorites = (cloudData: CloudFavoriteItem[]): void => {
+  const localFavorites = getFavorites()
+  const cloudMap = new Map(cloudData.map(item => [item.resourceId, item]))
+  const localMap = new Map(localFavorites.map(item => [item.id, item]))
+
+  const merged: FavoriteItem[] = []
+
+  // 1. 本地独有的收藏（云端没有的）：直接添加
+  localFavorites.forEach(item => {
+    if (!cloudMap.has(item.id)) {
+      merged.push(item)
+    }
+  })
+
+  // 2. 云端数据：与本地比较，保留较新的（时间戳比较）
+  cloudData.forEach(item => {
+    const local = localMap.get(item.resourceId)
+    const cloudTime = item.createdAt ? new Date(item.createdAt).getTime() : 0
+    const localTime = local?.lastModifiedAt || local?.addedAt || 0
+
+    if (!local || cloudTime > localTime) {
+      // 云端更新或本地不存在，使用云端数据
+      merged.push({
+        id: item.resourceId,
+        title: item.title || '',
+        desc: item.desc || '',
+        tags: item.tags || [],
+        score_total: item.score_total || 0,
+        url: item.url,
+        image: item.image,
+        addedAt: cloudTime || Date.now(),
+        lastModifiedAt: cloudTime || Date.now()
+      })
+    } else {
+      // 本地更新，使用本地数据
+      merged.push(local)
+    }
+  })
+
+  // 3. 按添加时间排序（新的在前）
+  merged.sort((a, b) => b.addedAt - a.addedAt)
+
+  // 4. 保存合并结果
+  uni.setStorageSync(STORAGE_KEY, merged)
+  refreshFavoriteStatus()
 }
