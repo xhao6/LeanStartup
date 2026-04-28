@@ -1,7 +1,12 @@
 // src/utils/favorites.ts
 import type { FavoriteItem, CloudFavoriteItem } from '@/types/favorites'
 import { toggleCollection } from '@/api/modules/collection'
+import { login as loginApi } from '@/api/modules/user'
 import { reactive, shallowRef } from 'vue'
+import { useUserStore } from '@/store'
+
+// 静默登录状态追踪（避免重复登录）
+let isLoggingIn = false
 
 const STORAGE_KEY = 'favorites'
 
@@ -64,8 +69,34 @@ export const removeFavorite = (id: string): boolean => {
 
 // 切换收藏状态（本地优先，云端同步）
 export const toggleFavorite = async (id: string, item: Omit<FavoriteItem, 'id' | 'addedAt' | 'lastModifiedAt'>): Promise<boolean> => {
+  // 静默登录检查（仅在添加收藏时）
   const favorites = getFavorites()
   const isFav = favorites.some(f => f.id === id)
+
+  if (!isFav) {
+    // 添加收藏时检查登录状态
+    try {
+      const userStore = useUserStore()
+      if (!userStore.isLoggedIn && !isLoggingIn) {
+        isLoggingIn = true
+        try {
+          const loginResult = await loginApi()
+          if (loginResult.success) {
+            await userStore.login()
+            console.log('[favorites] 静默登录成功')
+          }
+        } catch (e) {
+          console.warn('[favorites] 静默登录失败:', e)
+        } finally {
+          isLoggingIn = false
+        }
+      }
+    } catch (e) {
+      // useUserStore 可能失败（如在非 Vue 环境），继续执行
+      console.warn('[favorites] 检查登录状态失败:', e)
+    }
+  }
+
   if (isFav) {
     removeFavorite(id)
     toggleCollection({ case_id: id, action: 'uncollect' }).catch(e => console.warn('[favorites] 云端移除失败', e))

@@ -82,11 +82,15 @@
 import { computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useSubscriptionStore } from '@/store/subscription'
+import { useUserStore } from '@/store'
+import { login as loginApi } from '@/api/modules/user'
 
 const subscriptionStore = useSubscriptionStore()
+const userStore = useUserStore()
 
 const isSubscribed = computed(() => subscriptionStore.isSubscribed)
 const loading = computed(() => subscriptionStore.loading)
+const isLoggedIn = computed(() => userStore.isLoggedIn)
 
 const statusDesc = computed(() => {
   return isSubscribed.value
@@ -103,6 +107,19 @@ onShow(async () => {
     }
   }
 })
+
+// 静默登录（用于未登录用户）
+const ensureLoggedIn = async () => {
+  try {
+    const result = await loginApi()
+    if (result.success) {
+      await userStore.login()
+    }
+  } catch (err) {
+    console.error('[SubscriptionPage] Silent login failed:', err)
+    throw new Error('登录失败，请稍后重试')
+  }
+}
 
 const handleSubscribe = async () => {
   const templateId = '4cTtUI36EsezKm-B17z7lNt8gvWDX_AYRVlXeuOh8Wo'
@@ -125,6 +142,11 @@ const handleSubscribe = async () => {
         }
       })
     })
+
+    // 确保用户已登录（静默登录）
+    if (!isLoggedIn.value) {
+      await ensureLoggedIn()
+    }
 
     await subscriptionStore.doSubscribe()
     if (subscriptionStore.isSubscribed) {

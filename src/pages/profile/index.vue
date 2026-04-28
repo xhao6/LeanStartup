@@ -59,48 +59,22 @@
 
     <!-- Menu List -->
     <view class="menu-section">
-      <wd-cell-group>
-        <wd-cell title="订阅管理" is-link @click="goToSubscription">
-          <template #icon>
-            <wd-icon name="setting" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="我的收藏" is-link @click="goToFavorites">
-          <template #icon>
-            <wd-icon name="star" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="转发给朋友" is-link @click="handleShare">
-          <template #icon>
-            <wd-icon name="share" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="联系客服" is-link open-type="contact">
-          <template #icon>
-            <wd-icon name="service" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="用户协议" is-link @click="goToAgreement">
-          <template #icon>
-            <wd-icon name="file" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="隐私政策" is-link @click="goToPrivacy">
-          <template #icon>
-            <wd-icon name="lock-on" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="清除缓存" is-link @click="handleClearCache">
-          <template #icon>
-            <wd-icon name="delete" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-        <wd-cell title="关于..." is-link @click="goToAbout">
-          <template #icon>
-            <wd-icon name="info-circle" custom-class="cell-icon" />
-          </template>
-        </wd-cell>
-      </wd-cell-group>
+      <view class="menu-card">
+        <wd-cell-group border>
+          <wd-cell title="订阅管理" is-link icon="setting" @click="goToSubscription" />
+          <wd-cell title="我的收藏" is-link icon="star" @click="goToFavorites" />
+          <button class="share-btn" open-type="share">
+            <wd-cell title="转发给朋友" is-link icon="share" />
+          </button>
+          <button class="contact-btn" open-type="contact">
+            <wd-cell title="联系客服" is-link icon="service" />
+          </button>
+          <wd-cell title="用户协议" is-link icon="file" @click="goToAgreement" />
+          <wd-cell title="隐私政策" is-link icon="lock-on" @click="goToPrivacy" />
+          <wd-cell title="清除缓存" is-link icon="delete" @click="handleClearCache" />
+          <wd-cell title="关于..." is-link icon="info-circle" @click="goToAbout" />
+        </wd-cell-group>
+      </view>
 
       <!-- 退出登录 -->
       <view v-if="isLoggedIn" class="logout-section">
@@ -398,9 +372,39 @@ const handleClearCache = () => {
   padding: 16px;
 }
 
-.cell-icon {
-  color: #9B9A97;
-  margin-right: 12px;
+.menu-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.share-btn {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+.share-btn::after {
+  border: none;
+}
+
+.contact-btn {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+.contact-btn::after {
+  border: none;
+}
+
+:deep(.wd-cell-group) {
+  background-color: transparent !important;
 }
 
 /* Logout */
