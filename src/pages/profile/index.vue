@@ -3,7 +3,9 @@
 {
   "layout": "tabbar",
   "style": {
-    "navigationBarTitleText": "我的"
+    "navigationBarTitleText": "我的",
+    "navigationBarBackgroundColor": "#1A1A2E",
+    "navigationBarTextStyle": "white"
   }
 }
 </route>
@@ -64,7 +66,7 @@
           <wd-cell title="订阅管理" is-link icon="setting" @click="goToSubscription" />
           <wd-cell title="我的收藏" is-link icon="star" @click="goToFavorites" />
           <button class="share-btn" open-type="share">
-            <wd-cell title="转发给朋友" is-link icon="share" />
+            <wd-cell title="转发朋友" is-link icon="share" />
           </button>
           <button class="contact-btn" open-type="contact">
             <wd-cell title="联系客服" is-link icon="service" />
@@ -240,7 +242,7 @@ const handleClearCache = () => {
 /* Header */
 .profile-header {
   background: #1A1A2E;
-  padding: 48px 32px 64px;
+  padding: 24px 32px 64px;
   position: relative;
   overflow: hidden;
 }

@@ -45,7 +45,8 @@
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "我的",
-        "navigationStyle": "custom"
+        "navigationBarBackgroundColor": "#1A1A2E",
+        "navigationBarTextStyle": "white"
       }
     },
     {
