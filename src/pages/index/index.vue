@@ -58,13 +58,16 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useCaseStore } from '@/store/case'
+import { useUserStore } from '@/store'
 import CaseCard from '@/components/case-card/index.vue'
 import SkeletonCard from '@/components/skeleton-card/index.vue'
 import SubscribeBanner from '@/components/subscribe-banner/index.vue'
 import type { DailyCase } from '@/api/modules/daily'
 
 const store = useCaseStore()
+const userStore = useUserStore()
 
 const loading = computed(() => store.loading)
 const todayCases = computed(() => store.todayCases)
@@ -78,6 +81,11 @@ const todayText = computed(() => {
 
 onMounted(async () => {
   await store.fetchTodayCases()
+})
+
+onShow(() => {
+  const today = new Date().toISOString().split('T')[0]
+  userStore.recordRankingView(today)
 })
 
 const handleCardClick = (caseItem: DailyCase) => {
