@@ -1,5 +1,6 @@
 // src/utils/favorites.ts
 import type { FavoriteItem } from '@/types/favorites'
+import { toggleCollection } from '@/api/modules/collection'
 
 const STORAGE_KEY = 'favorites'
 
@@ -48,14 +49,10 @@ export const toggleFavorite = async (id: string, item: Omit<FavoriteItem, 'id' |
   const isFav = favorites.some(f => f.id === id)
   if (isFav) {
     removeFavorite(id)
-    // 云端取消
-    const { toggleCollection } = await import('@/api/modules/collection')
     toggleCollection({ case_id: id, action: 'uncollect' }).catch(e => console.warn('[favorites] 云端移除失败', e))
     return false
   } else {
     addFavorite({ ...item, id })
-    // 云端添加
-    const { toggleCollection } = await import('@/api/modules/collection')
     toggleCollection({ case_id: id, action: 'collect', progress: item.progress }).catch(e => console.warn('[favorites] 云端添加失败', e))
     return true
   }

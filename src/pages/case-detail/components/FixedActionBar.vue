@@ -20,7 +20,7 @@ const props = defineProps<{
   detail?: any
 }>()
 
-defineEmits<{ 'toggle-favorite': [boolean] }>()
+const emit = defineEmits<{ 'toggle-favorite': [boolean] }>()
 
 const isFavoritedComputed = computed(() => isFavorited(props.caseId))
 
