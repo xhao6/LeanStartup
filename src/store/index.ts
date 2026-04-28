@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { login as apiLogin, getProfile as apiGetProfile, updateProfile as apiUpdateProfile } from '@/api/modules/user'
 
 interface WeChatUserInfo {
@@ -19,14 +19,14 @@ interface SuccessResponse {
 
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref<{ id: string; name?: string; avatar?: string; level?: number; exp?: number; viewedRankingsCount?: number } | null>(null)
-  const isLoggedIn = ref(false)
+  const isLoggedIn = computed(() => userInfo.value !== null)
   const viewedCount = ref(0)
   const favoritesCount = ref(0)
 
-  const setUser = (info: typeof userInfo.value) => { userInfo.value = info; isLoggedIn.value = !!info }
+  const setUser = (info: typeof userInfo.value) => { userInfo.value = info }
   const incrementViewed = () => viewedCount.value++
   const setFavoritesCount = (n: number) => favoritesCount.value = n
-  const logout = () => { userInfo.value = null; isLoggedIn.value = false }
+  const logout = () => { userInfo.value = null }
 
   /**
    * Fetch user profile from cloud and update local state
@@ -44,7 +44,6 @@ export const useUserStore = defineStore('user', () => {
           exp: data.exp,
           viewedRankingsCount: data.viewedRankingsCount
         }
-        isLoggedIn.value = true
       }
       return response
     } catch (error) {
@@ -82,7 +81,6 @@ export const useUserStore = defineStore('user', () => {
           exp: data.exp,
           viewedRankingsCount: data.viewedRankingsCount
         }
-        isLoggedIn.value = true
       }
       return response
     } catch (error) {
