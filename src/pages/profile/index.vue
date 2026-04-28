@@ -95,7 +95,7 @@
             <wd-icon name="delete" custom-class="cell-icon" />
           </template>
         </wd-cell>
-        <wd-cell title="关于精益副业案例库" is-link @click="goToAbout">
+        <wd-cell title="关于..." is-link @click="goToAbout">
           <template #icon>
             <wd-icon name="info-circle" custom-class="cell-icon" />
           </template>
@@ -400,6 +400,7 @@ const handleClearCache = () => {
 
 .cell-icon {
   color: #9B9A97;
+  margin-right: 12px;
 }
 
 /* Logout */
