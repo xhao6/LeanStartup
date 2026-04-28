@@ -5,9 +5,9 @@ cloud.init({
 })
 
 const db = cloud.database()
+const _ = db.command
 
 const usersCollection = 'users'
-const favoritesCollection = process.env.FAVORITES_COLLECTION || 'favorites'
 
 function generateNickname() {
   const adjectives = ['敏捷', '智慧', '创新', '勇敢', '探索', '洞察', '先锋', '卓越']
@@ -164,20 +164,49 @@ exports.main = async (event, context) => {
       }
 
       case 'getFavorites': {
-        const limit = event.limit || 20
+        const limit = event.limit || 100
 
-        const favRes = await db.collection(favoritesCollection)
-          .where({
-            _openid: openId
-          })
-          .orderBy('createdAt', 'desc')
+        // 1. 从 UserCollection 获取收藏记录（按 updated_at 降序）
+        const { data: collections } = await db.collection('UserCollection')
+          .where({ _openid: openId })
+          .orderBy('updated_at', 'desc')
           .limit(limit)
           .get()
 
+        if (collections.length === 0) {
+          return { success: true, data: [], length: 0 }
+        }
+
+        // 2. 获取 case_id 列表
+        const caseIds = collections.map(c => c.case_id)
+
+        // 3. 批量查询 Case 详情
+        const { data: cases } = await db.collection('Case')
+          .where({ id: _.in(caseIds) })
+          .field({ id: true, title: true, summary: true, tags: true, score_total: true, image: true, source_url: true })
+          .get()
+
+        // 4. 组装返回（兼容 CloudFavoriteItem 格式，用 resourceId 字段）
+        const caseMap = new Map(cases.map(c => [c.id, c]))
+        const result = collections.map(uc => {
+          const c = caseMap.get(uc.case_id) || {}
+          return {
+            resourceId: uc.case_id,
+            title: c.title || '',
+            desc: c.summary || '',
+            tags: c.tags || [],
+            score_total: c.score_total || 0,
+            url: c.source_url || '',
+            image: c.image || '',
+            createdAt: uc.created_at || uc.updated_at,
+            progress: uc.progress || {}
+          }
+        })
+
         return {
           success: true,
-          data: favRes.data,
-          length: favRes.data.length
+          data: result,
+          length: result.length
         }
       }
 
