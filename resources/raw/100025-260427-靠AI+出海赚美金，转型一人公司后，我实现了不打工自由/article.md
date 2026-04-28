@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/zCuFkQnrBLw4H44o2rvbTg
-title: "靠AI+出海赚美金，转型一人公司后，我实现了不打工自由"
-description: "加入生财之前是一名996的小厂程序员，现在全职在做Youtube AI视频和AI自媒体。"
-author: "徐徐"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-27T01:35:24.366Z"
+url: 'https://mp.weixin.qq.com/s/zCuFkQnrBLw4H44o2rvbTg'
+title: 靠AI+出海赚美金，转型一人公司后，我实现了不打工自由
+description: 加入生财之前是一名996的小厂程序员，现在全职在做Youtube AI视频和AI自媒体。
+author: 徐徐
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-27T01:35:24.366Z'
+processed_at: '2026-04-28T09:10:46.187Z'
 ---
 
 # 靠AI+出海赚美金，转型一人公司后，我实现了不打工自由

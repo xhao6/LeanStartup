@@ -1,9 +1,10 @@
 ---
-url: https://mp.weixin.qq.com/s/RHzq-IJ8zirmMh3VznW5OA
-title: "不懂代码，开发学英语/日语网站，累计付费用户 4300+，变现12万，完整复盘"
-author: "黑帽子"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-27T01:35:35.796Z"
+url: 'https://mp.weixin.qq.com/s/RHzq-IJ8zirmMh3VznW5OA'
+title: 不懂代码，开发学英语/日语网站，累计付费用户 4300+，变现12万，完整复盘
+author: 黑帽子
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-27T01:35:35.796Z'
+processed_at: '2026-04-28T09:12:40.576Z'
 ---
 
 # 不懂代码，开发学英语/日语网站，累计付费用户 4300+，变现12万，完整复盘

@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/itlpqe9D6gCc4Cn00BPSNQ
-title: "30秒赚127美元：普通人也能复制的AI副业玩法"
-description: "30秒种下一颗种子，躺着等钱来"
-author: "龙虾"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-27T01:35:15.134Z"
+url: 'https://mp.weixin.qq.com/s/itlpqe9D6gCc4Cn00BPSNQ'
+title: 30秒赚127美元：普通人也能复制的AI副业玩法
+description: 30秒种下一颗种子，躺着等钱来
+author: 龙虾
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-27T01:35:15.134Z'
+processed_at: '2026-04-28T09:08:25.687Z'
 ---
 
 # 30秒赚127美元：普通人也能复制的AI副业玩法
