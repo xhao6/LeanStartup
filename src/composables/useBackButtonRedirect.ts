@@ -31,12 +31,19 @@ export function useBackButtonRedirect(targetPagePath: string = '/pages/index/ind
     return true
   }
 
-  // 自动注册返回键监听
-  onBackPress(() => {
+  // Store the cleanup function returned by onBackPress
+  const removeBackPressListener = onBackPress(() => {
     return handleBackPress()
   })
 
+  // CRITICAL FIX: Clean up on unmount to prevent memory leak
+  onUnmounted(() => {
+    removeBackPressListener?.()
+  })
+
+  // Return cleanup function for manual removal if needed
   return {
     handleBackPress,
+    remove: removeBackPressListener,
   }
 }

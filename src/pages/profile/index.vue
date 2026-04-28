@@ -119,41 +119,76 @@
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app'
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store'
-import { useCollectionStore } from '@/store/collection'
 import { CacheService } from '@/services/CacheService'
+import { useBackButtonRedirect } from '@/composables/useBackButtonRedirect'
 import { useShare } from '@/composables/useShare'
+import { getFavoritesCount } from '@/utils/favorites'
+import { fullSyncFavorites } from '@/utils/syncFavorites'
 import appConfig from '@/config/app.config'
 
+// 拦截返回键，跳转到首页
+useBackButtonRedirect('/pages/index/index')
+
+// 启用分享功能
 useShare({
   title: `${appConfig.appName} - 个人中心`,
   path: '/pages/profile/index'
 })
 
 const userStore = useUserStore()
-const collectionStore = useCollectionStore()
-const userInfo = computed(() => userStore.userInfo)
-const isLoggedIn = computed(() => userStore.isLoggedIn)
+const { userInfo, isLoggedIn } = storeToRefs(userStore)
 
-const viewedCount = computed(() => userStore.viewedCount)
-const favoritesCount = computed(() => collectionStore.collections.length)
+// 收藏数量
+const favoritesCount = ref(getFavoritesCount())
+const viewedCount = computed(() => userInfo.value.viewedRankingsCount || 0)
 
 onShow(() => {
-  refreshData()
-})
-
-const refreshData = () => {
+  // 每次页面显示时刷新收藏数量
+  favoritesCount.value = getFavoritesCount()
   if (isLoggedIn.value) {
-    collectionStore.refresh()
+    userStore.fetchProfile()
   }
-}
+})
 
 const handleLogin = async () => {
   if (isLoggedIn.value) return
 
   uni.showLoading({ title: '登录中...', mask: true })
+
   try {
-    userStore.setUser({ id: 'wechat_user', name: '微信用户' })
+    let wechatUserInfo = null
+
+    // #ifdef MP-WEIXIN
+    try {
+      wechatUserInfo = await new Promise<any>((resolve) => {
+        wx.getUserProfile({
+          desc: '用于完善用户资料',
+          success: (res: any) => {
+            resolve(res.userInfo)
+          },
+          fail: (err: any) => {
+            console.log('[Login] 用户拒绝授权:', err)
+            uni.showToast({
+              title: '需要授权才能完善资料',
+              icon: 'none'
+            })
+            resolve(null)
+          }
+        })
+      })
+    } catch (e) {
+      console.log('获取授权失败，继续登录:', e)
+    }
+    // #endif
+
+    await userStore.login(wechatUserInfo)
+    // 登录后等待收藏同步完成再刷新数量
+    await fullSyncFavorites().catch((err) => {
+      console.error('[Login] 收藏同步失败:', err)
+    })
+    favoritesCount.value = getFavoritesCount()
     uni.showToast({ title: '登录成功', icon: 'success' })
   } catch (e) {
     console.error('登录失败:', e)
@@ -165,7 +200,41 @@ const handleLogin = async () => {
 
 const handleLogout = () => {
   userStore.logout()
+  favoritesCount.value = 0
   uni.showToast({ title: '已退出', icon: 'none' })
+}
+
+// 修改昵称
+const handleEditNickname = () => {
+  uni.showModal({
+    title: '修改昵称',
+    editable: true,
+    placeholderText: '请输入新昵称',
+    content: userInfo.value?.name || '',
+    success: async (res) => {
+      if (res.confirm && res.content) {
+        const newName = res.content.trim()
+        if (!newName) {
+          uni.showToast({ title: '昵称不能为空', icon: 'none' })
+          return
+        }
+        if (newName.length > 20) {
+          uni.showToast({ title: '昵称不能超过20个字符', icon: 'none' })
+          return
+        }
+
+        uni.showLoading({ title: '保存中...', mask: true })
+        const result = await userStore.updateUserInfo({ name: newName })
+        uni.hideLoading()
+
+        if (result.success) {
+          uni.showToast({ title: '修改成功', icon: 'success' })
+        } else {
+          uni.showToast({ title: result.message || '修改失败', icon: 'none' })
+        }
+      }
+    }
+  })
 }
 
 const goToFavorites = () => {
