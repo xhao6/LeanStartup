@@ -37,25 +37,30 @@ import type { DailyCase } from '@/api/modules/daily'
 
 const loading = ref(true)
 const cases = ref<DailyCase[]>([])
+const date = ref<string>('')
 
-const pages = getCurrentPages()
-const current = pages[pages.length - 1]
-const date = (current as any)?.options?.date || new Date().toISOString().split('T')[0]
+// 从 URL 参数获取日期
+const initDate = () => {
+  const pages = getCurrentPages()
+  const current = pages[pages.length - 1]
+  const options = (current as any)?.options || {}
+  date.value = options.date || new Date().toISOString().split('T')[0]
+}
 
 const displayDate = computed(() => {
-  const d = new Date(date)
+  const d = new Date(date.value)
   return d.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })
 })
 
 const weekday = computed(() => {
-  const d = new Date(date)
+  const d = new Date(date.value)
   return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][d.getDay()]
 })
 
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await getDailyPick(date)
+    const res = await getDailyPick(date.value)
     if (res.success && res.data?.cases) {
       cases.value = res.data.cases
     }
@@ -68,7 +73,10 @@ const navigateToDetail = (id: string) => {
   uni.navigateTo({ url: `/pages/case-detail/index?id=${id}` })
 }
 
-onMounted(loadData)
+onMounted(() => {
+  initDate()
+  loadData()
+})
 </script>
 
 <style lang="scss" scoped>
