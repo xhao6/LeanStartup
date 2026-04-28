@@ -20,12 +20,12 @@ function generateNickname() {
   return `${adj}${noun}${code}`
 }
 
-async function initUserData(openId) {
+async function initUserData(openId, userInfo) {
   const now = new Date()
   return {
     _openid: openId,
-    name: generateNickname(),
-    avatar: '',
+    name: (userInfo && userInfo.nickName) || generateNickname(),
+    avatar: (userInfo && userInfo.avatarUrl) || '',
     gender: 0,
     country: '',
     province: '',
@@ -60,24 +60,25 @@ async function initUserData(openId) {
 }
 
 exports.main = async (event, context) => {
-  const { type, OPENID } = event
+  const { type, data = {} } = event
   const wxContext = cloud.getWXContext()
-  const openId = OPENID || wxContext.OPENID
+  const openId = wxContext.OPENID
+
+  if (!openId) {
+    return { success: false, error: 'Missing OPENID' }
+  }
 
   try {
     switch (type) {
       case 'login': {
+        const { userInfo } = data
         const userRes = await db.collection(usersCollection).where({
           _openid: openId
         }).get()
-
         const now = new Date()
-
         if (userRes.data.length === 0) {
-          const userData = await initUserData(openId)
-          await db.collection(usersCollection).add({
-            data: userData
-          })
+          const userData = await initUserData(openId, userInfo)
+          await db.collection(usersCollection).add({ data: userData })
           return {
             success: true,
             data: userData,
@@ -85,16 +86,19 @@ exports.main = async (event, context) => {
           }
         } else {
           const user = userRes.data[0]
+          const updateData = {
+            lastLoginAt: now,
+            loginCount: user.loginCount + 1,
+            lastActiveAt: now
+          }
+          if (userInfo && userInfo.nickName) updateData.name = userInfo.nickName
+          if (userInfo && userInfo.avatarUrl) updateData.avatar = userInfo.avatarUrl
           await db.collection(usersCollection).doc(user._id).update({
-            data: {
-              lastLoginAt: now,
-              loginCount: user.loginCount + 1,
-              lastActiveAt: now
-            }
+            data: updateData
           })
           return {
             success: true,
-            data: { ...user, lastLoginAt: now, loginCount: user.loginCount + 1, lastActiveAt: now },
+            data: { ...user, ...updateData },
             isNewUser: false
           }
         }
@@ -125,7 +129,7 @@ exports.main = async (event, context) => {
       }
 
       case 'updateProfile': {
-        const { name, avatar } = event
+        const { name, avatar } = data
 
         const userRes = await db.collection(usersCollection).where({
           _openid: openId
@@ -164,7 +168,7 @@ exports.main = async (event, context) => {
       }
 
       case 'getFavorites': {
-        const limit = event.limit || 100
+        const limit = data.limit || 100
 
         // 1. 从 UserCollection 获取收藏记录（按 updated_at 降序）
         const { data: collections } = await db.collection('UserCollection')
