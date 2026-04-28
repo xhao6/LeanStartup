@@ -38,5 +38,6 @@ coverage/
 .worktrees/
 skills/
 .env
+.mcp.json
 src/components.d.ts
 src/components.d.ts
