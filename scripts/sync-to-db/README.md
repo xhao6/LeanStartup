@@ -84,12 +84,19 @@ node index.js sync [选项]
 | `--file <path>` | 输入 JSON 文件 | - |
 | `--function <name>` | 云函数名称 | `syncCaseDataPublic` |
 | `--env <id>` | CloudBase 环境 ID | `CLOUDBASE_ENV_ID` |
+| `--incremental, -i` | 启用增量同步 | `false` |
 | `-h, --help` | 显示帮助 | - |
 
 **示例**：
 ```bash
-# 直接解析 MD 文件并同步
+# 全量同步（默认）
 node index.js sync
+
+# 增量同步（推荐：只同步新增或更新的案例）
+node index.js sync --incremental
+
+# 简写
+node index.js sync -i
 
 # 从 JSON 文件同步
 node index.js sync --file cases-batch.json
@@ -100,6 +107,15 @@ node index.js sync --input ./data
 # 指定云函数
 node index.js sync --function myCustomSyncFunction
 ```
+
+**增量同步说明**：
+- 使用 `--incremental` 或 `-i` 启用
+- 自动查询云端现有案例及其 `updated_at` 时间戳
+- 只同步以下案例：
+  - 云端不存在的（新增）
+  - 本地 `processed_at` 晚于云端 `updated_at` 的（更新）
+- 跳过云端已是最新的案例
+- 大幅减少同步时间，避免不必要的云函数调用
 
 ## 数据验证
 
@@ -124,18 +140,33 @@ node index.js sync --function myCustomSyncFunction
 # 1. 准备数据
 node index.js prepare
 
-# 2. 同步到数据库
+# 2. 全量同步到数据库
 node index.js sync
 ```
 
-### 增量更新
+### 增量更新（推荐）
 
-添加新文章后，直接运行：
+添加新文章或修改现有文章后，使用增量同步：
 ```bash
-node index.js sync
+node index.js sync --incremental
 ```
 
-脚本会自动检测所有 MD 文件并同步。
+**优势**：
+- 只同步新增或修改的案例
+- 跳过云端已是最新的案例
+- 节省云函数调用次数和时间
+- 适合日常更新流程
+
+**工作流程**：
+```bash
+# 1. 处理新文章
+cd scripts/article-processor
+npm run start -- --id 100027
+
+# 2. 增量同步到数据库
+cd ../sync-to-db
+node sync.js --incremental
+```
 
 ### 数据修复
 
@@ -144,8 +175,8 @@ node index.js sync
 # 1. 修正 MD 文件中的错误
 vim resources/processed/100001-xxx/100001-xxx.md
 
-# 2. 重新同步
-node index.js sync
+# 2. 增量同步（只有修改过的会同步）
+node sync.js --incremental
 ```
 
 ## 云函数
@@ -305,7 +336,9 @@ MD 文件解析器，提供以下函数：
 CloudBase 数据同步器，提供以下函数：
 
 - `initCloudBase(envId, secretId, secretKey)` - 初始化 CloudBase
-- `syncCasesToCloud(app, functionName, cases)` - 同步数据到云数据库
+- `fetchExistingCases(app)` - 查询云端现有案例（用于增量同步）
+- `syncCasesToCloud(app, functionName, cases, incremental)` - 同步数据到云数据库
+  - `incremental`: 是否启用增量同步（默认 `false`）
 
 ## 相关文档
 

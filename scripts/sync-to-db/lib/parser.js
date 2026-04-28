@@ -61,7 +61,8 @@ function parseCaseFile(filePath) {
     risk_tags: parseList(extractSection(content, '风险标签')),
     tags: parseList(extractSection(content, '吸睛标签')),
     case_story: extractSection(content, '案例故事') || '',
-    status: 'published'
+    status: 'published',
+    processed_at: data.processed_at || null
   }
 }
 

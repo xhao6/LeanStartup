@@ -20,7 +20,8 @@ async function main() {
     functionName: 'syncCaseDataPublic',
     envId: process.env.CLOUDBASE_ENV_ID,
     secretId: process.env.CLOUDBASE_SECRET_ID,
-    secretKey: process.env.CLOUDBASE_SECRET_KEY
+    secretKey: process.env.CLOUDBASE_SECRET_KEY,
+    incremental: false
   }
 
   // 解析命令行参数
@@ -38,6 +39,8 @@ async function main() {
     } else if (args[i] === '--env' && args[i + 1]) {
       config.envId = args[i + 1]
       i++
+    } else if (args[i] === '--incremental' || args[i] === '-i') {
+      config.incremental = true
     } else if (args[i] === '--help' || args[i] === '-h') {
       console.log(`
 同步案例数据到 CloudBase NoSQL 数据库
@@ -50,11 +53,15 @@ async function main() {
   --file <path>      输入 JSON 文件，使用 prepare.js 生成的文件
   --function <name>  云函数名称 (默认: syncCaseDataPublic)
   --env <id>         CloudBase 环境 ID (默认: CLOUDBASE_ENV_ID 环境变量)
+  --incremental, -i  启用增量同步（只同步新增或更新的案例）
   -h, --help         显示帮助信息
 
 示例:
-  # 直接解析 MD 文件并同步
+  # 全量同步（默认）
   node sync.js
+
+  # 增量同步（只同步新增或更新的案例）
+  node sync.js --incremental
 
   # 从 JSON 文件同步
   node sync.js --file cases-batch.json
@@ -93,6 +100,10 @@ async function main() {
 
   console.log(`找到 ${cases.length} 个案例`)
 
+  if (config.incremental) {
+    console.log(`🔄 增量同步模式已启用`)
+  }
+
   // 验证数据
   const validation = validateCases(cases)
   if (!validation.valid) {
@@ -109,13 +120,20 @@ async function main() {
   // 同步数据
   console.log(`调用云函数: ${config.functionName}`)
   try {
-    const result = await syncCasesToCloud(app, config.functionName, cases)
+    const result = await syncCasesToCloud(app, config.functionName, cases, config.incremental)
 
     if (result && result.success) {
       console.log(`\n✅ 同步成功!`)
-      console.log(`   同步数量: ${result.data?.synced || 0}`)
-      console.log(`   新增: ${result.data?.created || 0}`)
-      console.log(`   更新: ${result.data?.updated || 0}`)
+
+      if (result.incremental) {
+        console.log(`   需要同步: ${result.incremental.synced}`)
+        console.log(`   已跳过: ${result.incremental.skipped}（云端已是最新）`)
+      } else {
+        console.log(`   同步数量: ${result.data?.synced || result.synced || 0}`)
+        console.log(`   新增: ${result.data?.created || 0}`)
+        console.log(`   更新: ${result.data?.updated || 0}`)
+      }
+
       if (result.data?.errors?.length > 0) {
         console.log(`\n⚠️  部分数据同步失败:`)
         result.data.errors.forEach(err => console.log(`   ${err}`))
