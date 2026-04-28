@@ -1,6 +1,6 @@
 <!-- src/components/subscribe-banner/index.vue -->
 <template>
-  <view v-if="showBanner" class="subscribe-banner" @click="handleClick">
+  <view v-if="showBanner" class="subscribe-banner" hover-class="hover-tap" @click="handleClick">
     <!-- Shimmer overlay -->
     <view class="shimmer-overlay"></view>
 
@@ -132,10 +132,6 @@ onMounted(async () => {
   margin: 0 15px;
   cursor: pointer;
   transition: opacity 0.2s;
-}
-
-.subscribe-banner:active {
-  opacity: 0.9;
 }
 
 /* Shimmer animation overlay */

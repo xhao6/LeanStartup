@@ -1,10 +1,10 @@
 <template>
   <view class="fixed-action-bar">
-    <button class="action-btn secondary" open-type="share">
+    <button class="action-btn secondary" hover-class="hover-tap" open-type="share">
       <wd-icon name="share" size="16px" />
       <text>分享</text>
     </button>
-    <button class="action-btn primary" @click="onToggleFavorite">
+    <button class="action-btn primary" hover-class="hover-tap" @click="onToggleFavorite">
       <wd-icon :name="isFavoritedLocal ? 'star-fill' : 'star'" size="16px" custom-class="fill-1" />
       <text>{{ isFavoritedLocal ? '已收藏' : '收藏' }}</text>
     </button>
@@ -101,10 +101,6 @@ const onToggleFavorite = async () => {
     background: linear-gradient(135deg, #E94560, #FF6B8A);
     color: #FFFFFF;
     box-shadow: 0 2rpx 12rpx rgba(233, 69, 96, 0.2);
-  }
-  &:active {
-    transform: scale(0.98);
-    opacity: 0.9;
   }
 }
 </style>

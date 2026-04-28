@@ -1,6 +1,6 @@
 <!-- src/components/case-card/index.vue -->
 <template>
-  <view class="case-card" :class="`rank-${rank}`" @click="handleClick">
+  <view class="case-card" :class="`rank-${rank}`" hover-class="hover-tap" @click="handleClick">
     <!-- 排名数字 -->
     <view :class="['rank-number', `rank-${rank}`]">
       <text class="rank-text">{{ rankText }}</text>
@@ -93,12 +93,6 @@ const handleClick = () => emit('click', props.caseData)
   overflow: hidden;
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.case-card:active {
-  transform: translateY(0) scale(0.99);
-  background: #F8F8F6;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 /* 排名数字 - 左侧徽章 */

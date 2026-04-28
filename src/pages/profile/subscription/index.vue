@@ -40,6 +40,7 @@
       <view
         v-if="!isSubscribed"
         class="action-btn subscribe-btn"
+        hover-class="hover-tap"
         @click="handleSubscribe"
       >
         <text class="action-btn-text">{{ loading ? '处理中...' : '立即订阅' }}</text>
@@ -47,6 +48,7 @@
       <view
         v-else
         class="action-btn unsubscribe-btn"
+        hover-class="hover-tap"
         @click="handleUnsubscribe"
       >
         <text class="action-btn-text unsubscribe-text">{{ loading ? '处理中...' : '取消订阅' }}</text>
@@ -283,8 +285,6 @@ const handleUnsubscribe = async () => {
   background: #E94560;
 }
 
-.subscribe-btn:active { opacity: 0.85; }
-
 .action-btn-text {
   color: #FFFFFF;
   font-size: 16px;
@@ -295,8 +295,6 @@ const handleUnsubscribe = async () => {
   background: #FFFFFF;
   border: 1px solid #E8E6E1;
 }
-
-.unsubscribe-btn:active { opacity: 0.85; }
 
 .unsubscribe-text {
   color: #E94560;

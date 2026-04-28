@@ -47,6 +47,7 @@
           v-for="item in group"
           :key="item.date"
           class="history-card"
+          hover-class="hover-tap"
           @click="handleItemClick(item)"
         >
           <!-- 日期 -->
@@ -250,10 +251,6 @@ const getRankClass = (rank: number) => {
   border-radius: 12px;
   padding: 16px 18px;
   margin-bottom: 10px;
-}
-
-.history-card:active {
-  opacity: 0.85;
 }
 
 .history-date {

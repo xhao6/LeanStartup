@@ -24,7 +24,7 @@
           </svg>
           {{ detail.source_account }}
         </text>
-        <view class="source-link" @click="handleReadOriginal">
+        <view class="source-link" hover-class="hover-tap" @click="handleReadOriginal">
           <text class="link-text">阅读原文</text>
         </view>
       </view>
@@ -266,15 +266,11 @@ defineExpose({
 .source-link {
   display: flex;
   align-items: center;
-  padding: 8rpx 20rpx;
+  padding: 12rpx 24rpx;
   background: #FFFFFF;
   border: 1rpx solid #E8E6E1;
   border-radius: 999rpx;
-  transition: all 150ms ease-out;
-  &:active {
-    opacity: 0.7;
-    transform: scale(0.98);
-  }
+  min-height: 72rpx;
 }
 .link-text {
   font-size: 24rpx;

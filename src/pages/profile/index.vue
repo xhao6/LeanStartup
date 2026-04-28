@@ -80,7 +80,7 @@
 
       <!-- 退出登录 -->
       <view v-if="isLoggedIn" class="logout-section">
-        <view class="logout-btn" @click="handleLogout">
+        <view class="logout-btn" hover-class="hover-tap" @click="handleLogout">
           <text class="logout-text">退出登录</text>
         </view>
       </view>
@@ -301,6 +301,7 @@ const handleClearCache = () => {
   display: flex;
   align-items: center;
   gap: 8rpx;
+  min-height: 44px;
 }
 
 .user-name {
@@ -312,6 +313,7 @@ const handleClearCache = () => {
 
 .edit-icon {
   opacity: 0.7;
+  padding: 8px;
 }
 
 .user-id-row {
@@ -420,10 +422,6 @@ const handleClearCache = () => {
   padding: 14px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.logout-btn:active {
-  opacity: 0.85;
 }
 
 .logout-text {
