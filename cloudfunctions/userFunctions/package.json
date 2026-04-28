@@ -1,0 +1,9 @@
+{
+  "name": "userFunctions",
+  "version": "1.0.0",
+  "description": "User management and favorites operations",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
