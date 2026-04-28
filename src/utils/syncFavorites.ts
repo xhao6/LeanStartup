@@ -16,7 +16,7 @@ export const downloadCloudFavorites = async (limit: number = 100): Promise<void>
   const res = await apiGetFavorites({ limit })
 
   if (!res.success) {
-    throw new Error(`Failed to download favorites: ${res.msg || 'Unknown error'}`)
+    throw new Error(`Failed to download favorites: ${res.error || 'Unknown error'}`)
   }
 
   if (!res.data || !Array.isArray(res.data)) {

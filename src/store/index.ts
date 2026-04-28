@@ -71,7 +71,7 @@ export const useUserStore = defineStore('user', () => {
         }
       }
 
-      const response = await apiLogin(loginData)
+      const response = await apiLogin({ userInfo: loginData })
       if (response.success && response.data) {
         const data = response.data
         userInfo.value = {

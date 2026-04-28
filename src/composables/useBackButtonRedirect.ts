@@ -3,7 +3,6 @@
  * 用于在 TabBar 页面拦截返回键并跳转到首页
  */
 
-import { onUnmounted } from 'vue'
 import { onBackPress } from '@dcloudio/uni-app'
 
 /**
@@ -31,22 +30,13 @@ export function useBackButtonRedirect(targetPagePath: string = '/pages/index/ind
     return true
   }
 
-  // Store the cleanup function returned by onBackPress
-  const removeBackPressListener = onBackPress(() => {
+  // 注册返回键监听
+  // onBackPress 是页面级生命周期钩子，会自动清理
+  onBackPress(() => {
     return handleBackPress()
   })
 
-  // CRITICAL FIX: Clean up on unmount to prevent memory leak
-  onUnmounted(() => {
-    // Verify cleanup function exists before calling
-    if (typeof removeBackPressListener === 'function') {
-      removeBackPressListener()
-    }
-  })
-
-  // Return cleanup function for manual removal if needed
   return {
     handleBackPress,
-    remove: removeBackPressListener,
   }
 }

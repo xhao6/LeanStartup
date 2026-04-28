@@ -233,7 +233,7 @@ const handleEditNickname = () => {
         if (result.success) {
           uni.showToast({ title: '修改成功', icon: 'success' })
         } else {
-          uni.showToast({ title: result.message || '修改失败', icon: 'none' })
+          uni.showToast({ title: result.error || '修改失败', icon: 'none' })
         }
       }
     }

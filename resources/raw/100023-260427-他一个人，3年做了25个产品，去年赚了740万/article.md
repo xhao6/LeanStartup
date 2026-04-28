@@ -1,10 +1,11 @@
 ---
-url: https://mp.weixin.qq.com/s/8gEm8IxeBfDM8Kv_tFMTow
-title: "他一个人，3年做了25个产品，去年赚了740万"
-description: "不需要团队，不需要融资，不需要在大城市卷，一个人，靠几个解决真实问题的工具，就可以过上有尊严的、自由的职业生活。"
-author: "方北H5FUN"
-coverImage: "imgs/img-001-0.jpg"
-captured_at: "2026-04-27T01:35:04.967Z"
+url: 'https://mp.weixin.qq.com/s/8gEm8IxeBfDM8Kv_tFMTow'
+title: 他一个人，3年做了25个产品，去年赚了740万
+description: 不需要团队，不需要融资，不需要在大城市卷，一个人，靠几个解决真实问题的工具，就可以过上有尊严的、自由的职业生活。
+author: 方北H5FUN
+coverImage: imgs/img-001-0.jpg
+captured_at: '2026-04-27T01:35:04.967Z'
+processed_at: '2026-04-28T09:05:29.756Z'
 ---
 
 # 他一个人，3年做了25个产品，去年赚了740万
