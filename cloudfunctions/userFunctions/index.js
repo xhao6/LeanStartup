@@ -215,50 +215,44 @@ exports.main = async (event, context) => {
       }
 
       case 'viewRanking': {
-        const today = new Date().toISOString().split('T')[0]
+        const { date } = data
+        const rankingDate = date || new Date().toISOString().split('T')[0]
+
+        if (!rankingDate) {
+          return { success: false, error: 'Missing date' }
+        }
 
         const userRes = await db.collection(usersCollection).where({
           _openid: openId
         }).get()
 
         if (userRes.data.length === 0) {
-          return {
-            success: false,
-            error: 'User not found'
-          }
+          return { success: false, error: 'User not found' }
         }
 
         const user = userRes.data[0]
         const viewedDates = user.viewedRankingDates || []
 
-        if (!viewedDates.includes(today)) {
-          viewedDates.push(today)
-
-          await db.collection(usersCollection).doc(user._id).update({
-            data: {
-              viewedRankingDates: viewedDates,
-              totalViews: user.totalViews + 1,
-              lastActiveAt: new Date()
-            }
-          })
-
+        if (viewedDates.includes(rankingDate)) {
           return {
             success: true,
-            data: {
-              viewedRankingDates: viewedDates,
-              totalViews: user.totalViews + 1,
-              isNewView: true
-            }
+            data: { count: viewedDates.length, isNewView: false }
           }
         }
 
-        return {
-          success: true,
+        viewedDates.push(rankingDate)
+
+        await db.collection(usersCollection).doc(user._id).update({
           data: {
             viewedRankingDates: viewedDates,
-            totalViews: user.totalViews,
-            isNewView: false
+            totalViews: (user.totalViews || 0) + 1,
+            lastActiveAt: new Date()
           }
+        })
+
+        return {
+          success: true,
+          data: { count: viewedDates.length, isNewView: true }
         }
       }
 
