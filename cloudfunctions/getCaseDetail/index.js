@@ -27,7 +27,7 @@ async function doGetCaseDetail(event, deps) {
       return error('案例不存在或已下架', 'NOT_FOUND')
     }
 
-    return success({ case: res.data[0] })
+    return success(res.data[0])
   } catch (e) {
     const match = e.message.match(/^(\w+):\s*(.*)$/)
     if (match) {

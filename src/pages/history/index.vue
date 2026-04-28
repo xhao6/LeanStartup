@@ -97,13 +97,13 @@ const hasMore = computed(() => store.hasMoreHistory)
 const totalItems = computed(() => store.historyTotal)
 
 onMounted(async () => {
-  await store.fetchHistoryList({ page: 1, pageSize: 10 })
+  await store.fetchHistoryList({ page: 1, pageSize: 3 })
 })
 
 const handleLoadMore = async () => {
   if (!hasMore.value || loading.value) return
-  const nextPage = Math.floor(historyList.value.length / 10) + 1
-  await store.fetchHistoryList({ page: nextPage, pageSize: 10 })
+  const nextPage = Math.floor(historyList.value.length / 3) + 1
+  await store.fetchHistoryList({ page: nextPage, pageSize: 3 })
 }
 
 const handleItemClick = (item: HistoryItem) => {
