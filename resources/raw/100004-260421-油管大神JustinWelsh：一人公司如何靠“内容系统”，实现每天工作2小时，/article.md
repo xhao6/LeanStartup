@@ -5,7 +5,7 @@ description: 只靠内容创作，一个人创业能做到百万美元营收吗�
 author: 小遇
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:54:44.561Z'
-processed_at: '2026-04-21T15:57:32.959Z'
+processed_at: '2026-04-28T09:39:07.562Z'
 ---
 
 # 油管大神Justin Welsh：一人公司如何靠“内容系统”，实现每天工作2小时，年入170万美元

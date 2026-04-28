@@ -6,7 +6,7 @@ description: >-
 author: 房贷压不垮的码农
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:55:15.555Z'
-processed_at: '2026-04-21T16:04:37.305Z'
+processed_at: '2026-04-28T09:41:17.046Z'
 ---
 
 # 会写代码的人，先别急着创业，先做一个能卖的小工具

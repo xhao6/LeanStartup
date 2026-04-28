@@ -5,7 +5,7 @@ description: 不押注单一项目，而是通过数量获得多次验证机会�
 author: 方馨
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:36:02.112Z'
-processed_at: '2026-04-21T16:17:49.491Z'
+processed_at: '2026-04-28T09:47:40.193Z'
 ---
 
 # 从1个失败App到30个App月入$22k：反「专注」策略让他不到1年翻身

@@ -59,55 +59,48 @@
 
     <!-- Menu List -->
     <view class="menu-section">
-      <view class="menu-card">
-        <view class="menu-item" @click="goToSubscription">
-          <text class="menu-icon">🔔</text>
-          <text class="menu-title">订阅管理</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-divider"></view>
-        <view class="menu-item" @click="goToFavorites">
-          <text class="menu-icon">⭐</text>
-          <text class="menu-title">我的收藏</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-divider"></view>
-        <button class="menu-item share-btn" open-type="share">
-          <text class="menu-icon">📤</text>
-          <text class="menu-title">转发给朋友</text>
-          <text class="menu-arrow">›</text>
-        </button>
-        <view class="menu-divider"></view>
-        <button class="menu-item contact-btn" open-type="contact">
-          <text class="menu-icon">💬</text>
-          <text class="menu-title">联系客服</text>
-          <text class="menu-arrow">›</text>
-        </button>
-        <view class="menu-divider"></view>
-        <view class="menu-item" @click="goToAgreement">
-          <text class="menu-icon">📄</text>
-          <text class="menu-title">用户协议</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-divider"></view>
-        <view class="menu-item" @click="goToPrivacy">
-          <text class="menu-icon">🔒</text>
-          <text class="menu-title">隐私政策</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-divider"></view>
-        <view class="menu-item" @click="handleClearCache">
-          <text class="menu-icon">🗑</text>
-          <text class="menu-title">清除缓存</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-divider"></view>
-        <view class="menu-item" @click="goToAbout">
-          <text class="menu-icon">ℹ️</text>
-          <text class="menu-title">关于精益副业案例库</text>
-          <text class="menu-arrow">›</text>
-        </view>
-      </view>
+      <wd-cell-group>
+        <wd-cell title="订阅管理" is-link @click="goToSubscription">
+          <template #icon>
+            <wd-icon name="setting" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="我的收藏" is-link @click="goToFavorites">
+          <template #icon>
+            <wd-icon name="star" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="转发给朋友" is-link @click="handleShare">
+          <template #icon>
+            <wd-icon name="share" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="联系客服" is-link open-type="contact">
+          <template #icon>
+            <wd-icon name="service" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="用户协议" is-link @click="goToAgreement">
+          <template #icon>
+            <wd-icon name="file" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="隐私政策" is-link @click="goToPrivacy">
+          <template #icon>
+            <wd-icon name="lock-on" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="清除缓存" is-link @click="handleClearCache">
+          <template #icon>
+            <wd-icon name="delete" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+        <wd-cell title="关于精益副业案例库" is-link @click="goToAbout">
+          <template #icon>
+            <wd-icon name="info-circle" custom-class="cell-icon" />
+          </template>
+        </wd-cell>
+      </wd-cell-group>
 
       <!-- 退出登录 -->
       <view v-if="isLoggedIn" class="logout-section">
@@ -405,62 +398,8 @@ const handleClearCache = () => {
   padding: 16px;
 }
 
-.menu-card {
-  background: #FFFFFF;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 16px 18px;
-  width: 100%;
-  background: transparent;
-  border: none;
-  text-align: left;
-  font-size: 16px;
-}
-
-.menu-item::after {
-  border: none;
-}
-
-.menu-icon {
-  font-size: 18px;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.menu-title {
-  flex: 1;
-  font-size: 16px;
-  font-weight: 500;
-  color: #1A1A2E;
-}
-
-.menu-arrow {
-  font-size: 18px;
+.cell-icon {
   color: #9B9A97;
-}
-
-.menu-divider {
-  height: 1px;
-  background: #E8E6E1;
-  margin: 0 18px;
-}
-
-.share-btn, .contact-btn {
-  margin: 0;
-  padding: 16px 18px;
-  background: transparent;
-  border: none;
-  line-height: normal;
-}
-
-.share-btn::after, .contact-btn::after {
-  border: none;
 }
 
 /* Logout */

@@ -5,7 +5,7 @@ description: 大多数人第一反应：不对吧，技术都没有，拿什么�
 author: AI福安高
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:55:36.549Z'
-processed_at: '2026-04-21T16:09:42.661Z'
+processed_at: '2026-04-28T09:42:20.147Z'
 ---
 
 # 做一人公司，首先你要学的是做自媒体，不是学技术。

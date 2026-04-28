@@ -5,7 +5,7 @@ description: 95后男生，在小红书上卖饰品，月利润10万+昨天晚�
 author: 郭晓文
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:54:34.538Z'
-processed_at: '2026-04-21T15:55:27.748Z'
+processed_at: '2026-04-28T09:37:36.925Z'
 ---
 
 # 【文字版】95后男生，在小红书上卖饰品，月利润10万+

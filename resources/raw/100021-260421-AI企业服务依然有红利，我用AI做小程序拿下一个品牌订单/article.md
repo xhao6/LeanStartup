@@ -5,7 +5,7 @@ description: AI企业服务的市场，比很多人想象的大得多。
 author: 乐轩麟
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:37:25.857Z'
-processed_at: '2026-04-21T16:34:55.098Z'
+processed_at: '2026-04-28T09:54:19.298Z'
 ---
 
 # AI企业服务依然有红利，我用AI做小程序拿下一个品牌订单

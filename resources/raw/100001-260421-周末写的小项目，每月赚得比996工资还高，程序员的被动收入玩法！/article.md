@@ -5,7 +5,7 @@ description: 程序员Andy习惯性点开Stripe后台，盯着上面的数字看
 author: 5BASE
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T10:18:22.221Z'
-processed_at: '2026-04-21T15:50:07.796Z'
+processed_at: '2026-04-28T09:36:18.672Z'
 ---
 
 # 周末写的小项目，每月赚得比996工资还高，程序员的被动收入玩法！

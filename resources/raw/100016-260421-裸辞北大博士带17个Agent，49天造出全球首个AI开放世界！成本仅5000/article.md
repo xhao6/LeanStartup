@@ -4,7 +4,7 @@ title: 裸辞北大博士带17个Agent，49天造出全球首个AI开放世界�
 author: 新智元
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:36:31.112Z'
-processed_at: '2026-04-21T16:25:17.558Z'
+processed_at: '2026-04-28T09:50:48.606Z'
 ---
 
 # 裸辞北大博士带17个Agent，49天造出全球首个AI开放世界！成本仅5000

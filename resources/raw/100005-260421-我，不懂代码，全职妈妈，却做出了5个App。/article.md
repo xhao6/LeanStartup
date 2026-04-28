@@ -5,7 +5,7 @@ description: 我之前一直认为：一个全职妈妈的成长，是需要慢�
 author: s顏竹
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:54:54.555Z'
-processed_at: '2026-04-21T15:59:36.541Z'
+processed_at: '2026-04-28T09:39:41.766Z'
 ---
 
 # 我，不懂代码，全职妈妈，却做出了5个App。

@@ -5,7 +5,6 @@ description: 中国大分子创新药出海达千亿级别，剂泰科技想象�
 author: 杨婧雪
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T13:55:25.538Z'
-processed_at: '2026-04-21T16:07:41.825Z'
 ---
 
 # AI药物递送第一股冲刺IPO，剂泰科技要做医药界的SpaceX

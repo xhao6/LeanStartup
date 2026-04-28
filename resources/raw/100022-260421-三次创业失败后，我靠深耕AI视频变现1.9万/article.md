@@ -5,7 +5,7 @@ description: AI短视频的红利还在，现在入场依然来得及。
 author: 森林
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:37:37.046Z'
-processed_at: '2026-04-22T00:27:38.378Z'
+processed_at: '2026-04-28T09:54:59.570Z'
 ---
 
 # 三次创业失败后，我靠深耕 AI 视频变现1.9万

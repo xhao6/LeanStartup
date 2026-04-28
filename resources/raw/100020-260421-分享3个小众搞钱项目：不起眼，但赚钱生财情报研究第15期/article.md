@@ -5,7 +5,7 @@ description: 给你拆解3个可以快速上手，能带来实际收益的赚钱
 author: 杨爽
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:37:15.347Z'
-processed_at: '2026-04-22T00:24:55.343Z'
+processed_at: '2026-04-28T09:53:22.346Z'
 ---
 
 # 分享3个小众搞钱项目：不起眼，但赚钱 | 生财情报研究第15期

@@ -5,7 +5,7 @@ description: 笑不活了！这个“创业坟场”网站，扒了1500个失败
 author: 阿强ai实验室
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T14:36:21.288Z'
-processed_at: '2026-04-21T16:23:31.272Z'
+processed_at: '2026-04-28T09:49:52.278Z'
 ---
 
 # 笑不活了！这个“创业坟场”网站，扒了1500个失败项目，看完治好了我的创业瘾

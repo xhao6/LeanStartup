@@ -5,7 +5,7 @@ description: 无需复杂的团队或高昂的成本，利用 Notion、AI 工具
 author: 5BASE
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-04-21T10:18:32.408Z'
-processed_at: '2026-04-21T15:53:03.068Z'
+processed_at: '2026-04-28T09:36:50.982Z'
 ---
 
 # 5种超赚钱的虚拟产品，你也能立即开卖！
