@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useCollectionStore } from '@/store/collection'
 import { toggleCollection } from '@/api/modules/collection'
 
@@ -57,6 +57,11 @@ const loadFromStorage = (): Record<string, boolean> => {
 }
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+onBeforeUnmount(() => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+})
+
 let pendingUpdates: Record<string, boolean> = {}
 
 const toggleStep = async (order: number) => {
