@@ -2,6 +2,21 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { login as apiLogin, getProfile as apiGetProfile, updateProfile as apiUpdateProfile } from '@/api/modules/user'
 
+interface WeChatUserInfo {
+  nickName?: string
+  avatarUrl?: string
+  [key: string]: unknown
+}
+
+interface ErrorResponse {
+  success: false
+  error: string
+}
+
+interface SuccessResponse {
+  success: true
+}
+
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref<{ id: string; name?: string; avatar?: string; level?: number; exp?: number; viewedRankingsCount?: number } | null>(null)
   const isLoggedIn = ref(false)
@@ -32,9 +47,10 @@ export const useUserStore = defineStore('user', () => {
         isLoggedIn.value = true
       }
       return response
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '获取资料失败'
       console.error('[fetchProfile] Failed to fetch profile', error)
-      return { success: false, error: error.message || '获取资料失败' }
+      return { success: false, error: message } as ErrorResponse
     }
   }
 
@@ -42,16 +58,16 @@ export const useUserStore = defineStore('user', () => {
    * User login with optional WeChat user info
    * Filters out default WeChat avatar and nickname
    */
-  const login = async (wechatUserInfo?: Record<string, any>) => {
+  const login = async (wechatUserInfo?: WeChatUserInfo) => {
     try {
       // Filter default WeChat avatar/nickname
-      let loginData: Record<string, any> | undefined = undefined
+      let loginData: WeChatUserInfo | undefined = undefined
       if (wechatUserInfo) {
         const { nickName, avatarUrl } = wechatUserInfo
         const isDefaultWeChat = nickName === '微信用户' || nickName === 'WeChat' || (avatarUrl && avatarUrl.includes('wx.qlogo.cn'))
 
         if (!isDefaultWeChat) {
-          loginData = { userInfo: wechatUserInfo }
+          loginData = wechatUserInfo
         }
       }
 
@@ -69,9 +85,10 @@ export const useUserStore = defineStore('user', () => {
         isLoggedIn.value = true
       }
       return response
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '登录失败'
       console.error('[login] Login failed', error)
-      return { success: false, error: error.message || '登录失败' }
+      return { success: false, error: message } as ErrorResponse
     }
   }
 
@@ -88,10 +105,11 @@ export const useUserStore = defineStore('user', () => {
         }
         return { success: true }
       }
-      return { success: false, message: response.error || '更新失败' }
-    } catch (error: any) {
+      return { success: false, error: response.error || '更新失败' }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '更新失败'
       console.error('[updateUserInfo] Failed to update profile', error)
-      return { success: false, message: error.message || '更新失败' }
+      return { success: false, error: message } as ErrorResponse
     }
   }
 
