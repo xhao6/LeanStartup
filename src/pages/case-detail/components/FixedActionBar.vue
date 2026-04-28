@@ -14,10 +14,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { toggleFavorite, isFavorited } from '@/utils/favorites'
+import type { CaseDetail } from '@/types/case'
 
 const props = defineProps<{
   caseId: string
-  detail?: any
+  detail?: Partial<CaseDetail>
 }>()
 
 const emit = defineEmits<{ 'toggle-favorite': [boolean] }>()

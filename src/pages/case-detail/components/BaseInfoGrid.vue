@@ -40,7 +40,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ caseData: any }>()
+import type { CaseDetail } from '@/types/case'
+
+defineProps<{ caseData: Partial<CaseDetail> }>()
 </script>
 
 <style lang="scss" scoped>

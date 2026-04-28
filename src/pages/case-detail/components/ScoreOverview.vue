@@ -1,51 +1,53 @@
 <template>
   <view class="score-overview">
     <view class="score-main">
-      <text class="score-number">{{ caseData.score_total }}</text>
+      <text class="score-number">{{ caseData.score_total || 0 }}</text>
       <text class="score-max">/10</text>
     </view>
     <view class="score-dimensions">
       <view class="dim-item">
         <text class="dim-label">落地可行</text>
         <view class="dim-track">
-          <view class="dim-fill" :style="{ width: `${(caseData.score_feasibility / 3) * 100}%` }"></view>
+          <view class="dim-fill" :style="{ width: `${((caseData.score_feasibility || 0) / 3) * 100}%` }"></view>
         </view>
-        <text class="dim-value">{{ caseData.score_feasibility }}/3</text>
+        <text class="dim-value">{{ caseData.score_feasibility || 0 }}/3</text>
       </view>
       <view class="dim-item">
         <text class="dim-label">收益潜力</text>
         <view class="dim-track">
-          <view class="dim-fill" :style="{ width: `${(caseData.score_profit / 2) * 100}%` }"></view>
+          <view class="dim-fill" :style="{ width: `${((caseData.score_profit || 0) / 2) * 100}%` }"></view>
         </view>
-        <text class="dim-value">{{ caseData.score_profit }}/2</text>
+        <text class="dim-value">{{ caseData.score_profit || 0 }}/2</text>
       </view>
       <view class="dim-item">
         <text class="dim-label">时间时效</text>
         <view class="dim-track">
-          <view class="dim-fill" :style="{ width: `${(caseData.score_timeliness / 2) * 100}%` }"></view>
+          <view class="dim-fill" :style="{ width: `${((caseData.score_timeliness || 0) / 2) * 100}%` }"></view>
         </view>
-        <text class="dim-value">{{ caseData.score_timeliness }}/2</text>
+        <text class="dim-value">{{ caseData.score_timeliness || 0 }}/2</text>
       </view>
       <view class="dim-item">
         <text class="dim-label">实操细节</text>
         <view class="dim-track">
-          <view class="dim-fill" :style="{ width: `${(caseData.score_detail / 2) * 100}%` }"></view>
+          <view class="dim-fill" :style="{ width: `${((caseData.score_detail || 0) / 2) * 100}%` }"></view>
         </view>
-        <text class="dim-value">{{ caseData.score_detail }}/2</text>
+        <text class="dim-value">{{ caseData.score_detail || 0 }}/2</text>
       </view>
       <view class="dim-item">
         <text class="dim-label">人群适配</text>
         <view class="dim-track">
-          <view class="dim-fill" :style="{ width: `${(caseData.score_fitness / 1) * 100}%` }"></view>
+          <view class="dim-fill" :style="{ width: `${((caseData.score_fitness || 0) / 1) * 100}%` }"></view>
         </view>
-        <text class="dim-value">{{ caseData.score_fitness }}/1</text>
+        <text class="dim-value">{{ caseData.score_fitness || 0 }}/1</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ caseData: any }>()
+import type { CaseDetail } from '@/types/case'
+
+defineProps<{ caseData: Partial<CaseDetail> }>()
 </script>
 
 <style lang="scss" scoped>

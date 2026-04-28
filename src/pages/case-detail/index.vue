@@ -94,8 +94,9 @@ import FixedActionBar from './components/FixedActionBar.vue'
 import { getCaseDetail } from '@/api/modules/case'
 import { useCollectionStore } from '@/store/collection'
 import { getFavorite, updateFavorite, isFavorited } from '@/utils/favorites'
+import type { CaseDetail } from '@/types/case'
 
-const detail = ref<any>({})
+const detail = ref<Partial<CaseDetail>>({})
 const loading = ref(true)
 const error = ref(false)
 const collectionStore = useCollectionStore()
