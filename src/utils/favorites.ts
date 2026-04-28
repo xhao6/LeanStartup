@@ -78,6 +78,11 @@ export const updateFavorite = (id: string, updates: Partial<FavoriteItem>): bool
   return true
 }
 
+// 获取收藏数量（过滤掉没有标题的无效收藏）
+export const getFavoritesCount = (): number => {
+  return getFavorites().filter(item => item.title).length
+}
+
 // 清空所有收藏（仅本地）
 export const clearFavorites = (): void => {
   saveFavorites([])
