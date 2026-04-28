@@ -80,6 +80,8 @@ exports.main = async (event, context) => {
 
     const now = formatDateTime(new Date())
     let synced = 0
+    let created = 0
+    let updated = 0
     const errors = []
 
     for (let i = 0; i < cases.length; i++) {
@@ -124,14 +126,14 @@ exports.main = async (event, context) => {
         const { data: existing } = await collection.where({ id: caseId }).get()
 
         if (existing && existing.length > 0) {
-          // 保留 created_at
           record.created_at = existing[0].created_at
           record.published_at = existing[0].published_at || undefined
-          await collection.doc(caseId).update(record)
+          await collection.doc(existing[0]._id).update(record)
+          updated++
         } else {
           record.created_at = now
-          // 使用 add 时，让 MongoDB 自动生成 _id
           await collection.add(record)
+          created++
         }
 
         synced++
@@ -140,15 +142,13 @@ exports.main = async (event, context) => {
       }
     }
 
-    if (errors.length > 0) {
-      return {
-        success: false,
-        error: `部分案例同步失败: ${errors.map(e => `[${e.index}] ${e.message}`).join('; ')}`,
-        code: 'PARTIAL_FAILURE'
-      }
+    return {
+      success: errors.length === 0,
+      data: { synced, created, updated },
+      ...(errors.length > 0 && {
+        errors: errors.map(e => `[${e.index}] ${e.id}: ${e.message}`)
+      })
     }
-
-    return { success: true, data: { synced } }
   } catch (err) {
     console.error('syncCaseDataPublic error:', err)
     return { success: false, error: err.message || '未知错误', code: 'UNKNOWN' }
