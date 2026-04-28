@@ -26,9 +26,12 @@
         </view>
         <view class="user-text">
           <template v-if="isLoggedIn">
-            <text class="user-name">{{ userInfo?.name || '用户' }}</text>
+            <view class="user-name-row">
+              <text class="user-name">{{ userInfo?.name || '用户' }}</text>
+              <wd-icon v-if="isLoggedIn" name="edit" size="16px" class="edit-icon" @click.stop="handleEditNickname" />
+            </view>
             <view class="user-id-row">
-              <text class="user-id">已登录</text>
+              <text class="user-id">ID: {{ userInfo?.id ? userInfo.id.substring(0, 8) : '...' }}</text>
             </view>
           </template>
           <template v-else>
@@ -325,11 +328,21 @@ const handleClearCache = () => {
   flex: 1;
 }
 
+.user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
 .user-name {
   display: block;
   font-size: 20px;
   font-weight: 700;
   color: #FFFFFF;
+}
+
+.edit-icon {
+  opacity: 0.7;
 }
 
 .user-id-row {
