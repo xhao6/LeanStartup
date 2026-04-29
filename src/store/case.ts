@@ -84,7 +84,7 @@ export const useCaseStore = defineStore('case', () => {
       return
     }
 
-    // 2. 从网络加载
+    // 2. 从网络加载（含重试）
     try {
       todayLoading.value = true
       const res = await getDailyPick()
@@ -108,6 +108,21 @@ export const useCaseStore = defineStore('case', () => {
           casesMap.value[c.id] = c
         })
         saveCaseCache()
+      } else if (!todayCases.value.length) {
+        // 首次加载失败，延迟重试一次
+        console.warn('[fetchTodayCases] 首次加载失败，2秒后重试')
+        setTimeout(async () => {
+          try {
+            const retryRes = await getDailyPick()
+            if (retryRes.success && retryRes.data?.cases?.length) {
+              todayCases.value = retryRes.data.cases
+              displayDate.value = retryRes.data.date || ''
+              setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
+            }
+          } catch (e) {
+            console.error('[fetchTodayCases] 重试失败:', e)
+          }
+        }, 2000)
       }
     } finally {
       todayLoading.value = false

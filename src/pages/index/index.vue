@@ -86,6 +86,10 @@ onMounted(async () => {
 onShow(() => {
   const today = new Date().toISOString().split('T')[0]
   userStore.recordRankingView(today)
+  // 首次加载失败时，切 tab 回来重试
+  if (!todayCases.value.length) {
+    store.fetchTodayCases()
+  }
 })
 
 const handleCardClick = (caseItem: DailyCase) => {
