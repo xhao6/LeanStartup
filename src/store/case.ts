@@ -49,8 +49,7 @@ export const useCaseStore = defineStore('case', () => {
     return `${get('year')}-${get('month')}-${get('day')}`
   }
   const CACHE_KEY_TODAY = () => `today_cases_${getBeijingToday()}`
-
-  // 持久化
+  const CACHE_EXPIRE = 5 * 60 * 1000
   const initCaseCache = () => {
     const cached = getCache<Record<string, DailyCase>>(CASE_CACHE_KEY)
     if (cached) casesMap.value = cached
