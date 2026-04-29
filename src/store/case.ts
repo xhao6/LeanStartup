@@ -22,8 +22,20 @@ export const useCaseStore = defineStore('case', () => {
   const historyLoading = ref(false)
   const displayDate = ref('')
 
-  // 今日榜单缓存
-  const CACHE_KEY_TODAY = 'today_cases'
+  // 今日榜单缓存（按北京日期分区，解决跨时区缓存错乱）
+  const getBeijingToday = () => {
+    const now = new Date()
+    const formatter = new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+    const parts = formatter.formatToParts(now)
+    const get = (type) => parts.find(p => p.type === type)?.value || ''
+    return `${get('year')}-${get('month')}-${get('day')}`
+  }
+  const CACHE_KEY_TODAY = () => `today_cases_${getBeijingToday()}`
   const CACHE_EXPIRE = 5 * 60 * 1000
 
   // 持久化
@@ -52,8 +64,8 @@ export const useCaseStore = defineStore('case', () => {
 
   // Actions
   const fetchTodayCases = async () => {
-    // 1. 尝试从缓存加载
-    const cached = getCache<DailyCase[]>(CACHE_KEY_TODAY)
+    // 1. 尝试从缓存加载（按北京日期分区）
+    const cached = getCache<DailyCase[]>(CACHE_KEY_TODAY())
     if (cached && cached.length > 0) {
       todayCases.value = cached
       const now = new Date()
@@ -68,7 +80,7 @@ export const useCaseStore = defineStore('case', () => {
       if (res.success && res.data) {
         todayCases.value = res.data.cases || []
         displayDate.value = res.data.date || ''
-        setCache(CACHE_KEY_TODAY, todayCases.value, CACHE_EXPIRE)
+        setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
         // 缓存每个 case
         todayCases.value.forEach(c => {
           casesMap.value[c.id] = c
@@ -155,7 +167,7 @@ export const useCaseStore = defineStore('case', () => {
   }
 
   const clearTodayCache = () => {
-    removeCache(CACHE_KEY_TODAY)
+    removeCache(CACHE_KEY_TODAY())
   }
 
   return {
