@@ -1,7 +1,7 @@
 <template>
   <view class="checklist-section">
     <view class="section-header">
-      <text class="section-title">实践步骤</text>
+      <text class="section-title">📋 实践步骤</text>
       <text class="progress-text">{{ checkedCount }}/{{ steps.length }} 完成</text>
     </view>
     <view class="checklist">
@@ -167,7 +167,7 @@ onMounted(() => {
   font-weight: 700;
 }
 .step-text {
-  font-size: 30rpx;
+  font-size: 32rpx;
   color: #1A1A2E;
   line-height: 1.6;
   flex: 1;
