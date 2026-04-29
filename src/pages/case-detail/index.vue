@@ -167,12 +167,9 @@ const toggleFavorite = async (result: boolean) => {
 const goBack = () => uni.navigateBack()
 const handleReadOriginal = () => {
   if (detail.value.source_url) {
-    // 复制链接或打开浏览器
-    uni.setClipboardData({
-      data: detail.value.source_url,
-      success: () => {
-        uni.showToast({ title: '链接已复制', icon: 'none' })
-      }
+    const encoded = encodeURIComponent(detail.value.source_url)
+    uni.navigateTo({
+      url: `/pages/article-viewer/index?url=${encoded}`
     })
   }
 }
