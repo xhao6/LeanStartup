@@ -79,15 +79,26 @@ const todayText = computed(() => {
   return `${year}-${month}-${day}`
 })
 
+// 北京时间（与 store 保持一致）
+const getBeijingToday = () => {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const beijing = new Date(utc + 8 * 3600000)
+  const y = beijing.getFullYear()
+  const m = String(beijing.getMonth() + 1).padStart(2, '0')
+  const d = String(beijing.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 onMounted(async () => {
   await store.fetchTodayCases()
 })
 
 onShow(() => {
-  const today = new Date().toISOString().split('T')[0]
-  userStore.recordRankingView(today)
-  // 首次加载失败时，切 tab 回来重试
-  if (!todayCases.value.length) {
+  // 用北京时间记录浏览，避免时区差导致日期不匹配
+  userStore.recordRankingView(getBeijingToday())
+  // 数据为空且未在加载时重试（避免 onShow 在 fetch 过程中重复触发）
+  if (!todayCases.value.length && !loading.value) {
     store.fetchTodayCases()
   }
 })

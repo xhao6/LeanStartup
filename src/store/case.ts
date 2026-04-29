@@ -75,7 +75,7 @@ export const useCaseStore = defineStore('case', () => {
       return
     }
 
-    // 2. 从网络加载（含重试）
+    // 2. 从网络加载（含重试和兜底）
     try {
       todayLoading.value = true
       const res = await getDailyPick()
@@ -88,16 +88,16 @@ export const useCaseStore = defineStore('case', () => {
           const fallbackRes = await getDailyPick(yesterday)
           if (fallbackRes.success && fallbackRes.data?.cases?.length) {
             todayCases.value = fallbackRes.data.cases
-            res.data.date = fallbackRes.data.date
+            displayDate.value = fallbackRes.data.date || ''
+          } else {
+            displayDate.value = res.data.date || ''
           }
+        } else {
+          displayDate.value = res.data.date || ''
         }
 
-        displayDate.value = res.data.date || ''
         setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
-        // 缓存每个 case
-        todayCases.value.forEach(c => {
-          casesMap.value[c.id] = c
-        })
+        todayCases.value.forEach(c => { casesMap.value[c.id] = c })
         saveCaseCache()
       } else if (!todayCases.value.length) {
         // 首次加载失败，延迟重试一次
@@ -109,6 +109,15 @@ export const useCaseStore = defineStore('case', () => {
               todayCases.value = retryRes.data.cases
               displayDate.value = retryRes.data.date || ''
               setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
+            } else {
+              // 重试仍无数据，尝试昨天的数据
+              const yesterday = getBeijingYesterday()
+              const fallbackRes = await getDailyPick(yesterday)
+              if (fallbackRes.success && fallbackRes.data?.cases?.length) {
+                todayCases.value = fallbackRes.data.cases
+                displayDate.value = fallbackRes.data.date || ''
+                setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
+              }
             }
           } catch (e) {
             console.error('[fetchTodayCases] 重试失败:', e)
