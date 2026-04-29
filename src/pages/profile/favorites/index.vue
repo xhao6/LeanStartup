@@ -41,7 +41,6 @@
           </view>
           <view class="fav-meta">
             <text class="fav-score">{{ item.score_total }}★</text>
-            <text v-if="item.steps_count" class="fav-progress">{{ item.completed_count || 0 }}/{{ item.steps_count }} 步</text>
           </view>
         </view>
         <view class="fav-action" @click.stop="handleRemove(item.id)">

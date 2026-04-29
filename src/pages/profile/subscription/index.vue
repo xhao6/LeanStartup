@@ -124,7 +124,7 @@ const ensureLoggedIn = async () => {
 }
 
 const handleSubscribe = async () => {
-  const templateId = '4cTtUI36EsezKm-B17z7lNt8gvWDX_AYRVlXeuOh8Wo'
+  const templateId = 'POdB9EzzVCyvfHrJSgmG8vnXLkKiiIWPRC35qjv4wH4'
 
   try {
     await new Promise<void>((resolve, reject) => {
