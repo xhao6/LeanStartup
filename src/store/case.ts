@@ -35,8 +35,20 @@ export const useCaseStore = defineStore('case', () => {
     const get = (type) => parts.find(p => p.type === type)?.value || ''
     return `${get('year')}-${get('month')}-${get('day')}`
   }
+  const getBeijingYesterday = () => {
+    const d = new Date()
+    d.setDate(d.getDate() - 1)
+    const formatter = new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+    const parts = formatter.formatToParts(d)
+    const get = (type) => parts.find(p => p.type === type)?.value || ''
+    return `${get('year')}-${get('month')}-${get('day')}`
+  }
   const CACHE_KEY_TODAY = () => `today_cases_${getBeijingToday()}`
-  const CACHE_EXPIRE = 5 * 60 * 1000
 
   // 持久化
   const initCaseCache = () => {
@@ -79,6 +91,17 @@ export const useCaseStore = defineStore('case', () => {
       const res = await getDailyPick()
       if (res.success && res.data) {
         todayCases.value = res.data.cases || []
+
+        // 空数据兜底：尝试昨天的数据
+        if (todayCases.value.length === 0) {
+          const yesterday = getBeijingYesterday()
+          const fallbackRes = await getDailyPick(yesterday)
+          if (fallbackRes.success && fallbackRes.data?.cases?.length) {
+            todayCases.value = fallbackRes.data.cases
+            res.data.date = fallbackRes.data.date
+          }
+        }
+
         displayDate.value = res.data.date || ''
         setCache(CACHE_KEY_TODAY(), todayCases.value, CACHE_EXPIRE)
         // 缓存每个 case
