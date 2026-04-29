@@ -270,7 +270,7 @@ defineExpose({
   background: #FFFFFF;
   border: 1rpx solid #E8E6E1;
   border-radius: 999rpx;
-  min-height: 72rpx;
+  min-height: 56rpx;
 }
 .link-text {
   font-size: 24rpx;
