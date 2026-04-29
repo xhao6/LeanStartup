@@ -24,7 +24,7 @@
     </view>
 
     <view class="footer-tip">
-      <text>查看更多案例可前往「历史榜单」</text>
+      <text>查看更多案例可前往「往期榜单」</text>
     </view>
   </view>
 </template>
