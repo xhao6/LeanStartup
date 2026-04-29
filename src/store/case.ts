@@ -23,30 +23,21 @@ export const useCaseStore = defineStore('case', () => {
   const displayDate = ref('')
 
   // 今日榜单缓存（按北京日期分区，解决跨时区缓存错乱）
-  const getBeijingToday = () => {
-    const now = new Date()
-    const formatter = new Intl.DateTimeFormat('zh-CN', {
-      timeZone: 'Asia/Shanghai',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    })
-    const parts = formatter.formatToParts(now)
-    const get = (type) => parts.find(p => p.type === type)?.value || ''
-    return `${get('year')}-${get('month')}-${get('day')}`
+  // 注意：微信小程序不支持 Intl.DateTimeFormat，用 UTC 偏移量代替
+  const getBeijingDate = (date?: Date) => {
+    const d = date || new Date()
+    const utc = d.getTime() + d.getTimezoneOffset() * 60000
+    const beijing = new Date(utc + 8 * 3600000)
+    const y = beijing.getFullYear()
+    const m = String(beijing.getMonth() + 1).padStart(2, '0')
+    const day = String(beijing.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
   }
+  const getBeijingToday = () => getBeijingDate()
   const getBeijingYesterday = () => {
     const d = new Date()
     d.setDate(d.getDate() - 1)
-    const formatter = new Intl.DateTimeFormat('zh-CN', {
-      timeZone: 'Asia/Shanghai',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    })
-    const parts = formatter.formatToParts(d)
-    const get = (type) => parts.find(p => p.type === type)?.value || ''
-    return `${get('year')}-${get('month')}-${get('day')}`
+    return getBeijingDate(d)
   }
   const CACHE_KEY_TODAY = () => `today_cases_${getBeijingToday()}`
   const CACHE_EXPIRE = 5 * 60 * 1000
