@@ -1,13 +1,48 @@
-# PRD: 精益副业案例库 MVP v1.0
+# PRD: 精益副业案例库 MVP v1.0.1
 
 | 字段 | 值 |
 |------|-----|
 | 产品名称 | 精益副业案例库 |
-| 版本 | 1.0 |
-| 日期 | 2026-04-28 |
+| 版本 | 1.0.1 |
+| 日期 | 2026-04-29 |
 | 状态 | 已上线 |
 | 负责人 | Ava Bytewood |
 | 基于文档 | CEO Plan 2026-04-21, office-hours design doc, BEST-PRACTICES.md |
+
+---
+
+## 变更日志
+
+### v1.0.1 (2026-04-29)
+
+**Bug 修复**：
+- 修复首页"暂无今日榜单"问题（Intl.DateTimeFormat 不支持 → UTC 偏移量）
+- 修复 fetchTodayCases 首次加载失败无重试的问题
+- 修复 onShow 重试逻辑缺少 loading 状态判断导致的竞态条件
+- 修复 recordRankingView 使用 UTC 而非北京时间导致的日期不匹配
+- 修复 retry 路径缺少 yesterday 兜底数据的问题
+- 修复缓存 key 时区错乱问题（缓存 key 改为按北京日期分区）
+
+**代码质量**：
+- 代码审查修复（retry 路径一致性、res.data.date 变异问题）
+- viewRanking 云函数支持客户端传入 date 参数
+- 移除 store/index.ts 中未使用的 dead code
+- 恢复缺失的 CACHE_EXPIRE 常量
+
+**交互优化**：
+- 案例详情页标签前增加 emoji（📖 案例故事、📋 实践步骤、⚠️ 避坑指南）
+- 案例详情页正文字号 30rpx → 32rpx
+- hover-class 替代 :active（消除滚动时点击态残留）
+- 按钮触控区域优化（72rpx → 56rpx 最小高度）
+- 返回键拦截（TabBar 页面跳转首页）
+
+**文案调整**：
+- "历史榜单" → "往期榜单"
+- 首页标题"轻选案例" → "精益副业"
+
+**其他**：
+- 订阅模板 ID 更新
+- 移除收藏页面进度显示
 
 ---
 
