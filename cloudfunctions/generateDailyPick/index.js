@@ -2,6 +2,11 @@
 const { collection, getCommand, getApp } = require('./utils/db')
 const { formatDateTime, getTodayDate, getDaysAgoDate } = require('./utils/date')
 const { success, error } = require('./utils/response')
+const {
+  computeWeightedScore,
+  filterByScoreRange,
+  selectDailyCases
+} = require('./selector')
 
 /**
  * 每日定时生成精选 Top3（核心逻辑，纯函数，依赖注入）
@@ -52,11 +57,10 @@ async function doGenerateDailyPick(_event, deps) {
       }
     }
 
-    // 3. 查所有已发布案例，按 score_total 倒序
+    // 3. 查所有已发布案例
     const { data: publishedCases } = await deps.collection('Case')
       .where({ status: 'published' })
-      .orderBy('score_total', 'desc')
-      .limit(50)
+      .limit(100)
       .get()
 
     if (!publishedCases || publishedCases.length === 0) {
@@ -66,17 +70,56 @@ async function doGenerateDailyPick(_event, deps) {
       return error('无可选案例', 'NO_CASES')
     }
 
-    // 4. 过滤出最近 30 天未用过的案例
-    const freshCases = publishedCases.filter(c => !recentlyUsedIds.has(c.id))
+    // 4. 查询最近 7 天热度（Analytics 中 collect 事件计数）
+    const sevenDaysAgo = deps.getDaysAgoDate(7)
+    const popularityMap = {}
+    try {
+      const { data: analytics } = await deps.collection('Analytics')
+        .where({
+          event: 'collect',
+          date: cmd.gte(sevenDaysAgo)
+        })
+        .field('case_id')
+        .limit(1000)
+        .get()
 
-    // 5. 选 Top 3 新案例
-    let selectedIds = freshCases.slice(0, 3).map(c => c.id)
+      if (analytics) {
+        for (const record of analytics) {
+          if (record.case_id) {
+            popularityMap[record.case_id] = (popularityMap[record.case_id] || 0) + 1
+          }
+        }
+      }
+    } catch (analyticsErr) {
+      console.error('[generateDailyPick] analytics query failed:', analyticsErr.message)
+    }
 
-    // 6. 不足 3 个 → 从已用案例中按 score_total 补充（经典回顾）
+    // 5. 过滤已用 + 分数区间过滤
+    const freshCases = publishedCases.filter(c => !recentlyUsedIds.has(String(c.id)))
+    const candidates = filterByScoreRange(freshCases)
+
+    // 6. 计算加权评分
+    for (const c of candidates) {
+      const createdDate = c.created_at ? c.created_at.split(' ')[0] : ''
+      const daysSinceCreation = createdDate
+        ? Math.floor((new Date(today) - new Date(createdDate)) / 86400000)
+        : 999
+      c._weightedScore = computeWeightedScore(c, {
+        isNewCase: daysSinceCreation <= 7,
+        popularityCount: popularityMap[c.id] || 0
+      })
+    }
+
+    // 7. 选择 3 个（标签分散 + 随机）
+    const selected = selectDailyCases(candidates, 3)
+    let selectedIds = selected.map(c => c.id)
+
+    // 8. 不足 3 个 → 经典回顾补充
     if (selectedIds.length < 3) {
       const needCount = 3 - selectedIds.length
+      const alreadySelectedIds = new Set(selectedIds)
       const classicCases = publishedCases
-        .filter(c => recentlyUsedIds.has(c.id))
+        .filter(c => recentlyUsedIds.has(String(c.id)) && !alreadySelectedIds.has(c.id))
         .sort((a, b) => b.score_total - a.score_total)
 
       const classicIds = classicCases
@@ -93,7 +136,7 @@ async function doGenerateDailyPick(_event, deps) {
       return error('无可选案例', 'NO_CASES')
     }
 
-    // 7. 写入 DailyPick
+    // 9. 写入 DailyPick
     const dailyPick = {
       date: today,
       case_ids: selectedIds,
@@ -101,7 +144,7 @@ async function doGenerateDailyPick(_event, deps) {
     }
     await deps.collection('DailyPick').add(dailyPick)
 
-    // 8. 异步推送订阅消息（不 await，fire-and-forget）
+    // 10. 异步推送订阅消息（不 await，fire-and-forget）
     try {
       const templateId = process.env.PUSH_TEMPLATE_ID
       if (templateId) {
@@ -121,7 +164,7 @@ async function doGenerateDailyPick(_event, deps) {
       console.error('[generateDailyPick] push error:', pushErr.message)
     }
 
-    // 9. 记录日志
+    // 11. 记录日志
     logEntry.detail = `生成成功: date=${today} case_ids=${selectedIds.join(',')}`
     await deps.collection('SystemLog').add(logEntry)
 

@@ -446,6 +446,7 @@ npm run alova-gen   # 从 Alova 配置生成 API
 1. **API 生成**: 使用 `npm run alova-gen` 从配置生成类型化 API 方法
 2. **类型定义**: 自动生成在 `src/auto-import.d.ts` 和 `src/uni-pages.d.ts`
 3. **全局组件**: 通过 vite.config.ts 中的 unplugin-vue-components 注册
+4. **计划文件**: Plan mode 生成的实现计划统一保存到 `docs/superpowers/plans/`，命名格式 `YYYY-MM-DD-<feature-name>.md`
 
 ## Design System
 Always read DESIGN.md before making any visual or UI decisions.
