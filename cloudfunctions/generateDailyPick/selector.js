@@ -129,6 +129,9 @@ function selectDailyCases(candidates, count = 3, rng) {
     }
   }
 
+  // 保证最终返回顺序按加权分降序（高质量在前），标签分散仍体现在选中的案例上
+  selected.sort((a, b) => (b._weightedScore || 0) - (a._weightedScore || 0))
+
   return selected
 }
 
