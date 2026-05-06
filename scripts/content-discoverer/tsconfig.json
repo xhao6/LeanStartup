@@ -6,8 +6,8 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "rootDir": "src",
+    "rootDir": "..",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../article-downloader/capture.ts", "../article-downloader/constants.ts"]
 }
