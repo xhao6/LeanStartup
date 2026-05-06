@@ -209,15 +209,23 @@ async function extractArticlesFromPage(
       href: item.querySelector('${cfg.selectors.articleUrl}')?.href || '',
       title: (item.querySelector('${cfg.selectors.articleTitle}')?.textContent || '').trim(),
       excerpt: (item.querySelector('${cfg.selectors.articleExcerpt}')?.textContent || '').trim().slice(0, 100),
-      date: (() => { const el = item.querySelector('${cfg.selectors.articleDate}'); if (!el) return ''; const t = el.textContent.trim(); return t.replace(/.*?(\\d{4}[\\/-]\\d{1,2}[\\/-]\\d{1,2}).*/, '$1'); })()
+      date: (() => { const el = item.querySelector('${cfg.selectors.articleDate}'); if (!el) return ''; const t = el.textContent.trim(); const abs = t.match(/(\\d{4}[\\/-]\\d{1,2}[\\/-]\\d{1,2})/); if (abs) return abs[1]; const dm = t.match(/(\\d+)\\s*天前/); if (dm) return new Date(Date.now() - parseInt(dm[1]) * 86400000).toISOString().slice(0,10); const wm = t.match(/(\\d+)\\s*周前/); if (wm) return new Date(Date.now() - parseInt(wm[1]) * 7 * 86400000).toISOString().slice(0,10); const mm = t.match(/(\\d+)\\s*个月前/); if (mm) return new Date(Date.now() - parseInt(mm[1]) * 30 * 86400000).toISOString().slice(0,10); const yd = t.match(/昨天/); if (yd) return new Date(Date.now() - 86400000).toISOString().slice(0,10); return t; })()
     }))`,
   );
 
   const now = new Date().toISOString();
   const articles: CandidateArticle[] = [];
 
+  const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
   for (const item of raw) {
     if (!item.title) continue;
+
+    // Skip articles older than 90 days
+    if (item.date) {
+      const d = new Date(item.date.replace(/\//g, "-"));
+      if (!isNaN(d.getTime()) && d < cutoff) continue;
+    }
 
     // Try direct URL parsing first
     let url = extractWeChatUrlFromSogou(item.href);
