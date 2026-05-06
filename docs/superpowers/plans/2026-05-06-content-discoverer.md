@@ -253,8 +253,8 @@ export async function connectChrome(): Promise<{ cdp: CdpConnection; sessionId: 
 }
 
 export async function navigateTo(cdp: CdpConnection, sessionId: string, url: string): Promise<void> {
-  await cdp.send("Page.enable", undefined, { sessionId });
-  await cdp.send("Network.enable", undefined, { sessionId });
+  await cdp.send("Page.enable", {}, { sessionId });
+  await cdp.send("Network.enable", {}, { sessionId });
   await cdp.send("Page.navigate", { url }, { sessionId });
   await waitForPageLoad(cdp, sessionId);
   await waitForNetworkIdle(cdp, sessionId);
@@ -488,12 +488,11 @@ git add scripts/content-discoverer/src/dedup.ts && git commit -m "feat(content-d
 - [ ] **Step 1: 创建 scanner.ts**
 
 ```typescript
-import fs from "node:fs";
 import path from "node:path";
 import type { CdpConnection } from "../../article-downloader/capture.js";
 import type { CandidateArticle, DiscoverConfig } from "./types.js";
 import { DEFAULT_CONFIG } from "./config.js";
-import { evaluateScript, autoScroll } from "../../article-downloader/capture.js";
+import { evaluateScript, autoScroll } from "./cdp-helpers.js";
 import { connectChrome, navigateTo, randomDelay, detectCaptcha, handleCaptcha } from "./cdp-helpers.js";
 import { extractWeChatUrlFromSogou } from "./url-normalize.js";
 import { loadExistingUrls, loadCandidates, getScannedSources, saveCandidates } from "./dedup.js";
@@ -925,7 +924,7 @@ async function evaluateBatch(
       const parsed: EvaluatedArticle[] = JSON.parse(jsonMatch[1].trim());
 
       // 验证 LLM 返回：补全缺失项，确保 URL 匹配
-      return batch.map((article, idx) => {
+      return batch.map((article) => {
         const found = parsed.find((e) => e.url === article.url);
         return found ?? { url: article.url, pass: false, score: 0, reason: "LLM 未返回评估结果" };
       });
