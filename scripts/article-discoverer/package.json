@@ -1,5 +1,5 @@
 {
-  "name": "content-discoverer",
+  "name": "article-discoverer",
   "private": true,
   "type": "module",
   "scripts": {
