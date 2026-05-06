@@ -55,6 +55,18 @@ scripts/content-discoverer/
 
 导入路径：`import { CdpConnection, evaluateScript, ... } from "article-downloader/capture.js"`。
 
+**前置条件**：`article-downloader/package.json` 需添加 `"exports"` 字段以支持 ESM 子路径导入：
+
+```json
+{
+  "exports": {
+    "./capture.js": "./capture.ts"
+  }
+}
+```
+
+若不想修改 article-downloader 的 package.json，可改用相对路径导入：`import { ... } from "../article-downloader/capture.ts"`。
+
 ### 数据流
 
 ```
@@ -132,7 +144,7 @@ selectors: {
 1. 通过 CDP 执行 JS 获取链接的 `href` 属性
 2. 如果 URL 域名不是 `mp.weixin.qq.com`，通过 CDP `Page.navigate` 到该链接并读取 `Page.navigatedWithinDocument` 或最终 URL
 3. 仅保留域名为 `mp.weixin.qq.com` 的 URL，其余丢弃
-4. 去除 URL 中的跟踪参数（`&ch=...`、`&sn=...` 等），保留核心路径参数
+4. 去除 URL 中的跟踪参数，仅保留 `__biz`、`mid`、`idx` 三个核心参数，移除其余所有查询参数（`sn`、`ch`、`pass_ticket`、`scene`、`subscene`、`clicktime`、`enterid`、`devicetype`、`version` 等）
 
 归一化后的 URL 才存入 candidates.json，确保与 `source_url` 去重比较时格式一致。
 
@@ -223,7 +235,8 @@ evaluator.ts 从 `criteria.json` 读取上述字段，构造 LLM prompt 的 syst
    - User: 每篇文章的 `{ title, excerpt, date, source }`
    - 输出：`{ url, pass: boolean, score: number (1-10), reason: string }`
 4. 收集 `pass: true` 的文章，按 `score` 降序排列
-5. 输出 `resources/discovered-urls.txt`（每行一个 URL）
+5. 输出 `resources/discovered-urls.txt`（每行一个 URL，按 score 降序排列）
+6. 同时输出 `resources/discovered-metadata.json`，包含每篇入选文章的 `{ url, score, reason }`，供人工审核时参考
 
 ### LLM 模型与 SDK 配置
 
