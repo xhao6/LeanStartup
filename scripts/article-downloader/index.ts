@@ -1,5 +1,6 @@
 import { createInterface } from "node:readline";
 import { writeFile, mkdir } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
@@ -63,6 +64,11 @@ function parseArgs(argv: string[]): Args {
       args.outputDir = argv[++i];
     } else if (!arg.startsWith("-")) {
       args.urls.push(arg);
+    } else if (arg === "--url-file" || arg === "-f") {
+      const filePath = argv[++i];
+      const fileContent = readFileSync(filePath, "utf-8");
+      const fileUrls = fileContent.split("\n").map((l: string) => l.trim()).filter((l: string) => l.length > 0 && !l.startsWith("#"));
+      args.urls.push(...fileUrls);
     }
   }
   return args;
@@ -168,6 +174,7 @@ async function main(): Promise<void> {
     console.error("  --timeout <ms>    Page load timeout (default: 30000)");
     console.error("  --no-media        Don't download images");
     console.error("  --no-html         Don't save HTML snapshot");
+    console.error("  --url-file <f>    Read URLs from file (one per line, # for comments)");
     console.error("  --output-dir <d>  Output directory (default: resources/raw/)");
     process.exit(1);
   }
