@@ -6,6 +6,13 @@
 
 ```
 scripts/
+├── article-discoverer/    # 文章发现工具
+│   ├── src/
+│   │   ├── index.ts      # CLI 入口
+│   │   ├── scanner.ts    # 搜狗微信搜索扫描
+│   │   ├── evaluator.ts  # LLM 评估筛选
+│   │   └── ...           # 其他模块
+│   └── README.md
 ├── article-downloader/    # 文章下载工具
 │   └── README.md
 ├── article-processor/     # 文章处理工具
@@ -20,6 +27,34 @@ scripts/
 ```
 
 ## 子模块说明
+
+### article-discoverer - 文章发现工具
+
+通过搜狗微信搜索自动扫描公众号和关键词，收集候选文章并用 LLM 评估筛选。
+
+**主要功能**：
+- 扫描指定公众号的最新文章列表
+- 按关键词搜索微信文章（支持多页翻页）
+- 自动处理验证码（等待手动解决）
+- 用 LLM 评估文章是否符合入选标准
+- 支持手动模式（直接提供 URL 列表）
+
+**快速开始**：
+```bash
+# 1. 启动 Chrome（带远程调试）
+chrome.exe --remote-debugging-port=9222
+
+# 2. 运行扫描
+cd scripts/article-discoverer
+npx tsx src/index.ts scan
+
+# 3. 评估候选文章
+npx tsx src/index.ts evaluate
+```
+
+**详细文档**：[article-discoverer/README.md](article-discoverer/README.md)
+
+---
 
 ### article-downloader - 文章下载工具
 
@@ -95,14 +130,20 @@ node index.js sync --file ../../cases-batch.json
 │                     内容采集流程                               │
 └─────────────────────────────────────────────────────────────┘
 
-    运营筛选               article-downloader              article-processor
-  文章 URL      ──────►  下载 HTML 文件      ──────►  LLM 评分 + 结构化
-                          ↓                         ↓
-                   resources/raw/          resources/processed/
-                                               ↓
-                                         sync-to-db
-                                               ↓
-                                         Case 集合 (NoSQL 数据库)
+  article-discoverer        运营确认             article-downloader
+  扫描 + LLM 筛选       ──────►  审核 URL   ──────►  下载 HTML 文件
+        ↓                                        ↓
+  resources/candidates.json                 resources/raw/
+  resources/discovered-urls.txt
+                                                    ↓
+                                            article-processor
+                                          LLM 评分 + 结构化
+                                                    ↓
+                                          resources/processed/
+                                                    ↓
+                                              sync-to-db
+                                                    ↓
+                                          Case 集合 (NoSQL 数据库)
 ```
 
 ## 相关文档
