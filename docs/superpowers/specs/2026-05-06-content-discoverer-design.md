@@ -168,7 +168,7 @@ npx discover scan && npx discover evaluate
 | 搜狗反爬/验证码 | CDP 检测验证码页面，暂停提示用户手动处理后按回车继续 |
 | candidates.json 不存在 | evaluate 报错退出，提示先运行 scan |
 | 零篇存量文章 | criteria 跳过，仅用配置关键词搜索，不生成入选标准 |
-| 全部候选被过滤 | 输出空 discovered-ursl.txt + 日志提示 |
+| 全部候选被过滤 | 输出空 discovered-urls.txt + 日志提示 |
 | LLM API 限流 | 每批之间加 2s 间隔，重试 3 次 |
 | 文章 URL 格式异常 | 扫描时过滤非 mp.weixin.qq.com 域名的 URL |
 
