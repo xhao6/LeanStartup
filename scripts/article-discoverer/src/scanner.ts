@@ -1,6 +1,6 @@
 import path from "node:path";
-import type { CdpConnection } from "./cdp-helpers.js";
 import {
+  CdpConnection,
   evaluateScript,
   autoScroll,
   connectChrome,
@@ -9,10 +9,11 @@ import {
   detectCaptcha,
   handleCaptcha,
   resetCaptchaCount,
+  sleep,
 } from "./cdp-helpers.js";
 import type { CandidateArticle, DiscoverConfig } from "./types.js";
 import { DEFAULT_CONFIG } from "./config.js";
-import { extractWeChatUrlFromSogou } from "./url-normalize.js";
+import { extractWeChatUrlFromSogou, normalizeWeChatUrl } from "./url-normalize.js";
 import {
   loadExistingUrls,
   loadCandidates,
@@ -40,7 +41,7 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
   for (const c of candidates) existingUrls.add(c.url);
 
   resetCaptchaCount();
-  const { cdp, sessionId, targetId } = await connectChrome();
+  const { cdp, sessionId, cleanup } = await connectChrome();
 
   try {
     if (!options.keywordsOnly) {
@@ -90,12 +91,7 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
 
     console.log(`\n扫描完成：共 ${candidates.length} 篇候选`);
   } finally {
-    try {
-      await cdp.send("Target.closeTarget", { targetId });
-    } catch {
-      /* ignore */
-    }
-    cdp.close();
+    await cleanup();
   }
 }
 
@@ -213,7 +209,7 @@ async function extractArticlesFromPage(
       href: item.querySelector('${cfg.selectors.articleUrl}')?.href || '',
       title: (item.querySelector('${cfg.selectors.articleTitle}')?.textContent || '').trim(),
       excerpt: (item.querySelector('${cfg.selectors.articleExcerpt}')?.textContent || '').trim().slice(0, 100),
-      date: (item.querySelector('${cfg.selectors.articleDate}')?.textContent || '').trim()
+      date: (() => { const el = item.querySelector('${cfg.selectors.articleDate}'); if (!el) return ''; const t = el.textContent.trim(); return t.replace(/.*?(\\d{4}[\\/-]\\d{1,2}[\\/-]\\d{1,2}).*/, '$1'); })()
     }))`,
   );
 
@@ -221,9 +217,17 @@ async function extractArticlesFromPage(
   const articles: CandidateArticle[] = [];
 
   for (const item of raw) {
-    const url = extractWeChatUrlFromSogou(item.href);
-    if (!url || existingUrls.has(url)) continue;
     if (!item.title) continue;
+
+    // Try direct URL parsing first
+    let url = extractWeChatUrlFromSogou(item.href);
+
+    // If not a direct WeChat URL, resolve via CDP navigation
+    if (!url && item.href.includes("weixin.sogou.com")) {
+      url = await resolveSogouRedirect(cdp, item.href);
+    }
+
+    if (!url || existingUrls.has(url)) continue;
 
     articles.push({
       url,
@@ -236,4 +240,47 @@ async function extractArticlesFromPage(
   }
 
   return articles;
+}
+
+async function resolveSogouRedirect(
+  cdp: CdpConnection,
+  sogouUrl: string,
+): Promise<string | null> {
+  const target = await cdp.send<{ targetId: string }>("Target.createTarget", {
+    url: sogouUrl,
+  });
+  const newTargetId = target.targetId;
+
+  try {
+    const { sessionId: newSessionId } = await cdp.send<{ sessionId: string }>(
+      "Target.attachToTarget",
+      { targetId: newTargetId, flatten: true },
+    );
+
+    await sleep(2000);
+
+    // Try to extract biz/mid/idx from page JS runtime for a canonical URL
+    const ids = await evaluateScript<{ biz: string; mid: string; idx: string } | null>(
+      cdp, newSessionId,
+      `(() => { const b = typeof biz !== 'undefined' ? String(biz) : (typeof window.biz !== 'undefined' ? String(window.biz) : ''); const m = typeof mid !== 'undefined' ? String(mid) : ''; const x = typeof idx !== 'undefined' ? String(idx) : ''; return b && m && x ? { biz: b, mid: m, idx: x } : null; })()`,
+    );
+
+    if (ids) {
+      return normalizeWeChatUrl(
+        `https://mp.weixin.qq.com/s?__biz=${ids.biz}&mid=${ids.mid}&idx=${ids.idx}`,
+      );
+    }
+
+    // Fallback: use the final URL as-is
+    const finalUrl = await evaluateScript<string>(
+      cdp, newSessionId, "window.location.href",
+    );
+    return extractWeChatUrlFromSogou(finalUrl);
+  } catch {
+    return null;
+  } finally {
+    try {
+      await cdp.send("Target.closeTarget", { targetId: newTargetId });
+    } catch { /* ignore */ }
+  }
 }

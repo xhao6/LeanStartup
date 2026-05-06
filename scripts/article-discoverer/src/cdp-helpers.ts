@@ -7,6 +7,9 @@ import {
   waitForNetworkIdle,
   autoScroll,
   findExistingChromePort,
+  getFreePort,
+  launchChrome,
+  killChrome,
   sleep,
   waitForChromeDebugPort,
 } from "../../article-downloader/capture.js";
@@ -25,31 +28,60 @@ export async function connectChrome(): Promise<{
   cdp: CdpConnection;
   sessionId: string;
   targetId: string;
+  cleanup: () => Promise<void>;
 }> {
-  const port = await findExistingChromePort();
-  if (!port) {
-    console.error("[!] 未检测到运行中的 Chrome 实例");
-    console.error(
-      "    请先启动 Chrome 并开启远程调试：chrome.exe --remote-debugging-port=9222"
-    );
-    process.exit(1);
-  }
+  const existingPort = await findExistingChromePort();
+  const reusing = existingPort !== null;
+  const port = existingPort ?? await getFreePort();
+  const chrome = reusing ? null : await launchChrome("about:blank", port);
+
+  if (reusing) console.log(`  复用已有 Chrome 实例 (port ${port})`);
+  else console.log(`  已启动 Chrome (port ${port})`);
 
   const wsUrl = await waitForChromeDebugPort(port, 15_000);
   const cdp = await CdpConnection.connect(wsUrl, 15_000);
 
-  const target = await cdp.send<{ targetId: string }>("Target.createTarget", {
-    url: "about:blank",
-  });
-  const { sessionId } = await cdp.send<{ sessionId: string }>(
-    "Target.attachToTarget",
-    {
-      targetId: target.targetId,
-      flatten: true,
-    }
-  );
+  let targetId: string;
+  let sessionId: string;
 
-  return { cdp, sessionId, targetId: target.targetId };
+  if (reusing) {
+    const target = await cdp.send<{ targetId: string }>("Target.createTarget", {
+      url: "about:blank",
+    });
+    targetId = target.targetId;
+    const attached = await cdp.send<{ sessionId: string }>(
+      "Target.attachToTarget",
+      { targetId, flatten: true }
+    );
+    sessionId = attached.sessionId;
+  } else {
+    const targets = await cdp.send<{ targetInfos: Array<{ targetId: string; type: string; url: string }> }>("Target.getTargets");
+    const pageTarget = targets.targetInfos.find(t => t.type === "page" && t.url.startsWith("http"));
+    if (!pageTarget) {
+      const target = await cdp.send<{ targetId: string }>("Target.createTarget", { url: "about:blank" });
+      targetId = target.targetId;
+    } else {
+      targetId = pageTarget.targetId;
+    }
+    const attached = await cdp.send<{ sessionId: string }>(
+      "Target.attachToTarget",
+      { targetId, flatten: true }
+    );
+    sessionId = attached.sessionId;
+  }
+
+  const cleanup = async () => {
+    if (reusing) {
+      try { await cdp.send("Target.closeTarget", { targetId }, { timeoutMs: 5_000 }); } catch { /* ignore */ }
+      cdp.close();
+    } else {
+      try { await cdp.send("Browser.close", {}, { timeoutMs: 5_000 }); } catch { /* ignore */ }
+      cdp.close();
+      if (chrome) killChrome(chrome);
+    }
+  };
+
+  return { cdp, sessionId, targetId, cleanup };
 }
 
 export async function navigateTo(

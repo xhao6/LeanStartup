@@ -3,10 +3,12 @@ import type { DiscoverConfig } from "./types.js";
 
 export const DEFAULT_CONFIG: DiscoverConfig = {
   accounts: [
-    // 在此添加目标公众号名称
+    "一人公司",
+    "独立开发者",
   ],
   keywords: [
-    // 在此添加搜索关键词
+    "副业",
+    "小成本创业",
   ],
   maxPages: 5,
   batchSize: 10,

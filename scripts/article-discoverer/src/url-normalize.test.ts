@@ -81,6 +81,26 @@ describe("extractWeChatUrlFromSogou", () => {
     );
   });
 
+  it("normalizes Sogou redirect format (src/timestamp/ver/signature)", () => {
+    const input =
+      "https://mp.weixin.qq.com/s?src=11&timestamp=1778038032&ver=6703&signature=FvdLTR*some&scene=1#rd";
+    const result = normalizeWeChatUrl(input);
+    assert.equal(
+      result,
+      "https://mp.weixin.qq.com/s?src=11&timestamp=1778038032&ver=6703&signature=FvdLTR*some",
+    );
+  });
+
+  it("normalizes a direct mp.weixin.qq.com link with signature format", () => {
+    const input =
+      "https://mp.weixin.qq.com/s?src=11&timestamp=1778038032&ver=6703&signature=abc123&extra=foo";
+    const result = extractWeChatUrlFromSogou(input);
+    assert.equal(
+      result,
+      "https://mp.weixin.qq.com/s?src=11&timestamp=1778038032&ver=6703&signature=abc123",
+    );
+  });
+
   it("returns null for non-WeChat, non-Sogou URL", () => {
     assert.equal(
       extractWeChatUrlFromSogou("https://example.com/some-article"),
