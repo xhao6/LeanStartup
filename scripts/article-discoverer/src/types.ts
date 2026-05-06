@@ -45,6 +45,7 @@ export interface DiscoverConfig {
   keywords: string[];
   maxPages: number;
   batchSize: number;
+  dayLimit: number;       // search within N days (default 90)
   scanDelayMs: [number, number];
   sogouSearchUrl: string;
   outputDir: string;

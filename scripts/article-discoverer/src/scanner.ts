@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import {
   CdpConnection,
@@ -11,7 +12,7 @@ import {
   resetCaptchaCount,
   sleep,
 } from "./cdp-helpers.js";
-import type { CandidateArticle, DiscoverConfig } from "./types.js";
+import type { CandidateArticle, DiscoverConfig, SelectionCriteria } from "./types.js";
 import { DEFAULT_CONFIG } from "./config.js";
 import { extractWeChatUrlFromSogou, normalizeWeChatUrl } from "./url-normalize.js";
 import {
@@ -32,6 +33,19 @@ interface ScanOptions {
 export async function scan(options: ScanOptions = {}): Promise<void> {
   const cfg = options.config ?? DEFAULT_CONFIG;
   const candidatesPath = path.join(cfg.outputDir, "candidates.json");
+
+  // Load keywords from criteria.json if available
+  let keywords = cfg.keywords;
+  const criteriaPath = path.join(cfg.outputDir, "criteria.json");
+  if (fs.existsSync(criteriaPath)) {
+    try {
+      const criteria: SelectionCriteria = JSON.parse(fs.readFileSync(criteriaPath, "utf-8"));
+      if (criteria.searchKeywords?.length) {
+        keywords = criteria.searchKeywords;
+        console.log(`  从 criteria.json 加载 ${keywords.length} 个关键词`);
+      }
+    } catch { /* ignore */ }
+  }
 
   let candidates: CandidateArticle[] = options.clean
     ? []
@@ -67,17 +81,19 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
     }
 
     if (!options.accountsOnly) {
-      const keywords = cfg.keywords.filter(
+      const remainingKeywords = keywords.filter(
         (kw) => !scannedSources.has(`keyword:${kw}`),
       );
-      for (let i = 0; i < keywords.length; i++) {
-        const kw = keywords[i];
+      for (let i = 0; i < remainingKeywords.length; i++) {
+        const kw = remainingKeywords[i];
+        console.log(`[keyword ${i + 1}/${remainingKeywords.length}] "${kw}"`);[i];
         console.log(`[keyword ${i + 1}/${keywords.length}] "${kw}"`);
         const articles = await scanKeyword(
           cdp,
           sessionId,
           kw,
           options.maxPages ?? cfg.maxPages,
+          cfg.dayLimit,
           cfg,
           existingUrls,
         );
@@ -163,13 +179,14 @@ async function scanKeyword(
   sessionId: string,
   keyword: string,
   maxPages: number,
+  dayLimit: number,
   cfg: DiscoverConfig,
   existingUrls: Set<string>,
 ): Promise<CandidateArticle[]> {
   const allArticles: CandidateArticle[] = [];
 
   for (let page = 1; page <= maxPages; page++) {
-    const searchUrl = `${cfg.sogouSearchUrl}/weixin?type=2&query=${encodeURIComponent(keyword)}&sort=time&page=${page}`;
+    const searchUrl = `${cfg.sogouSearchUrl}/weixin?type=2&query=${encodeURIComponent(keyword)}&sort=time&dr=${dayLimit}&page=${page}`;
     await navigateTo(cdp, sessionId, searchUrl);
     await randomDelay();
 

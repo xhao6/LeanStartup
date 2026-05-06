@@ -2,16 +2,11 @@ import path from "node:path";
 import type { DiscoverConfig } from "./types.js";
 
 export const DEFAULT_CONFIG: DiscoverConfig = {
-  accounts: [
-    "一人公司",
-    "独立开发者",
-  ],
-  keywords: [
-    "副业",
-    "小成本创业",
-  ],
+  accounts: [],
+  keywords: [],
   maxPages: 5,
   batchSize: 10,
+  dayLimit: 90,
   scanDelayMs: [3000, 5000],
   sogouSearchUrl: "https://weixin.sogou.com",
   outputDir: path.resolve(import.meta.dirname ?? ".", "../../../resources"),
