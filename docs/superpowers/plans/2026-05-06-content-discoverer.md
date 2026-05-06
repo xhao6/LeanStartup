@@ -253,6 +253,8 @@ export async function connectChrome(): Promise<{ cdp: CdpConnection; sessionId: 
 }
 
 export async function navigateTo(cdp: CdpConnection, sessionId: string, url: string): Promise<void> {
+  await cdp.send("Page.enable", undefined, { sessionId });
+  await cdp.send("Network.enable", undefined, { sessionId });
   await cdp.send("Page.navigate", { url }, { sessionId });
   await waitForPageLoad(cdp, sessionId);
   await waitForNetworkIdle(cdp, sessionId);
@@ -402,24 +404,42 @@ import { normalizeWeChatUrl } from "./url-normalize.js";
 export function loadExistingUrls(resourcesDir: string): Set<string> {
   const urls = new Set<string>();
 
-  for (const subdir of ["raw", "processed"]) {
-    const dir = path.join(resourcesDir, subdir);
-    if (!fs.existsSync(dir)) continue;
-
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+  // raw/ 目录：HTML 文件，从 <meta property="og:url"> 提取 URL
+  const rawDir = path.join(resourcesDir, "raw");
+  if (fs.existsSync(rawDir)) {
+    const entries = fs.readdirSync(rawDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
-      const mdPath = path.join(dir, entry.name, "article.md");
-      if (!fs.existsSync(mdPath)) continue;
+      for (const htmlFile of fs.readdirSync(path.join(rawDir, entry.name))) {
+        if (!htmlFile.endsWith(".html")) continue;
+        try {
+          const html = fs.readFileSync(path.join(rawDir, entry.name, htmlFile), "utf-8");
+          const match = html.match(/<meta\s+property="og:url"\s+content="([^"]+)"/);
+          if (match) {
+            const normalized = normalizeWeChatUrl(match[1]);
+            if (normalized) urls.add(normalized);
+          }
+        } catch { /* skip */ }
+      }
+    }
+  }
 
+  // processed/ 目录：MD 文件，frontmatter 中 source_url 字段，文件名 {dirName}/{dirName}.md
+  const processedDir = path.join(resourcesDir, "processed");
+  if (fs.existsSync(processedDir)) {
+    const entries = fs.readdirSync(processedDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const mdPath = path.join(processedDir, entry.name, `${entry.name}.md`);
+      if (!fs.existsSync(mdPath)) continue;
       try {
         const content = fs.readFileSync(mdPath, "utf-8");
         const { data } = matter(content);
-        if (data.url) {
-          const normalized = normalizeWeChatUrl(data.url);
+        if (data.source_url) {
+          const normalized = normalizeWeChatUrl(data.source_url);
           if (normalized) urls.add(normalized);
         }
-      } catch { /* skip unreadable files */ }
+      } catch { /* skip */ }
     }
   }
 
@@ -734,11 +754,23 @@ function extractFeaturesFromDir(processedDir: string): ArticleFeatures[] {
     try {
       const content = fs.readFileSync(mdPath, "utf-8");
       const { data, content: body } = matter(content);
+
+      // 从 body 中提取吸睛标签
+      const tagMatch = body.match(/## 吸睛标签\s*\n([\s\S]*?)(?=\n## |$)/);
+      const tags = tagMatch?.[1]
+        ?.split("\n")
+        .map((l: string) => l.replace(/^[-*]\s*/, "").trim())
+        .filter(Boolean) ?? [];
+
+      // 从 body 中提取核心亮点作为 summary
+      const highlightMatch = body.match(/## 核心亮点\s*\n([\s\S]*?)(?=\n## |$)/);
+      const summary = highlightMatch?.[1]?.trim().slice(0, 200) ?? "";
+
       features.push({
-        title: data.title ?? "",
-        tags: data.tags ?? [],
-        scoreTotal: data.score_total ?? 0,
-        summary: data.summary ?? data.core_highlight ?? "",
+        title: data.source_title ?? "",
+        tags,
+        scoreTotal: data.total_score ?? 0,
+        summary,
         caseStoryExcerpt: (body.match(/## 案例故事\s*\n([\s\S]{0,300})/)?.[1] ?? "").trim(),
       });
     } catch { /* skip */ }
@@ -890,7 +922,13 @@ async function evaluateBatch(
       const jsonMatch = textBlock.text.match(/```(?:json)?\s*([\s\S]*?)```/) ?? textBlock.text.match(/(\[[\s\S]*\])/);
       if (!jsonMatch) throw new Error("无法解析 LLM 响应中的 JSON");
 
-      return JSON.parse(jsonMatch[1].trim());
+      const parsed: EvaluatedArticle[] = JSON.parse(jsonMatch[1].trim());
+
+      // 验证 LLM 返回：补全缺失项，确保 URL 匹配
+      return batch.map((article, idx) => {
+        const found = parsed.find((e) => e.url === article.url);
+        return found ?? { url: article.url, pass: false, score: 0, reason: "LLM 未返回评估结果" };
+      });
     } catch (err) {
       retries++;
       if (retries >= 3) throw err;
