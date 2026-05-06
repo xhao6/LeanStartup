@@ -26,6 +26,11 @@ package-lock.json
 __pycache__/
 *.pyc
 
+# Article discoverer runtime output
+resources/candidates*.json
+resources/discovered-urls.txt
+resources/discovered-metadata.json
+
 # Test results
 test-results/
 playwright-report/

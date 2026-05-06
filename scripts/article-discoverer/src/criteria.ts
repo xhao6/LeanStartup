@@ -116,14 +116,14 @@ export async function generateCriteria(
   const textBlock = response.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") throw new Error("LLM 响应无文本块");
 
-  const jsonMatch = textBlock.text.match(/```(?:json)?\s*([\s\S]*?)```/) ?? textBlock.text.match(/(\{[\s\S]*\})/);
-  if (!jsonMatch) {
+const jsonBlock = textBlock.text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (!jsonBlock) {
     console.error("LLM 响应原文（前500字）：", textBlock.text.slice(0, 500));
     throw new Error("无法解析 LLM 响应中的 JSON");
   }
 
   const criteria: SelectionCriteria = {
-    ...JSON.parse(jsonMatch[1].trim()),
+    ...JSON.parse(jsonBlock[1].trim()),
     generatedAt: new Date().toISOString(),
   };
 

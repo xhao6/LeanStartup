@@ -73,12 +73,10 @@ async function evaluateBatch(
       const textBlock = response.content.find((b) => b.type === "text");
       if (!textBlock || textBlock.type !== "text") throw new Error("LLM 响应无文本块");
 
-      const jsonMatch =
-        textBlock.text.match(/```(?:json)?\s*([\s\S]*?)```/) ??
-        textBlock.text.match(/(\[[\s\S]*\])/);
-      if (!jsonMatch) throw new Error("无法解析 LLM 响应中的 JSON");
+const codeBlock = textBlock.text.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (!codeBlock) throw new Error("无法解析 LLM 响应中的 JSON");
 
-      const parsed: EvaluatedArticle[] = JSON.parse(jsonMatch[1].trim());
+      const parsed: EvaluatedArticle[] = JSON.parse(codeBlock[1].trim());
 
       // Validate: map results back to input batch, fill missing entries
       return batch.map((article) => {
