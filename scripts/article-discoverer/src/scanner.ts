@@ -28,6 +28,7 @@ interface ScanOptions {
   maxPages?: number;
   clean?: boolean;
   config?: DiscoverConfig;
+  captureCache?: Map<string, string>;
 }
 
 export async function scan(options: ScanOptions = {}): Promise<void> {
@@ -71,6 +72,7 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
           name,
           cfg,
           existingUrls,
+          options.captureCache,
         );
         console.log(`  → 已加载 ${articles.length} 篇新文章`);
         candidates.push(...articles);
@@ -96,6 +98,7 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
           cfg.dayLimit,
           cfg,
           existingUrls,
+          options.captureCache,
         );
         console.log(`  → ${articles.length} 篇新文章`);
         candidates.push(...articles);
@@ -111,12 +114,13 @@ export async function scan(options: ScanOptions = {}): Promise<void> {
   }
 }
 
-async function scanAccount(
+export async function scanAccount(
   cdp: CdpConnection,
   sessionId: string,
   accountName: string,
   cfg: DiscoverConfig,
   existingUrls: Set<string>,
+  captureCache?: Map<string, string>,
 ): Promise<CandidateArticle[]> {
   await navigateTo(cdp, sessionId, cfg.sogouSearchUrl);
   await randomDelay();
@@ -171,10 +175,11 @@ async function scanAccount(
     `account:${accountName}`,
     cfg,
     existingUrls,
+    captureCache,
   );
 }
 
-async function scanKeyword(
+export async function scanKeyword(
   cdp: CdpConnection,
   sessionId: string,
   keyword: string,
@@ -182,6 +187,7 @@ async function scanKeyword(
   dayLimit: number,
   cfg: DiscoverConfig,
   existingUrls: Set<string>,
+  captureCache?: Map<string, string>,
 ): Promise<CandidateArticle[]> {
   const allArticles: CandidateArticle[] = [];
 
@@ -199,6 +205,7 @@ async function scanKeyword(
       `keyword:${keyword}`,
       cfg,
       existingUrls,
+      captureCache,
     );
     console.log(`  第${page}页 → ${articles.length} 篇`);
     allArticles.push(...articles);
@@ -216,6 +223,7 @@ async function extractArticlesFromPage(
   source: string,
   cfg: DiscoverConfig,
   existingUrls: Set<string>,
+  captureCache?: Map<string, string>,
 ): Promise<CandidateArticle[]> {
   const raw = await evaluateScript<
     Array<{ href: string; title: string; excerpt: string; date: string }>
@@ -249,7 +257,7 @@ async function extractArticlesFromPage(
 
     // If not a direct WeChat URL, resolve via CDP navigation
     if (!url && item.href.includes("weixin.sogou.com")) {
-      url = await resolveSogouRedirect(cdp, item.href);
+      url = await resolveSogouRedirect(cdp, item.href, captureCache);
     }
 
     if (!url || existingUrls.has(url)) continue;
@@ -270,6 +278,7 @@ async function extractArticlesFromPage(
 async function resolveSogouRedirect(
   cdp: CdpConnection,
   sogouUrl: string,
+  captureCache?: Map<string, string>,
 ): Promise<string | null> {
   const target = await cdp.send<{ targetId: string }>("Target.createTarget", {
     url: sogouUrl,
@@ -290,17 +299,28 @@ async function resolveSogouRedirect(
       `(() => { const b = typeof biz !== 'undefined' ? String(biz) : (typeof window.biz !== 'undefined' ? String(window.biz) : ''); const m = typeof mid !== 'undefined' ? String(mid) : ''; const x = typeof idx !== 'undefined' ? String(idx) : ''; return b && m && x ? { biz: b, mid: m, idx: x } : null; })()`,
     );
 
+    let canonicalUrl: string | null = null;
     if (ids) {
-      return normalizeWeChatUrl(
+      canonicalUrl = normalizeWeChatUrl(
         `https://mp.weixin.qq.com/s?__biz=${ids.biz}&mid=${ids.mid}&idx=${ids.idx}`,
       );
+    } else {
+      const finalUrl = await evaluateScript<string>(
+        cdp, newSessionId, "window.location.href",
+      );
+      canonicalUrl = extractWeChatUrlFromSogou(finalUrl);
     }
 
-    // Fallback: use the final URL as-is
-    const finalUrl = await evaluateScript<string>(
-      cdp, newSessionId, "window.location.href",
-    );
-    return extractWeChatUrlFromSogou(finalUrl);
+    if (canonicalUrl && captureCache) {
+      await autoScroll(cdp, newSessionId, 6, 500);
+      await sleep(500);
+      const html = await evaluateScript<string>(
+        cdp, newSessionId, "document.documentElement.outerHTML",
+      );
+      captureCache.set(canonicalUrl, html);
+    }
+
+    return canonicalUrl;
   } catch {
     return null;
   } finally {

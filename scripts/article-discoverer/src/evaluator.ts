@@ -10,13 +10,13 @@ import { loadCandidates } from "./dedup.js";
 const MINIMAX_BASE_URL = "https://api.minimaxi.com/anthropic";
 const MINIMAX_MODEL = "MiniMax-M2.7";
 
-function createClient(): Anthropic {
+export function createClient(): Anthropic {
   const apiKey = process.env.MINIMAX_API_KEY;
   if (!apiKey) throw new Error("MINIMAX_API_KEY environment variable is required");
   return new Anthropic({ apiKey, baseURL: MINIMAX_BASE_URL });
 }
 
-function buildSystemPrompt(criteria: SelectionCriteria): string {
+export function buildSystemPrompt(criteria: SelectionCriteria): string {
   return `你是一个内容筛选专家。根据以下入选标准，评估候选文章是否值得入选。
 
 ## 入选标准
@@ -43,7 +43,7 @@ ${criteria.negativeSignals.map((s) => `- ${s}`).join("\n")}
 只输出 JSON 数组，不要其他内容。`;
 }
 
-async function evaluateBatch(
+export async function evaluateBatch(
   client: Anthropic,
   criteria: SelectionCriteria,
   batch: CandidateArticle[],

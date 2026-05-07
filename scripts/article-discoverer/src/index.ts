@@ -4,6 +4,7 @@ import process from "node:process";
 import { Command } from "commander";
 import { scan } from "./scanner.js";
 import { evaluate } from "./evaluator.js";
+import { discover } from "./pipeline.js";
 import { DEFAULT_CONFIG } from "./config.js";
 import { normalizeWeChatUrl } from "./url-normalize.js";
 
@@ -55,6 +56,24 @@ program
   .action(async (opts) => {
     await evaluate({
       refreshCriteria: opts.refreshCriteria,
+    });
+  });
+
+program
+  .command("discover")
+  .description("一站式：扫描 → 评估 → 下载")
+  .option("--accounts-only", "仅扫描固定公众号")
+  .option("--keywords-only", "仅关键词搜索")
+  .option("--max-pages <n>", "关键词搜索最大翻页数", "5")
+  .option("--clean", "清除已有候选，重新全量扫描")
+  .option("--no-html", "不保存 HTML 快照")
+  .action(async (opts) => {
+    await discover({
+      accountsOnly: opts.accountsOnly,
+      keywordsOnly: opts.keywordsOnly,
+      maxPages: parseInt(opts.maxPages, 10),
+      clean: opts.clean,
+      saveHtml: opts.html ?? true,
     });
   });
 

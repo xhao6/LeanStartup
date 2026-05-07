@@ -17,6 +17,10 @@ export interface SelectionCriteria {
   generatedAt: string;
 }
 
+export interface CapturedArticle extends CandidateArticle {
+  html: string;
+}
+
 export interface EvaluatedArticle {
   url: string;
   pass: boolean;
