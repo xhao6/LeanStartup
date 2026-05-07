@@ -11,6 +11,7 @@ description: >-
 author: "西门良\_Simon\_Liang"
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:45:37.012Z'
+processed_at: '2026-05-07T05:39:37.951Z'
 ---
 
 # 独立开发两年，达到1k MRR有感

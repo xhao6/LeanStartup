@@ -6,6 +6,7 @@ description: 高中生零代码创业：一人公司如何靠Kimi 2.5+OpenClaw�
 author: 草包
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:41:24.300Z'
+processed_at: '2026-05-07T05:25:46.864Z'
 ---
 
 # 高中生零代码创业：一人公司如何靠Kimi 2.5+OpenClaw月入过万？

@@ -9,6 +9,7 @@ description: >-
 author: 我是奥特曼哦
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:39:11.002Z'
+processed_at: '2026-05-07T05:23:43.463Z'
 ---
 
 # YouTube 出海 Day10｜别再瞎做 YouTube 了！我踩过的这几个坑，新手一定要避开

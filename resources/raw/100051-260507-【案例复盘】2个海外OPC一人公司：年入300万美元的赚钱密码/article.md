@@ -8,6 +8,7 @@ description: >-
 author: 真启
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:36:43.303Z'
+processed_at: '2026-05-07T05:18:53.014Z'
 ---
 
 # 【案例复盘】2个海外OPC一人公司：年入300万美元的赚钱密码

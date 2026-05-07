@@ -6,6 +6,7 @@ description: 本文由AI小白进化论创作，带你了解最新的AI技术动
 author: AI小白进化论
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:34:14.402Z'
+processed_at: '2026-05-07T05:14:25.787Z'
 ---
 
 # 普通人也能月入过万：5个已验证AI副业变现案例全拆解

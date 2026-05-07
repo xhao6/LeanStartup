@@ -6,6 +6,7 @@ description: 2025年 · 实战方法论 · 真实案例数据2025年，AI浪潮�
 author: 大黄
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:35:18.317Z'
+processed_at: '2026-05-07T05:56:20.715Z'
 ---
 
 # 干货！程序员转型AI独立开发者：从0到月入3万的6条真实路径

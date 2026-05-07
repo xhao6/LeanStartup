@@ -6,6 +6,7 @@ description: 拆解3个普通人可复制的AI一人公司真实案例，从工�
 author: PixelNova
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:36:45.735Z'
+processed_at: '2026-05-07T05:20:48.119Z'
 ---
 
 # 3个真实AI一人公司案例：单月最高赚20万，没团队没融资

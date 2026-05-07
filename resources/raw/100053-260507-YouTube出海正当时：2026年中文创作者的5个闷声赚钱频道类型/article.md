@@ -6,6 +6,7 @@ description: 很多人知道YouTube能赚钱，但一想到\x26amp;quot;我要�
 author: "点击关注\U0001F449"
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:39:07.954Z'
+processed_at: '2026-05-07T05:22:00.736Z'
 ---
 
 # YouTube出海正当时：2026年中文创作者的5个闷声赚钱频道类型

@@ -6,6 +6,7 @@ description: >-
 author: 成哥副业思维
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:42:39.444Z'
+processed_at: '2026-05-07T05:29:37.474Z'
 ---
 
 # 真实案例拆解：一篇育儿心得，如何变成5个渠道的被动收入？（宝妈3个月从0到月入8K）

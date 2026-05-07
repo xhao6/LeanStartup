@@ -6,6 +6,7 @@ description: 大家好，我是速出海的opcmax。 前两篇说的都是英文
 author: 速出海
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:45:34.097Z'
+processed_at: '2026-05-07T05:37:32.994Z'
 ---
 
 # 10 万美金 2 年 - 这可能是中文独立开发者的代表案例

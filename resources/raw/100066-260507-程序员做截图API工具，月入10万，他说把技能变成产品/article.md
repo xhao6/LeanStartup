@@ -6,6 +6,7 @@ description: 程序员做截图API工具，月入10万，他说\x26amp;quot;把�
 author: 时光纹理
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:49:01.256Z'
+processed_at: '2026-05-07T05:45:56.852Z'
 ---
 
 # 程序员做截图API工具，月入10万，他说"把技能变成产品"

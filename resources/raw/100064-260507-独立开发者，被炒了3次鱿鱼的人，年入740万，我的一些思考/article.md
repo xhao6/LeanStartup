@@ -7,6 +7,7 @@ description: >-
 author: it江湖
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:45:39.670Z'
+processed_at: '2026-05-07T05:41:50.741Z'
 ---
 
 # 独立开发者，被炒了3次鱿鱼的人，年入740万，我的一些思考

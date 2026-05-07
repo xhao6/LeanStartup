@@ -6,6 +6,7 @@ description: 从零到月入10万：我的AI创业真实经历\x0a大家好，�
 author: 指尖乐趣
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:41:26.564Z'
+processed_at: '2026-05-07T05:27:12.983Z'
 ---
 
 # 从零到月入10万：他的AI创业真实经历

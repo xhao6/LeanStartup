@@ -6,6 +6,7 @@ description: '2026年2月，一个叫\x26quot;阿杰\x26quot;的开发者在朋�
 author: 微信公众平台
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:49:04.143Z'
+processed_at: '2026-05-07T05:47:48.503Z'
 ---
 
 # 从0到1做AI智能体变现，月入5万+的副业路子普通人怎么靠AI赚钱

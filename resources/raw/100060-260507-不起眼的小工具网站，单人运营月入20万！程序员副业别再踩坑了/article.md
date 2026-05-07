@@ -6,6 +6,7 @@ description: 案例拆解：仅靠“查网站宕机”，单人月入3万美元
 author: 源码站
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:43:36.475Z'
+processed_at: '2026-05-07T05:57:32.271Z'
 ---
 
 # 不起眼的小工具网站，单人运营月入20万！程序员副业别再踩坑了

@@ -6,6 +6,7 @@ description: 龙哥副业实战 · 第 19 篇\x0a\x0a兄弟们，先说结论：
 author: 微信公众平台
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:42:42.743Z'
+processed_at: '2026-05-07T05:30:59.450Z'
 ---
 
 # 我搭了个AI工具站，月入8000，被动收入真香

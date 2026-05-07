@@ -6,6 +6,7 @@ description: 在SaaS领域，我们经常听到\x26quot;增长黑客\x26quot;这
 author: 思考的汉堡
 coverImage: imgs/img-001-0.jpg
 captured_at: '2026-05-07T01:45:31.195Z'
+processed_at: '2026-05-07T05:35:49.905Z'
 ---
 
 # 从0到$10K MRR：一个独立开发者的增长黑客之路
