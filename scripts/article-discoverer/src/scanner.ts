@@ -322,10 +322,12 @@ async function resolveSogouRedirect(
 
     let canonicalUrl: string | null = interceptedWechatUrl;
 
-    // Fallback: search Sogou by article title
+    // Fallback: use Sogou search URL by title
     if (!canonicalUrl && articleTitle) {
-      console.log(`    网络拦截失败，按标题搜索: "${articleTitle.slice(0, 30)}..."`);
-      canonicalUrl = await searchByTitle(cdp, newSessionId, articleTitle);
+      console.log(`    网络拦截失败，使用标题搜索 URL`);
+      // Extract first 20 chars, replace punctuation with spaces, then encode
+      const raw = articleTitle.slice(0, 20).replace(/[，。！？：；、""''（）【】《》（）…—\-_~.,!?;:'"()[\]\\/]/g, " ");
+      canonicalUrl = `https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(raw)}&sort=time`;
     }
 
     if (canonicalUrl && captureCache) {
@@ -345,51 +347,3 @@ async function resolveSogouRedirect(
   }
 }
 
-async function searchByTitle(
-  cdp: CdpConnection,
-  sessionId: string,
-  title: string,
-): Promise<string | null> {
-  const searchUrl = `https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(title)}&sort=time`;
-  await cdp.send("Page.navigate", { url: searchUrl }, { sessionId });
-  await sleep(3000);
-
-  const currentUrl = await evaluateScript<string>(cdp, sessionId, "window.location.href");
-  if (currentUrl.includes("antispider")) {
-    console.log(`    按标题搜索时遇到验证码，跳过`);
-    return null;
-  }
-
-  // Get first article link from search results
-  const firstHref = await evaluateScript<string | null>(
-    cdp, sessionId,
-    `(() => { const a = document.querySelector('.news-list li:first-child .txt-box h3 a[href]'); return a ? a.href : null; })()`,
-  );
-
-  if (!firstHref || !firstHref.includes("weixin.sogou.com")) return null;
-
-  // Intercept the redirect for this new link
-  let intercepted: string | null = null;
-  const reqHandler = (params: unknown) => {
-    const p = params as { request: { url: string }; redirectResponse?: { url: string } };
-    if (p.redirectResponse && p.request.url.includes("mp.weixin.qq.com")) {
-      intercepted = normalizeWeChatUrl(p.request.url) || p.request.url;
-    }
-  };
-  const resHandler = (params: unknown) => {
-    const p = params as { response: { url: string } };
-    if (!intercepted && p.response.url.includes("mp.weixin.qq.com")) {
-      intercepted = normalizeWeChatUrl(p.response.url) || p.response.url;
-    }
-  };
-  cdp.on("Network.requestWillBeSent", reqHandler);
-  cdp.on("Network.responseReceived", resHandler);
-
-  await cdp.send("Page.navigate", { url: firstHref }, { sessionId });
-  await sleep(3000);
-
-  cdp.off("Network.requestWillBeSent", reqHandler);
-  cdp.off("Network.responseReceived", resHandler);
-
-  return intercepted;
-}
