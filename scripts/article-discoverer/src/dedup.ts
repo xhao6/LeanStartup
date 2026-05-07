@@ -14,13 +14,30 @@ import { normalizeWeChatUrl } from "./url-normalize.js";
 export function loadExistingUrls(resourcesDir: string): Set<string> {
   const urls = new Set<string>();
 
-  // raw/: HTML files, extract from <meta property="og:url">
+  // raw/: Extract URLs from article.md frontmatter (primary) and captured.html (fallback)
   const rawDir = path.join(resourcesDir, "raw");
   if (fs.existsSync(rawDir)) {
     const entries = fs.readdirSync(rawDir, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
       const subDir = path.join(rawDir, entry.name);
+
+      // article.md frontmatter: url field
+      const mdPath = path.join(subDir, "article.md");
+      if (fs.existsSync(mdPath)) {
+        try {
+          const content = fs.readFileSync(mdPath, "utf-8");
+          const { data } = matter(content);
+          if (data.url) {
+            const normalized = normalizeWeChatUrl(data.url);
+            if (normalized) urls.add(normalized);
+          }
+        } catch {
+          /* skip unparseable files */
+        }
+      }
+
+      // captured.html fallback: og:url meta tag
       for (const file of fs.readdirSync(subDir)) {
         if (!file.endsWith(".html")) continue;
         try {
