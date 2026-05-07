@@ -292,18 +292,24 @@ async function resolveSogouRedirect(
 
     await sleep(2000);
 
-    // Try to extract biz/mid/idx from page JS runtime for a canonical URL
-    const ids = await evaluateScript<{ biz: string; mid: string; idx: string } | null>(
+    // Try short URL first (mp.weixin.qq.com/s/xxxxx), then biz/mid/idx
+    const linkData = await evaluateScript<{ shortUrl: string | null; biz: string; mid: string; idx: string } | null>(
       cdp, newSessionId,
-      `(() => { const b = typeof biz !== 'undefined' ? String(biz) : (typeof window.biz !== 'undefined' ? String(window.biz) : ''); const m = typeof mid !== 'undefined' ? String(mid) : ''; const x = typeof idx !== 'undefined' ? String(idx) : ''; return b && m && x ? { biz: b, mid: m, idx: x } : null; })()`,
+      `(() => { const su = (typeof msg_link !== 'undefined' && msg_link) ? String(msg_link) : ''; const b = typeof biz !== 'undefined' ? String(biz) : (typeof window.biz !== 'undefined' ? String(window.biz) : ''); const m = typeof mid !== 'undefined' ? String(mid) : ''; const x = typeof idx !== 'undefined' ? String(idx) : ''; return { shortUrl: su || null, biz: b, mid: m, idx: x }; })()`,
     );
 
     let canonicalUrl: string | null = null;
-    if (ids) {
-      canonicalUrl = normalizeWeChatUrl(
-        `https://mp.weixin.qq.com/s?__biz=${ids.biz}&mid=${ids.mid}&idx=${ids.idx}`,
-      );
-    } else {
+    if (linkData) {
+      if (linkData.shortUrl && /mp\.weixin\.qq\.com\/s\/[A-Za-z0-9_-]+/.test(linkData.shortUrl)) {
+        canonicalUrl = linkData.shortUrl.replace(/&.*$/, "").replace(/\?.*$/, "");
+      } else if (linkData.biz && linkData.mid && linkData.idx) {
+        canonicalUrl = normalizeWeChatUrl(
+          `https://mp.weixin.qq.com/s?__biz=${linkData.biz}&mid=${linkData.mid}&idx=${linkData.idx}`,
+        );
+      }
+    }
+
+    if (!canonicalUrl) {
       const finalUrl = await evaluateScript<string>(
         cdp, newSessionId, "window.location.href",
       );
