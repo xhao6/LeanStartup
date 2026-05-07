@@ -114,6 +114,130 @@ ${scoringRubricText()}
   "tags": ["闲鱼副业", "零成本", "虚拟资源", "考研资料", "信息差变现"]
 }`;
 
+const JSON_FIX_PROMPT = `你是一个JSON修复专家。用户的LLM输出无法被解析为有效JSON，请修复它。
+
+## 任务
+1. 读取下方有问题的原始输出
+2. 尽可能保留原有数据，只修复JSON语法错误
+3. 修复规则：
+   - 修复未闭合的引号、括号
+   - 修复末尾多余的逗号
+   - 修复Unicode转义问题（如\\u4e00）
+   - 处理换行符、转义符等特殊字符
+   - 移除markdown代码块标记
+4. 输出必须是有效JSON，不要添加任何解释
+
+## 注意事项
+- 不要改变原始数据的语义
+- 对于无法确定的值，使用null而非空字符串
+- 如果原输出缺失关键字段，不要凭空添加
+
+请修复以下JSON：`;
+
+/**
+ * Extract text from LLM response, handling potential code blocks.
+ */
+function extractTextFromResponse(response: Anthropic.Message): string {
+  const textBlock = response.content.find((block) => block.type === "text");
+  if (!textBlock || textBlock.type !== "text") {
+    throw new Error("LLM response contains no text block");
+  }
+  return textBlock.text;
+}
+
+/**
+ * Parse JSON from text, handling markdown code blocks.
+ */
+function parseJsonFromText(text: string): ExtractionResult | null {
+  // Try to extract JSON from code blocks first
+  const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const jsonStr = jsonMatch ? jsonMatch[1].trim() : text.trim();
+
+  // Try direct JSON parse
+  try {
+    return validateExtractionResult(JSON.parse(jsonStr));
+  } catch {
+    // Try to extract raw JSON object
+    const rawMatch = jsonStr.match(/(\{[\s\S]*\})/);
+    if (rawMatch) {
+      try {
+        return validateExtractionResult(JSON.parse(rawMatch[1]));
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+
+/**
+ * Validate that parsed object has required ExtractionResult fields.
+ * Returns null if validation fails, otherwise returns the validated object.
+ */
+function validateExtractionResult(obj: unknown): ExtractionResult | null {
+  if (!obj || typeof obj !== "object") return null;
+
+  const required = [
+    "sourceTitle",
+    "coreHighlight",
+    "steps",
+    "tools",
+    "startupCost",
+    "expectedRevenue",
+    "targetAudience",
+    "pitfalls",
+    "score",
+    "caseStory",
+    "cycle",
+    "riskTags",
+    "tags",
+  ];
+
+  for (const field of required) {
+    if (!(field in obj)) return null;
+  }
+
+  // Validate score sub-object
+  const score = (obj as ExtractionResult).score;
+  if (!score || typeof score !== "object") return null;
+  const scoreFields = ["feasibility", "revenue", "timeliness", "detail", "userFit"];
+  for (const f of scoreFields) {
+    if (!(f in score) || typeof score[f as keyof typeof score] !== "number") return null;
+  }
+
+  return obj as ExtractionResult;
+}
+
+/**
+ * Call LLM to fix malformed JSON.
+ */
+async function fixJsonWithLLM(
+  client: Anthropic,
+  rawText: string,
+  attempt: number
+): Promise<ExtractionResult> {
+  const response = await client.messages.create({
+    model: MINIMAX_MODEL,
+    max_tokens: 8192,
+    system: JSON_FIX_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: `原始LLM输出（解析失败第${attempt}次）：\n\n${rawText.slice(0, 8000)}`,
+      },
+    ],
+  });
+
+  const fixedText = extractTextFromResponse(response);
+  const parsed = parseJsonFromText(fixedText);
+
+  if (!parsed) {
+    throw new Error(`JSON fix attempt ${attempt} failed: still not valid JSON`);
+  }
+
+  return parsed;
+}
+
 /**
  * Call MiniMax LLM to extract structured data and score from an article.
  */
@@ -134,23 +258,22 @@ export async function extractArticle(
     ],
   });
 
-  // Extract text from response
-  const textBlock = response.content.find((block) => block.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("LLM response contains no text block");
+  const rawText = extractTextFromResponse(response);
+  let parsed = parseJsonFromText(rawText);
+
+  // Retry JSON fixing up to 2 times
+  if (!parsed) {
+    console.log("    JSON parse failed, attempting repair...");
+    try {
+      parsed = await fixJsonWithLLM(client, rawText, 1);
+    } catch {
+      try {
+        parsed = await fixJsonWithLLM(client, rawText, 2);
+      } catch (err) {
+        throw new Error(`JSON parse error after 2 repair attempts: ${(err as Error).message}`);
+      }
+    }
   }
-
-  const rawText = textBlock.text;
-
-  // Parse JSON from response (handle potential markdown code blocks)
-  const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/) ||
-    rawText.match(/(\{[\s\S]*\})/);
-
-  if (!jsonMatch) {
-    throw new Error("Failed to parse JSON from LLM response");
-  }
-
-  const parsed: ExtractionResult = JSON.parse(jsonMatch[1].trim());
 
   // Clamp scores to valid ranges
   parsed.score = clampScore(parsed.score);
