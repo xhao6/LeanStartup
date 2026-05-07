@@ -165,6 +165,8 @@ async function saveArticle(
     }
 
     let document = createMarkdownDocument(conversionResult);
+    // Strip WeChat lazy-load placeholder images (1x1 transparent SVG data URIs)
+    document = document.replace(/!\[[^\]]*\]\(data:image\/svg\+xml[^)]*\)\n?/g, "");
     const mediaResult = await localizeMarkdownMedia(document, {
       markdownPath: path.join(articleDir, "article.md"),
       log: () => {},
