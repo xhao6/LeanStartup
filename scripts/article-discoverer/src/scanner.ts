@@ -246,11 +246,10 @@ async function extractArticlesFromPage(
   for (const item of raw) {
     if (!item.title) continue;
 
-    // Skip articles older than 90 days
-    if (item.date) {
-      const d = new Date(item.date.replace(/\//g, "-"));
-      if (!isNaN(d.getTime()) && d < cutoff) continue;
-    }
+    // Skip articles older than 90 days or with unparseable dates
+    if (!item.date) continue;
+    const d = new Date(item.date.replace(/\//g, "-"));
+    if (isNaN(d.getTime()) || d < cutoff) continue;
 
     // Try direct URL parsing first
     let url = extractWeChatUrlFromSogou(item.href);
