@@ -264,8 +264,9 @@ async function startGenerate() {
     if (isUnmounted) return
 
     if (result.success && result.paths.length > 0) {
+      uni.setStorageSync('poster_paths', result.paths)
       uni.redirectTo({
-        url: `/pages/profile/poster/preview?paths=${encodeURIComponent(JSON.stringify(result.paths))}`
+        url: '/pages/profile/poster/preview'
       })
     } else {
       errorMsg.value = result.error || '生成失败，请重试'

@@ -40,21 +40,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
+import { onShareAppMessage } from '@dcloudio/uni-app'
 
 const currentIndex = ref(0)
 const imagePaths = ref<string[]>([])
 const saving = ref(false)
 
-onLoad((options: any) => {
-  if (options?.paths) {
-    try {
-      imagePaths.value = JSON.parse(decodeURIComponent(options.paths))
-    } catch (e) {
-      console.error('[Preview] 解析图片路径失败:', e)
-    }
-  }
-})
+// 从全局存储读取图片路径（URL 参数可能因路径过长被截断）
+try {
+  const stored = uni.getStorageSync('poster_paths')
+  if (stored) imagePaths.value = stored
+} catch (e) {
+  console.error('[Preview] 读取图片路径失败:', e)
+}
 
 function onSwiperChange(e: any) {
   currentIndex.value = e.detail.current
