@@ -64,6 +64,7 @@
       <view class="menu-card">
         <wd-cell-group border>
           <wd-cell title="订阅管理" is-link icon="setting" @click="goToSubscription" />
+          <wd-cell title="导出海报" is-link icon="picture" @click="goToPoster" />
           <wd-cell title="我的收藏" is-link icon="star" @click="goToFavorites" />
           <button class="share-btn" open-type="share">
             <wd-cell title="转发朋友" is-link icon="share" />
@@ -211,6 +212,10 @@ const handleEditNickname = () => {
 
 const goToFavorites = () => {
   uni.navigateTo({ url: '/pages/profile/favorites/index' })
+}
+
+const goToPoster = () => {
+  uni.navigateTo({ url: '/pages/profile/poster/generate' })
 }
 
 const goToSubscription = () => {
