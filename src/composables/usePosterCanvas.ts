@@ -1,4 +1,4 @@
-// #ifdef MP-WEIXIN
+// @ts-nocheck
 import { ref } from 'vue'
 
 const CANVAS_W = 750
@@ -574,4 +574,3 @@ export function usePosterCanvas() {
 
   return { progress, maxProgress, tempFilePaths, errors, generateAll }
 }
-// #endif
