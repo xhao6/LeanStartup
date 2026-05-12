@@ -39,9 +39,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useCaseStore } from '@/store/case'
 import { getCaseDetail } from '@/api/modules/case'
 import { getHistoryPicks } from '@/api/modules/daily'
-// #ifdef MP-WEIXIN
 import { usePosterCanvas as usePoster } from '@/composables/usePosterCanvas'
-// #endif
 
 const store = useCaseStore()
 const progress = ref(0)
@@ -114,7 +112,6 @@ async function startGenerate() {
     }
     const allDays = [todayEntry, ...historyDays]
 
-    // #ifdef MP-WEIXIN
     statusText.value = '正在生成海报...'
     iconText.value = '🖼'
 
@@ -140,13 +137,6 @@ async function startGenerate() {
       statusText.value = '生成失败'
       iconText.value = '❌'
     }
-    // #endif
-
-    // #ifndef MP-WEIXIN
-    errorMsg.value = '当前平台暂不支持生成海报'
-    statusText.value = '平台不支持'
-    iconText.value = '⚠️'
-    // #endif
   } catch (e: any) {
     errorMsg.value = e.message || '生成异常'
     statusText.value = '生成失败'

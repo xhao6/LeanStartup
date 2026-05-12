@@ -61,7 +61,6 @@ function onSwiperChange(e: any) {
 }
 
 async function handleSaveAll() {
-  // #ifdef MP-WEIXIN
   saving.value = true
   try {
     const authRes = await wx.getSetting()
@@ -106,7 +105,6 @@ async function handleSaveAll() {
   } finally {
     saving.value = false
   }
-  // #endif
 }
 
 onShareAppMessage(() => ({
