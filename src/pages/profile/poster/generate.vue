@@ -97,6 +97,11 @@ function exportCanvas(canvas: any): Promise<string> {
     wx.canvasToTempFilePath({ canvas, destWidth: CANVAS_W * dpr, destHeight: CANVAS_H * dpr, success: (r: any) => resolve(r.tempFilePath), fail: reject })
   })
 }
+
+/** 导出 canvas 为 dataURL（base64，可直接在 image 中使用） */
+function canvasToDataURL(canvas: any): string {
+  return canvas.toDataURL('image/png')
+}
 function rankColors(index: number) { const r = [{ start: '#CA8A04', end: '#E5A812' }, { start: '#94A3B8', end: '#64748B' }, { start: '#C4956A', end: '#A67B5B' }]; return r[index] || r[2] }
 function beijingDate(): string { const d = new Date(), b = new Date(d.getTime() + 8 * 3600000); return `${b.getUTCFullYear()}-${String(b.getUTCMonth() + 1).padStart(2,'0')}-${String(b.getUTCDate()).padStart(2,'0')}` }
 
@@ -180,9 +185,9 @@ async function generateAllImages(
   const tick = () => { done++; onProgress(done, 5) }
   try {
     const results = await Promise.all([
-      (async () => { const ctx = cA.getContext('2d'); ctx.textBaseline = 'top'; await drawRanking(ctx, rc, dateStr); const p1 = await exportCanvas(cA); tick(); ctx.clearRect(0, 0, CANVAS_W, CANVAS_H); ctx.textBaseline = 'top'; await drawHistory(ctx, rHistory); const p5 = await exportCanvas(cA); tick(); return [p1, p5] })(),
-      (async () => { if (!rDetails[0]) return ['']; const ctx = cB.getContext('2d'); ctx.textBaseline = 'top'; await drawDetail(ctx, rDetails[0]); const p = await exportCanvas(cB); tick(); return [p] })(),
-      (async () => { const p: string[] = [], ctx = cC.getContext('2d'); ctx.textBaseline = 'top'; if (rDetails[1]) { await drawDetail(ctx, rDetails[1]); p.push(await exportCanvas(cC)); tick() } if (rDetails[2]) { ctx.clearRect(0, 0, CANVAS_W, CANVAS_H); ctx.textBaseline = 'top'; await drawDetail(ctx, rDetails[2]); p.push(await exportCanvas(cC)); tick() } return p })(),
+      (async () => { const ctx = cA.getContext('2d'); ctx.textBaseline = 'top'; await drawRanking(ctx, rc, dateStr); const p1 = canvasToDataURL(cA); tick(); ctx.clearRect(0, 0, CANVAS_W, CANVAS_H); ctx.textBaseline = 'top'; await drawHistory(ctx, rHistory); const p5 = canvasToDataURL(cA); tick(); return [p1, p5] })(),
+      (async () => { if (!rDetails[0]) return ['']; const ctx = cB.getContext('2d'); ctx.textBaseline = 'top'; await drawDetail(ctx, rDetails[0]); const p = canvasToDataURL(cB); tick(); return [p] })(),
+      (async () => { const p: string[] = [], ctx = cC.getContext('2d'); ctx.textBaseline = 'top'; if (rDetails[1]) { await drawDetail(ctx, rDetails[1]); p.push(canvasToDataURL(cC)); tick() } if (rDetails[2]) { ctx.clearRect(0, 0, CANVAS_W, CANVAS_H); ctx.textBaseline = 'top'; await drawDetail(ctx, rDetails[2]); p.push(canvasToDataURL(cC)); tick() } return p })(),
     ])
     paths = [...results[0], ...results[1], ...results[2]].filter(Boolean)
     return { success: paths.length >= 3, paths }
@@ -264,8 +269,7 @@ async function startGenerate() {
     if (isUnmounted) return
 
     if (result.success && result.paths.length > 0) {
-      // 使用 navigateTo 保留页面栈，canvas 临时文件不会失效
-      uni.setStorageSync('poster_paths', result.paths)
+      getApp().globalData.posterPaths = result.paths
       uni.navigateTo({ url: '/pages/profile/poster/preview' })
     } else {
       errorMsg.value = result.error || '生成失败，请重试'

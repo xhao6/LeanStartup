@@ -50,12 +50,17 @@ const onImageError = (e: any) => {
   console.error('[Preview] 图片加载失败:', e)
 }
 
-// 从全局存储读取图片路径（URL 参数可能因路径过长被截断）
+// 从全局数据读取图片 base64 dataURL
 try {
-  const stored = uni.getStorageSync('poster_paths')
-  if (stored) imagePaths.value = stored
+  const app = getApp()
+  const stored = app.globalData?.posterPaths
+  if (stored && stored.length > 0) {
+    imagePaths.value = stored
+  } else {
+    console.error('[Preview] 未找到海报数据')
+  }
 } catch (e) {
-  console.error('[Preview] 读取图片路径失败:', e)
+  console.error('[Preview] 读取海报数据失败:', e)
 }
 
 function onSwiperChange(e: any) {
