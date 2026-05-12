@@ -1,6 +1,4 @@
 // #ifdef MP-WEIXIN
-import type { DailyCase } from '@/api/modules/daily'
-import type { CaseDetail } from '@/api/modules/case'
 import { ref } from 'vue'
 
 const CANVAS_W = 750
@@ -118,9 +116,7 @@ function splitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
       current += char
     }
     if (maxLines && lines.length >= maxLines) {
-      if (current) {
-        lines[lines.length - 1] = truncateText(ctx, lines[lines.length - 1] + current.slice(0, 3), maxWidth)
-      }
+      if (current) lines[lines.length - 1] = truncateText(ctx, lines[lines.length - 1], maxWidth)
       return lines
     }
   }
@@ -130,8 +126,12 @@ function splitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
 
 function exportCanvas(canvas: OffscreenCanvas): Promise<string> {
   return new Promise((resolve, reject) => {
+    const systemInfo = wx.getSystemInfoSync()
+    const dpr = systemInfo.pixelRatio || 2
     wx.canvasToTempFilePath({
       canvas,
+      destWidth: CANVAS_W * dpr,
+      destHeight: CANVAS_H * dpr,
       success: (res: any) => resolve(res.tempFilePath),
       fail: reject,
     })
@@ -407,7 +407,7 @@ async function drawRecentDays(ctx: CanvasRenderingContext2D, days: Array<{ date:
   ctx.textAlign = 'center'
   ctx.fillText('近三日精选榜单', CANVAS_W / 2, 40)
 
-  const cardY = 80, cardH = 240, gap = 14
+  const cardY = 80, cardH = 254, gap = 14
   for (let di = 0; di < 3 && di < days.length; di++) {
     const y = cardY + di * (cardH + gap)
     const day = days[di]
@@ -473,11 +473,10 @@ async function drawRecentDays(ctx: CanvasRenderingContext2D, days: Array<{ date:
 
 function getBeijingDate(): string {
   const d = new Date()
-  const utc = d.getTime() + d.getTimezoneOffset() * 60000
-  const beijing = new Date(utc + 8 * 3600000)
-  const y = beijing.getFullYear()
-  const m = String(beijing.getMonth() + 1).padStart(2, '0')
-  const day = String(beijing.getDate()).padStart(2, '0')
+  const beijing = new Date(d.getTime() + 8 * 3600000)
+  const y = beijing.getUTCFullYear()
+  const m = String(beijing.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(beijing.getUTCDate()).padStart(2, '0')
   return `${y}-${m}-${day}`
 }
 
@@ -515,7 +514,7 @@ export function usePosterCanvas() {
     const tick = () => {
       done++
       progress.value = done
-      onProgress(done, 5)
+      onProgress(done, maxProgress.value)
     }
 
     try {
@@ -566,8 +565,10 @@ export function usePosterCanvas() {
       tempFilePaths.value = allPaths
       return { success: allPaths.length >= 3, paths: allPaths }
     } catch (e: any) {
+      const msg = e.message || '生成失败'
+      errors.value.push(msg)
       console.error('[usePosterCanvas] 渲染失败:', e)
-      return { success: false, paths: tempFilePaths.value, error: e.message || '生成失败' }
+      return { success: false, paths: tempFilePaths.value, error: msg }
     }
   }
 
