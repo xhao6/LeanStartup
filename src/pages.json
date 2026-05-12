@@ -86,14 +86,6 @@
         "navigationBarBackgroundColor": "#F8F6F1",
         "navigationBarTextStyle": "black"
       }
-    },
-    {
-      "path": "pages/profile/poster/preview",
-      "style": {
-        "navigationBarTitleText": "预览海报",
-        "navigationBarBackgroundColor": "#F8F6F1",
-        "navigationBarTextStyle": "black"
-      }
     }
   ],
   "subPackages": [],

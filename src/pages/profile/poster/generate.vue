@@ -53,6 +53,14 @@ let isUnmounted = false
 onUnmounted(() => { isUnmounted = true })
 
 const CANVAS_W = 750, CANVAS_H = 1000
+function getBeijingDate(): string {
+  const d = new Date()
+  const beijing = new Date(d.getTime() + 8 * 3600000)
+  const y = beijing.getUTCFullYear()
+  const m = String(beijing.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(beijing.getUTCDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 // Canvas rendering helpers
 const C = { bg: '#F8F6F1', card: '#FFFFFF', title: '#1C1917', body: '#78716C', gold: '#CA8A04', border: '#E7E5E4', tagBg: '#F0EDE8', white: '#FFFFFF' }
 
@@ -103,7 +111,7 @@ async function generateAllImages(
   onProgress: (d: number, t: number) => void
 ) {
   const rc = todayCases.map(toRenderCase), rDetails = caseDetails.map(toRenderCase)
-  const rHistory = historyDays.map(d => ({ date: d.date, cases: d.cases.map(toRenderCase) })), dateStr = beijingDate()
+  const rHistory = historyDays.map(d => ({ date: d.date, cases: d.cases.map(toRenderCase) })), dateStr = getBeijingDate()
   const cA = wx.createOffscreenCanvas({ type: '2d', width: CANVAS_W, height: CANVAS_H })
   const cB = wx.createOffscreenCanvas({ type: '2d', width: CANVAS_W, height: CANVAS_H })
   const cC = wx.createOffscreenCanvas({ type: '2d', width: CANVAS_W, height: CANVAS_H })
@@ -165,14 +173,6 @@ async function startGenerate() {
     if (isUnmounted) return
 
     // 图 5 需包含今天数据
-    function getBeijingDate(): string {
-      const d = new Date()
-      const beijing = new Date(d.getTime() + 8 * 3600000)
-      const y = beijing.getUTCFullYear()
-      const m = String(beijing.getUTCMonth() + 1).padStart(2, '0')
-      const day = String(beijing.getUTCDate()).padStart(2, '0')
-      return `${y}-${m}-${day}`
-    }
     const todayEntry = {
       date: getBeijingDate(),
       cases: todayCases.slice(0, 3),
@@ -196,6 +196,21 @@ async function startGenerate() {
 
     if (result.success && result.paths.length > 0) {
       statusText.value = '正在保存到相册...'
+      // 检查相册权限
+      try {
+        const authRes = await wx.getSetting()
+        if (!authRes.authSetting['scope.writePhotosAlbum']) {
+          await wx.authorize({ scope: 'scope.writePhotosAlbum' })
+        }
+      } catch {
+        uni.showModal({
+          title: '需要相册权限',
+          content: '请在设置中开启相册权限以保存图片',
+          success: (r) => { if (r.confirm) wx.openSetting() },
+        })
+        isGenerating.value = false
+        return
+      }
       let saved = 0
       for (const p of result.paths) {
         try {
