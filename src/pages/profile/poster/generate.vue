@@ -264,7 +264,17 @@ async function startGenerate() {
     if (isUnmounted) return
 
     if (result.success && result.paths.length > 0) {
-      uni.setStorageSync('poster_paths', result.paths)
+      // 持久化临时文件（tempFilePath 在页面跳转后可能失效）
+      const savedPaths: string[] = []
+      for (const p of result.paths) {
+        try {
+          const res = await new Promise<any>((resolve, reject) => {
+            wx.saveFile({ tempFilePath: p, success: resolve, fail: reject })
+          })
+          savedPaths.push(res.savedFilePath)
+        } catch { savedPaths.push(p) }
+      }
+      uni.setStorageSync('poster_paths', savedPaths)
       uni.redirectTo({
         url: '/pages/profile/poster/preview'
       })
