@@ -39,6 +39,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useCaseStore } from '@/store/case'
 import { getCaseDetail } from '@/api/modules/case'
 import { getHistoryPicks } from '@/api/modules/daily'
+// #ifdef MP-WEIXIN
+import { usePosterCanvas as usePoster } from '@/composables/usePosterCanvas'
+// #endif
 
 const store = useCaseStore()
 const progress = ref(0)
@@ -115,8 +118,7 @@ async function startGenerate() {
     statusText.value = '正在生成海报...'
     iconText.value = '🖼'
 
-    const { usePosterCanvas } = await import('@/composables/usePosterCanvas')
-    const { generateAll } = usePosterCanvas()
+    const { generateAll } = usePoster()
     const result = await generateAll(
       todayCases,
       validDetails,
