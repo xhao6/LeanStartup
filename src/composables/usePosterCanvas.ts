@@ -110,7 +110,7 @@ function splitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
   let current = ''
   for (const char of text) {
     if (ctx.measureText(current + char).width > maxWidth) {
-      lines.push(current)
+      if (current) lines.push(current)
       current = char
     } else {
       current += char

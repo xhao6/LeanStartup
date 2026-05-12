@@ -72,7 +72,6 @@ async function startGenerate() {
       return
     }
 
-    progress.value = 1
     statusText.value = '正在获取案例详情...'
     const caseIds = todayCases.slice(0, 3).map((c: any) => c.id)
     const details = await Promise.all(
@@ -81,7 +80,6 @@ async function startGenerate() {
     const validDetails = details.filter(Boolean)
 
     if (isUnmounted) return
-    progress.value = 2
     statusText.value = '正在获取历史数据...'
     const historyRes = await getHistoryPicks({ page: 1, pageSize: 3 })
     const historyData = historyRes.data?.list || []
@@ -98,6 +96,21 @@ async function startGenerate() {
 
     if (isUnmounted) return
 
+    // 图 5 需包含今天数据
+    function getBeijingDate(): string {
+      const d = new Date()
+      const beijing = new Date(d.getTime() + 8 * 3600000)
+      const y = beijing.getUTCFullYear()
+      const m = String(beijing.getUTCMonth() + 1).padStart(2, '0')
+      const day = String(beijing.getUTCDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+    const todayEntry = {
+      date: getBeijingDate(),
+      cases: todayCases.slice(0, 3),
+    }
+    const allDays = [todayEntry, ...historyDays]
+
     // #ifdef MP-WEIXIN
     statusText.value = '正在生成海报...'
     iconText.value = '🖼'
@@ -107,7 +120,7 @@ async function startGenerate() {
     const result = await generateAll(
       todayCases,
       validDetails,
-      historyDays,
+      allDays,
       (done: number) => {
         progress.value = done
         statusText.value = `正在生成 ${done}/${maxProgress.value}`
