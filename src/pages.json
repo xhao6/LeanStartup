@@ -78,6 +78,22 @@
       "style": {
         "navigationBarTitleText": "订阅管理"
       }
+    },
+    {
+      "path": "pages/profile/poster/generate",
+      "style": {
+        "navigationBarTitleText": "生成海报",
+        "navigationBarBackgroundColor": "#F8F6F1",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/profile/poster/preview",
+      "style": {
+        "navigationBarTitleText": "预览海报",
+        "navigationBarBackgroundColor": "#F8F6F1",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "subPackages": [],
