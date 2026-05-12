@@ -20,7 +20,7 @@
     >
       <swiper-item v-for="(path, idx) in imagePaths" :key="idx">
         <view class="swiper-slide">
-          <image :src="path" class="preview-image" mode="aspectFit" />
+          <image :src="path" class="preview-image" mode="aspectFit" @error="onImageError" />
         </view>
       </swiper-item>
     </swiper>
@@ -45,6 +45,10 @@ import { onShareAppMessage } from '@dcloudio/uni-app'
 const currentIndex = ref(0)
 const imagePaths = ref<string[]>([])
 const saving = ref(false)
+
+const onImageError = (e: any) => {
+  console.error('[Preview] 图片加载失败:', e)
+}
 
 // 从全局存储读取图片路径（URL 参数可能因路径过长被截断）
 try {

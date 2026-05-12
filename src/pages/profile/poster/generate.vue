@@ -52,8 +52,8 @@ let isUnmounted = false
 
 onUnmounted(() => { isUnmounted = true })
 
-// Canvas rendering helpers
 const CANVAS_W = 750, CANVAS_H = 1000
+// Canvas rendering helpers
 const C = { bg: '#F8F6F1', card: '#FFFFFF', title: '#1C1917', body: '#78716C', gold: '#CA8A04', border: '#E7E5E4', tagBg: '#F0EDE8', white: '#FFFFFF' }
 
 function toRenderCase(c: any) {
@@ -93,7 +93,7 @@ function splitText(ctx: any, text: string, maxW: number, maxL?: number): string[
 }
 function exportCanvas(canvas: any): Promise<string> {
   return new Promise((resolve, reject) => {
-    const dpr = wx.getSystemInfoSync().pixelRatio || 2
+    const dpr = wx.getDeviceInfo().pixelRatio || 2
     wx.canvasToTempFilePath({ canvas, destWidth: CANVAS_W * dpr, destHeight: CANVAS_H * dpr, success: (r: any) => resolve(r.tempFilePath), fail: reject })
   })
 }
@@ -264,20 +264,9 @@ async function startGenerate() {
     if (isUnmounted) return
 
     if (result.success && result.paths.length > 0) {
-      // 持久化临时文件（tempFilePath 在页面跳转后可能失效）
-      const savedPaths: string[] = []
-      for (const p of result.paths) {
-        try {
-          const res = await new Promise<any>((resolve, reject) => {
-            wx.saveFile({ tempFilePath: p, success: resolve, fail: reject })
-          })
-          savedPaths.push(res.savedFilePath)
-        } catch { savedPaths.push(p) }
-      }
-      uni.setStorageSync('poster_paths', savedPaths)
-      uni.redirectTo({
-        url: '/pages/profile/poster/preview'
-      })
+      // 使用 navigateTo 保留页面栈，canvas 临时文件不会失效
+      uni.setStorageSync('poster_paths', result.paths)
+      uni.navigateTo({ url: '/pages/profile/poster/preview' })
     } else {
       errorMsg.value = result.error || '生成失败，请重试'
       statusText.value = '生成失败'
