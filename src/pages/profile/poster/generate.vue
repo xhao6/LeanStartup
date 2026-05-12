@@ -22,16 +22,20 @@
         ></view>
       </view>
       <text class="progress-detail">{{ progress }} / {{ maxProgress }}</text>
-      <view v-if="errorMsg" class="error-row">
+      <view v-if="errorMsg && !emptyData" class="error-row">
         <text class="error-text">{{ errorMsg }}</text>
-        <button class="retry-btn" @click="startGenerate">重试</button>
+        <button class="retry-btn" :disabled="isGenerating" @click="startGenerate">重试</button>
+      </view>
+      <view v-if="emptyData" class="error-row">
+        <text class="error-text">{{ errorMsg }}</text>
+        <button class="back-btn" @click="goBack">返回</button>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useCaseStore } from '@/store/case'
 import { getCaseDetail } from '@/api/modules/case'
 import { getHistoryPicks } from '@/api/modules/daily'
@@ -42,8 +46,18 @@ const maxProgress = ref(5)
 const statusText = ref('正在准备数据...')
 const iconText = ref('🎨')
 const errorMsg = ref('')
+const emptyData = ref(false)
+const isGenerating = ref(false)
+let isUnmounted = false
+
+onUnmounted(() => { isUnmounted = true })
 
 async function startGenerate() {
+  if (isGenerating.value) return
+  if (emptyData.value) return
+
+  isGenerating.value = true
+  progress.value = 0
   errorMsg.value = ''
   statusText.value = '正在加载数据...'
   iconText.value = '📡'
@@ -51,11 +65,14 @@ async function startGenerate() {
   try {
     const todayCases = store.todayCases
     if (!todayCases || todayCases.length === 0) {
+      emptyData.value = true
       errorMsg.value = '今日暂无榜单数据'
       statusText.value = '加载失败'
+      isGenerating.value = false
       return
     }
 
+    progress.value = 1
     statusText.value = '正在获取案例详情...'
     const caseIds = todayCases.slice(0, 3).map((c: any) => c.id)
     const details = await Promise.all(
@@ -63,6 +80,8 @@ async function startGenerate() {
     )
     const validDetails = details.filter(Boolean)
 
+    if (isUnmounted) return
+    progress.value = 2
     statusText.value = '正在获取历史数据...'
     const historyRes = await getHistoryPicks({ page: 1, pageSize: 3 })
     const historyData = historyRes.data?.list || []
@@ -76,6 +95,8 @@ async function startGenerate() {
         return { date: item.date, cases: cases.filter(Boolean) }
       })
     )
+
+    if (isUnmounted) return
 
     // #ifdef MP-WEIXIN
     statusText.value = '正在生成海报...'
@@ -93,6 +114,8 @@ async function startGenerate() {
       }
     )
 
+    if (isUnmounted) return
+
     if (result.success && result.paths.length > 0) {
       uni.redirectTo({
         url: `/pages/profile/poster/preview?paths=${encodeURIComponent(JSON.stringify(result.paths))}`
@@ -103,11 +126,23 @@ async function startGenerate() {
       iconText.value = '❌'
     }
     // #endif
+
+    // #ifndef MP-WEIXIN
+    errorMsg.value = '当前平台暂不支持生成海报'
+    statusText.value = '平台不支持'
+    iconText.value = '⚠️'
+    // #endif
   } catch (e: any) {
     errorMsg.value = e.message || '生成异常'
     statusText.value = '生成失败'
     iconText.value = '❌'
+  } finally {
+    isGenerating.value = false
   }
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 
 onMounted(() => {
@@ -185,6 +220,20 @@ onMounted(() => {
   border: none;
 }
 .retry-btn::after {
+  border: none;
+}
+.retry-btn[disabled] {
+  opacity: 0.5;
+}
+.back-btn {
+  padding: 8px 24px;
+  background: #78716C;
+  color: #FFFFFF;
+  border-radius: 999px;
+  font-size: 14px;
+  border: none;
+}
+.back-btn::after {
   border: none;
 }
 </style>
