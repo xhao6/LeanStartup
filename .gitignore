@@ -46,4 +46,8 @@ skills/
 .mcp.json
 src/components.d.ts
 src/components.d.ts
+# Generated content (raw downloads, processed markdown)
+resources/raw/
+resources/processed/
+
 resources/candidates.json
