@@ -81,4 +81,5 @@ export interface ProcessorOptions {
   outputDir: string;
   skipReview: boolean;
   extractOnly: boolean;
+  cleanOnly: boolean;
 }
