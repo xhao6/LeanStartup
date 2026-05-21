@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterAll, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, afterAll } from "vitest";
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -13,28 +13,35 @@ vi.mock("@anthropic-ai/sdk", () => ({
   },
 }));
 
-let testDir = "";
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  process.env.MINIMAX_API_KEY = "test-key-123";
-  testDir = "";
+afterAll(() => {
+  vi.restoreAllMocks();
 });
 
+let testDirs: string[] = [];
+
 afterAll(() => {
-  if (testDir && existsSync(testDir)) {
-    rmSync(testDir, { recursive: true, force: true });
+  for (const dir of testDirs) {
+    if (existsSync(dir)) rmSync(dir, { recursive: true, force: true });
   }
 });
 
+function trackDir(dir: string) {
+  testDirs.push(dir);
+  return dir;
+}
+
 describe("cleanArticleContent", () => {
-  it("should call Anthropic and return parsed CleanResult", async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.MINIMAX_API_KEY = "test-key-123";
+  });
+
+  it("should parse delimiter-separated response", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: '{"title":"测试标题","content":"清理后的内容"}' }],
+      content: [{ type: "text", text: "测试标题\n===TITLE_END===\n清理后的内容" }],
     });
 
     const { cleanArticleContent } = await import("./cleaner.js");
-
     const result = await cleanArticleContent("原文内容");
 
     expect(result.title).toBe("测试标题");
@@ -42,20 +49,16 @@ describe("cleanArticleContent", () => {
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
-  it("should handle markdown code blocks in response", async () => {
+  it("should fallback when no delimiter found", async () => {
     mockCreate.mockResolvedValue({
-      content: [{
-        type: "text",
-        text: "```json\n{\"title\":\"标题\",\"content\":\"正文内容\"}\n```",
-      }],
+      content: [{ type: "text", text: "# 一个标题\n\n正文内容" }],
     });
 
     const { cleanArticleContent } = await import("./cleaner.js");
-
     const result = await cleanArticleContent("内容");
 
-    expect(result.title).toBe("标题");
-    expect(result.content).toBe("正文内容");
+    expect(result.title).toBeTruthy();
+    expect(result.content).toContain("正文内容");
   });
 });
 
@@ -63,16 +66,9 @@ describe("embedImagesAsBase64", () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = join(tmpdir(), `cleaner-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    tmpDir = trackDir(join(tmpdir(), `cleaner-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`));
     mkdirSync(tmpDir, { recursive: true });
     mkdirSync(join(tmpDir, "imgs"), { recursive: true });
-    testDir = tmpDir;
-  });
-
-  afterEach(() => {
-    if (existsSync(tmpDir)) {
-      rmSync(tmpDir, { recursive: true, force: true });
-    }
   });
 
   it("should replace local image paths with data URIs", async () => {
@@ -176,23 +172,18 @@ describe("writeCleanedArticle", () => {
   let outputDir: string;
 
   beforeEach(() => {
-    tmpDir = join(tmpdir(), `cleaner-write-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    vi.clearAllMocks();
+    process.env.MINIMAX_API_KEY = "test-key-123";
+    tmpDir = trackDir(join(tmpdir(), `cleaner-write-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`));
     outputDir = join(tmpDir, "output");
     mkdirSync(tmpDir, { recursive: true });
     mkdirSync(join(tmpDir, "imgs"), { recursive: true });
     mkdirSync(outputDir, { recursive: true });
-    testDir = tmpDir;
-  });
-
-  afterEach(() => {
-    if (existsSync(tmpDir)) {
-      rmSync(tmpDir, { recursive: true, force: true });
-    }
   });
 
   it("should write cleaned article to output directory", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: '{"title":"一个简短的测试标题","content":"清理后的文章正文内容"}' }],
+      content: [{ type: "text", text: "一个简短的测试标题\n===TITLE_END===\n清理后的文章正文内容" }],
     });
 
     const { writeCleanedArticle } = await import("./cleaner.js");
@@ -209,7 +200,7 @@ describe("writeCleanedArticle", () => {
 
   it("should sanitize title in filename", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: '{"title":"短标题最多20字","content":"Content"}' }],
+      content: [{ type: "text", text: "短标题最多35字了\n===TITLE_END===\nContent" }],
     });
 
     const { writeCleanedArticle } = await import("./cleaner.js");
@@ -218,16 +209,20 @@ describe("writeCleanedArticle", () => {
 
     const filename = result.split(/[/\\]/).pop()!;
     expect(filename).toContain("100042");
-    expect(filename).toBe("短标题最多20字-100042.md"); // sanitized title also capped at 35
+    expect(filename).toBe("短标题最多35字了-100042.md");
   });
 
-  it("should throw if cleanArticleContent returns invalid JSON", async () => {
+  it("should handle fallback when no delimiter in response", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: "invalid json response" }],
+      content: [{ type: "text", text: "# 任意标题\n\n正文内容" }],
     });
 
     const { writeCleanedArticle } = await import("./cleaner.js");
 
-    await expect(writeCleanedArticle(tmpDir, "100042", "内容", outputDir)).rejects.toThrow();
+    const result = await writeCleanedArticle(tmpDir, "100042", "内容", outputDir);
+
+    expect(existsSync(result)).toBe(true);
+    const written = readFileSync(result, "utf-8");
+    expect(written).toContain("正文内容");
   });
 });

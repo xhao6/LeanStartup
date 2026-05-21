@@ -37,31 +37,14 @@ const CLEAN_SYSTEM_PROMPT = `你是一位公众号文章清理专家。你的任
 4. 保持原文的图片引用不变（不要删除或修改图片标签）
 
 ## 输出格式
-输出 JSON，不要其他内容：
-{
-  "title": "不超过35个字的吸睛短标题，要有钩子感、突出收益/结果或引发好奇心",
-  "content": "清理和美化后的完整 Markdown 正文"
-}`;
+先输出一行标题（不超过35字），然后单独一行输出 ===TITLE_END===，然后输出清理后的正文。
 
-const JSON_FIX_PROMPT = `你是一个JSON修复专家。用户的LLM输出无法被解析为有效JSON，请修复它。
+示例：
+用NotebookLM做PPT课件月入1万
+===TITLE_END===
+清理和美化后的完整 Markdown 正文......
 
-## 任务
-1. 读取下方有问题的原始输出
-2. 尽可能保留原有数据，只修复JSON语法错误
-3. 修复规则：
-   - 修复未闭合的引号、括号
-   - 修复末尾多余的逗号
-   - 修复Unicode转义问题
-   - 处理换行符、转义符等特殊字符
-   - 移除markdown代码块标记
-4. 输出必须是有效JSON，不要添加任何解释
-
-## 注意事项
-- 不要改变原始数据的语义
-- 对于无法确定的值，使用null而非空字符串
-- 如果原输出缺失关键字段，不要凭空添加
-
-请修复以下JSON：`;
+注意：===TITLE_END=== 必须独占一行，前后不要有其他内容。标题行和 ===TITLE_END=== 行之间不能有空行。`;
 
 function createClient(): Anthropic {
   const apiKey = process.env.MINIMAX_API_KEY;
@@ -71,55 +54,16 @@ function createClient(): Anthropic {
   return new Anthropic({ apiKey, baseURL: MINIMAX_BASE_URL });
 }
 
-function parseJsonFromText(text: string): CleanResult | null {
-  const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const jsonStr = jsonMatch ? jsonMatch[1].trim() : text.trim();
+function parseCleanResponse(text: string): CleanResult | null {
+  const lines = text.split("\n");
+  const sepIdx = lines.findIndex((l) => l.trim() === "===TITLE_END===");
+  if (sepIdx < 1) return null;
 
-  try {
-    const parsed = JSON.parse(jsonStr);
-    if (parsed && typeof parsed === "object" && typeof parsed.title === "string" && typeof parsed.content === "string") {
-      return { title: parsed.title, content: parsed.content };
-    }
-    return null;
-  } catch {
-    const rawMatch = jsonStr.match(/(\{[\s\S]*\})/);
-    if (rawMatch) {
-      try {
-        const parsed = JSON.parse(rawMatch[1]);
-        if (parsed && typeof parsed === "object" && typeof parsed.title === "string" && typeof parsed.content === "string") {
-          return { title: parsed.title, content: parsed.content };
-        }
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }
-}
+  const title = lines.slice(0, sepIdx).join(" ").trim();
+  const content = lines.slice(sepIdx + 1).join("\n").trim();
 
-async function fixJsonWithLLM(
-  client: Anthropic,
-  rawText: string,
-  attempt: number,
-): Promise<CleanResult> {
-  const response = await client.messages.create({
-    model: MINIMAX_MODEL,
-    max_tokens: 2048,
-    system: JSON_FIX_PROMPT,
-    messages: [{ role: "user", content: `原始LLM输出（解析失败第${attempt}次）：\n\n${rawText.slice(0, 8000)}` }],
-  });
-
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("JSON fix response contains no text block");
-  }
-
-  const result = parseJsonFromText(textBlock.text);
-  if (!result) {
-    throw new Error(`JSON fix attempt ${attempt} failed`);
-  }
-
-  return result;
+  if (!title || !content) return null;
+  return { title, content };
 }
 
 export async function cleanArticleContent(content: string): Promise<CleanResult> {
@@ -137,14 +81,15 @@ export async function cleanArticleContent(content: string): Promise<CleanResult>
     throw new Error("LLM response contains no text block");
   }
 
-  let result = parseJsonFromText(textBlock.text);
-
+  const result = parseCleanResponse(textBlock.text);
   if (!result) {
-    try {
-      result = await fixJsonWithLLM(client, textBlock.text, 1);
-    } catch {
-      result = await fixJsonWithLLM(client, textBlock.text, 2);
-    }
+    // Fallback: use full response as content, generate title from first line
+    const lines = textBlock.text.trim().split("\n");
+    const firstLine = lines[0].replace(/^#+\s*/, "").replace(/[^\p{L}\p{N}0-9]/gu, "_").slice(0, 35).replace(/_+$/, "");
+    return {
+      title: firstLine || "article",
+      content: textBlock.text.trim(),
+    };
   }
 
   return result;
