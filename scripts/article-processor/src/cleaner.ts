@@ -134,26 +134,25 @@ export async function writeCleanedArticle(
   articleId: string,
   content: string,
   outputDir: string,
-): Promise<string | null> {
-  try {
-    const cleaned = await cleanArticleContent(content);
-    const embeddedContent = embedImagesAsBase64(cleaned.content, rawDirPath);
+): Promise<string> {
+  const cleaned = await cleanArticleContent(content);
+  const embeddedContent = embedImagesAsBase64(cleaned.content, rawDirPath);
 
-    const safeTitle = cleaned.title
-      .replace(/[^\p{L}\p{N}_-]/gu, "")
-      .slice(0, 20);
+  const safeTitle = cleaned.title
+    .replace(/[^\p{L}\p{N} _-]/gu, "")
+    .replace(/\s+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 20)
+    .replace(/_$/, "");
 
-    const filename = `${safeTitle || "article"}-${articleId}.md`;
-    const outputPath = join(outputDir, filename);
+  const filename = `${safeTitle || "article"}-${articleId}.md`;
+  const outputPath = join(outputDir, filename);
 
-    if (!existsSync(outputDir)) {
-      mkdirSync(outputDir, { recursive: true });
-    }
-
-    writeFileSync(outputPath, embeddedContent, "utf-8");
-    return outputPath;
-  } catch (err) {
-    console.error(`    Clean failed: ${(err as Error).message}`);
-    return null;
+  if (!existsSync(outputDir)) {
+    mkdirSync(outputDir, { recursive: true });
   }
+
+  writeFileSync(outputPath, embeddedContent, "utf-8");
+  return outputPath;
 }

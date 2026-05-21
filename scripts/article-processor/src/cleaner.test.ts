@@ -199,10 +199,9 @@ describe("writeCleanedArticle", () => {
 
     const result = await writeCleanedArticle(tmpDir, "100042", "原文内容", outputDir);
 
-    expect(result).not.toBeNull();
     expect(result).toContain("output");
     expect(result).toContain("100042");
-    expect(existsSync(result!)).toBe(true);
+    expect(existsSync(result)).toBe(true);
 
     const written = readFileSync(result!, "utf-8");
     expect(written).toContain("清理后的文章正文内容");
@@ -226,15 +225,13 @@ describe("writeCleanedArticle", () => {
     expect(filename).not.toContain("!");
   });
 
-  it("should return null if cleanArticleContent returns invalid JSON", async () => {
+  it("should throw if cleanArticleContent returns invalid JSON", async () => {
     mockCreate.mockResolvedValue({
       content: [{ type: "text", text: "invalid json response" }],
     });
 
     const { writeCleanedArticle } = await import("./cleaner.js");
 
-    const result = await writeCleanedArticle(tmpDir, "100042", "内容", outputDir);
-
-    expect(result).toBeNull();
+    await expect(writeCleanedArticle(tmpDir, "100042", "内容", outputDir)).rejects.toThrow();
   });
 });
