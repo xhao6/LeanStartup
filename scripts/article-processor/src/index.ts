@@ -170,6 +170,7 @@ async function main(): Promise<void> {
     .option("--output-dir <dir>", "Output directory", DEFAULT_OUTPUT_DIR)
     .option("--skip-review", "Skip the review step")
     .option("--extract-only", "Extract only, no scoring (debug mode)")
+    .option("--clean-only", "Run cleaning step only")
     .parse();
 
   const opts = program.opts();
@@ -179,6 +180,7 @@ async function main(): Promise<void> {
     outputDir: path.resolve(opts.outputDir),
     skipReview: opts.skipReview || false,
     extractOnly: opts.extractOnly || false,
+    cleanOnly: opts.cleanOnly || false,
   };
 
   // Validate API key
