@@ -37,7 +37,7 @@ const CLEAN_SYSTEM_PROMPT = `你是一位公众号文章清理专家。你的任
 4. 保持原文的图片引用不变（不要删除或修改图片标签）
 
 ## 输出格式
-先输出一行标题（不超过35字），然后单独一行输出 ===TITLE_END===，然后输出清理后的正文。
+先输出一行标题（不超过35字，原文数字必须准确如1.1万不能写成11万），然后单独一行输出 ===TITLE_END===，然后输出清理后的正文。
 
 示例：
 用NotebookLM做PPT课件月入1万
@@ -136,7 +136,7 @@ export async function writeCleanedArticle(
   const safeTitle = cleaned.title
     .replace(/[\u3000-\u303f\uff00-\uffef]/g, "_")
     .replace(/[\s]+/g, "_")
-    .replace(/[^\p{L}\p{N}_-]/gu, "")
+    .replace(/[^\p{L}\p{N}._-]/gu, "")
     .replace(/_+/g, "_")
     .replace(/^_|_$/g, "")
     .slice(0, 35)
