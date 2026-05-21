@@ -39,9 +39,29 @@ const CLEAN_SYSTEM_PROMPT = `你是一位公众号文章清理专家。你的任
 ## 输出格式
 输出 JSON，不要其他内容：
 {
-  "title": "不超过20个字的短标题，概括文章核心内容",
+  "title": "不超过20个字的吸睛短标题，要有钩子感、突出收益/结果或引发好奇心",
   "content": "清理和美化后的完整 Markdown 正文"
 }`;
+
+const JSON_FIX_PROMPT = `你是一个JSON修复专家。用户的LLM输出无法被解析为有效JSON，请修复它。
+
+## 任务
+1. 读取下方有问题的原始输出
+2. 尽可能保留原有数据，只修复JSON语法错误
+3. 修复规则：
+   - 修复未闭合的引号、括号
+   - 修复末尾多余的逗号
+   - 修复Unicode转义问题
+   - 处理换行符、转义符等特殊字符
+   - 移除markdown代码块标记
+4. 输出必须是有效JSON，不要添加任何解释
+
+## 注意事项
+- 不要改变原始数据的语义
+- 对于无法确定的值，使用null而非空字符串
+- 如果原输出缺失关键字段，不要凭空添加
+
+请修复以下JSON：`;
 
 function createClient(): Anthropic {
   const apiKey = process.env.MINIMAX_API_KEY;
@@ -77,12 +97,37 @@ function parseJsonFromText(text: string): CleanResult | null {
   }
 }
 
+async function fixJsonWithLLM(
+  client: Anthropic,
+  rawText: string,
+  attempt: number,
+): Promise<CleanResult> {
+  const response = await client.messages.create({
+    model: MINIMAX_MODEL,
+    max_tokens: 2048,
+    system: JSON_FIX_PROMPT,
+    messages: [{ role: "user", content: `原始LLM输出（解析失败第${attempt}次）：\n\n${rawText.slice(0, 8000)}` }],
+  });
+
+  const textBlock = response.content.find((b) => b.type === "text");
+  if (!textBlock || textBlock.type !== "text") {
+    throw new Error("JSON fix response contains no text block");
+  }
+
+  const result = parseJsonFromText(textBlock.text);
+  if (!result) {
+    throw new Error(`JSON fix attempt ${attempt} failed`);
+  }
+
+  return result;
+}
+
 export async function cleanArticleContent(content: string): Promise<CleanResult> {
   const client = createClient();
 
   const response = await client.messages.create({
     model: MINIMAX_MODEL,
-    max_tokens: 4096,
+    max_tokens: 8192,
     system: CLEAN_SYSTEM_PROMPT,
     messages: [{ role: "user", content: `请清理并美化以下文章：\n\n${content}` }],
   });
@@ -92,9 +137,14 @@ export async function cleanArticleContent(content: string): Promise<CleanResult>
     throw new Error("LLM response contains no text block");
   }
 
-  const result = parseJsonFromText(textBlock.text);
+  let result = parseJsonFromText(textBlock.text);
+
   if (!result) {
-    throw new Error("Failed to parse CleanResult from LLM response");
+    try {
+      result = await fixJsonWithLLM(client, textBlock.text, 1);
+    } catch {
+      result = await fixJsonWithLLM(client, textBlock.text, 2);
+    }
   }
 
   return result;
@@ -139,8 +189,9 @@ export async function writeCleanedArticle(
   const embeddedContent = embedImagesAsBase64(cleaned.content, rawDirPath);
 
   const safeTitle = cleaned.title
-    .replace(/[^\p{L}\p{N} _-]/gu, "")
-    .replace(/\s+/g, "_")
+    .replace(/[\u3000-\u303f\uff00-\uffef]/g, "_")
+    .replace(/[\s]+/g, "_")
+    .replace(/[^\p{L}\p{N}_-]/gu, "")
     .replace(/_+/g, "_")
     .replace(/^_|_$/g, "")
     .slice(0, 20)

@@ -203,26 +203,22 @@ describe("writeCleanedArticle", () => {
     expect(result).toContain("100042");
     expect(existsSync(result)).toBe(true);
 
-    const written = readFileSync(result!, "utf-8");
+    const written = readFileSync(result, "utf-8");
     expect(written).toContain("清理后的文章正文内容");
   });
 
   it("should sanitize title in filename", async () => {
     mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: '{"title":"Hello World! @test #2024","content":"Content"}' }],
+      content: [{ type: "text", text: '{"title":"短标题最多20字","content":"Content"}' }],
     });
 
     const { writeCleanedArticle } = await import("./cleaner.js");
 
     const result = await writeCleanedArticle(tmpDir, "100042", "内容", outputDir);
 
-    expect(result).not.toBeNull();
-    const filename = result!.split(/[/\\]/).pop()!;
+    const filename = result.split(/[/\\]/).pop()!;
     expect(filename).toContain("100042");
-    expect(filename).not.toContain(" ");
-    expect(filename).not.toContain("@");
-    expect(filename).not.toContain("#");
-    expect(filename).not.toContain("!");
+    expect(filename).toBe("短标题最多20字-100042.md");
   });
 
   it("should throw if cleanArticleContent returns invalid JSON", async () => {
