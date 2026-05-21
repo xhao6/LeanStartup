@@ -218,7 +218,7 @@ describe("writeCleanedArticle", () => {
 
     const filename = result.split(/[/\\]/).pop()!;
     expect(filename).toContain("100042");
-    expect(filename).toBe("短标题最多20字-100042.md");
+    expect(filename).toBe("短标题最多20字-100042.md"); // sanitized title also capped at 35
   });
 
   it("should throw if cleanArticleContent returns invalid JSON", async () => {

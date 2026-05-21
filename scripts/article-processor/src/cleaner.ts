@@ -39,7 +39,7 @@ const CLEAN_SYSTEM_PROMPT = `你是一位公众号文章清理专家。你的任
 ## 输出格式
 输出 JSON，不要其他内容：
 {
-  "title": "不超过20个字的吸睛短标题，要有钩子感、突出收益/结果或引发好奇心",
+  "title": "不超过35个字的吸睛短标题，要有钩子感、突出收益/结果或引发好奇心",
   "content": "清理和美化后的完整 Markdown 正文"
 }`;
 
@@ -127,7 +127,7 @@ export async function cleanArticleContent(content: string): Promise<CleanResult>
 
   const response = await client.messages.create({
     model: MINIMAX_MODEL,
-    max_tokens: 8192,
+    max_tokens: 16384,
     system: CLEAN_SYSTEM_PROMPT,
     messages: [{ role: "user", content: `请清理并美化以下文章：\n\n${content}` }],
   });
@@ -194,7 +194,7 @@ export async function writeCleanedArticle(
     .replace(/[^\p{L}\p{N}_-]/gu, "")
     .replace(/_+/g, "_")
     .replace(/^_|_$/g, "")
-    .slice(0, 20)
+    .slice(0, 35)
     .replace(/_$/, "");
 
   const filename = `${safeTitle || "article"}-${articleId}.md`;
