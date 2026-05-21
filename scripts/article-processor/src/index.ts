@@ -9,6 +9,7 @@ import { validateScore } from "./scorer.js";
 import { extractArticle } from "./extractor.js";
 import { reviewExtraction } from "./reviewer.js";
 import { formatProcessedMarkdown } from "./formatter.js";
+import { writeCleanedArticle } from "./cleaner.js";
 
 // Load .env from project root (walk up from cwd or script location)
 function findProjectRoot(): string {
@@ -89,6 +90,52 @@ function scanUnprocessed(rawDir: string, filterIds?: string[]): RawArticle[] {
 }
 
 /**
+ * Scan raw directory for already-processed articles (those with processed_at in frontmatter).
+ */
+export function scanProcessed(rawDir: string, filterIds?: string[]): RawArticle[] {
+  if (!fs.existsSync(rawDir)) {
+    console.error(`Raw directory not found: ${rawDir}`);
+    return [];
+  }
+
+  const entries = fs.readdirSync(rawDir, { withFileTypes: true });
+  const articles: RawArticle[] = [];
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+
+    const match = entry.name.match(/^(\d{6})-/);
+    if (!match) continue;
+
+    const id = match[1];
+    if (filterIds && filterIds.length > 0 && !filterIds.includes(id)) continue;
+
+    const articlePath = path.join(rawDir, entry.name, "article.md");
+    if (!fs.existsSync(articlePath)) continue;
+
+    try {
+      const raw = fs.readFileSync(articlePath, "utf-8");
+      const { data: frontmatter, content } = matter(raw);
+
+      if (!frontmatter.processed_at) continue;
+
+      articles.push({
+        id,
+        dirName: entry.name,
+        dirPath: path.join(rawDir, entry.name),
+        frontmatter: frontmatter as RawArticleFrontmatter,
+        content,
+      });
+    } catch (err) {
+      console.warn(`  Warning: Failed to read ${articlePath}: ${err}`);
+    }
+  }
+
+  articles.sort((a, b) => a.id.localeCompare(b.id));
+  return articles;
+}
+
+/**
  * Mark original article as processed by adding processed_at to frontmatter.
  */
 function markAsProcessed(dirPath: string): void {
@@ -152,6 +199,45 @@ async function processArticle(
     // Step 4: Mark original as processed
     markAsProcessed(article.dirPath);
 
+    // Step 5: Write cleaned article
+    console.log("    Writing cleaned article...");
+    await writeCleanedArticle(
+      article.dirPath,
+      article.id,
+      article.content,
+      articleOutputDir,
+    );
+
+    return { success: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`    FAILED: ${message}`);
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * Process a single article through clean-only pipeline.
+ */
+export async function processCleanOnly(
+  article: RawArticle,
+  options: ProcessorOptions,
+): Promise<{ success: boolean; error?: string }> {
+  console.log(`  [${article.id}] ${article.frontmatter.title || "untitled"}`);
+
+  try {
+    const articleOutputDir = path.join(options.outputDir, article.dirName);
+    if (!fs.existsSync(articleOutputDir)) {
+      fs.mkdirSync(articleOutputDir, { recursive: true });
+    }
+
+    await writeCleanedArticle(
+      article.dirPath,
+      article.id,
+      article.content,
+      articleOutputDir,
+    );
+
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -188,6 +274,28 @@ async function main(): Promise<void> {
     console.error("Error: MINIMAX_API_KEY environment variable is required");
     console.error("Set it with: export MINIMAX_API_KEY=your-key-here");
     process.exit(1);
+  }
+
+  // Clean-only flow
+  if (options.cleanOnly) {
+    console.log(`Clean-only mode: scanning processed articles in ${options.rawDir}`);
+    const articles = scanProcessed(options.rawDir, options.ids);
+    if (articles.length === 0) {
+      console.log("No processed articles found for clean step.");
+      return;
+    }
+    console.log(`Found ${articles.length} article(s) to clean\n`);
+    let succeeded = 0;
+    let failed = 0;
+    for (let i = 0; i < articles.length; i++) {
+      console.log(`[${i + 1}/${articles.length}]`);
+      const result = await processCleanOnly(articles[i], options);
+      if (result.success) succeeded++; else failed++;
+      console.log("");
+    }
+    console.log("=== Summary ===");
+    console.log(`Success: ${succeeded}, Failed: ${failed}`);
+    return;
   }
 
   console.log(`Scanning: ${options.rawDir}`);
