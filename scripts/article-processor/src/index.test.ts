@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from "node
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-let testDir = "";
+let testDirs: string[] = [];
 
 // Mocks for cleaner module
 vi.mock("./cleaner.js", () => ({
@@ -16,12 +16,18 @@ const mockExit = vi.spyOn(process, "exit").mockImplementation(() => undefined as
 beforeEach(() => {
   vi.clearAllMocks();
   process.env.MINIMAX_API_KEY = "test-key-123";
-  testDir = "";
 });
 
+function trackDir(dir: string) {
+  testDirs.push(dir);
+  return dir;
+}
+
 afterAll(() => {
-  if (testDir && existsSync(testDir)) {
-    rmSync(testDir, { recursive: true, force: true });
+  for (const dir of testDirs) {
+    if (existsSync(dir)) {
+      rmSync(dir, { recursive: true, force: true });
+    }
   }
   mockExit.mockRestore();
 });
@@ -45,9 +51,8 @@ describe("scanProcessed", () => {
   let rawDir: string;
 
   beforeEach(() => {
-    rawDir = join(tmpdir(), `index-test-scan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    rawDir = trackDir(join(tmpdir(), `index-test-scan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`));
     mkdirSync(rawDir, { recursive: true });
-    testDir = rawDir;
   });
 
   it("should return processed articles that have processed_at in frontmatter", async () => {
@@ -127,11 +132,10 @@ describe("processCleanOnly", () => {
   let outputDir: string;
 
   beforeEach(() => {
-    rawDir = join(tmpdir(), `index-test-clean-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    rawDir = trackDir(join(tmpdir(), `index-test-clean-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`));
     outputDir = join(rawDir, "output");
     mkdirSync(rawDir, { recursive: true });
     mkdirSync(outputDir, { recursive: true });
-    testDir = rawDir;
   });
 
   it("should call writeCleanedArticle and return success", async () => {
@@ -203,8 +207,7 @@ describe("main clean-only routing", () => {
 
     const { scanProcessed, processCleanOnly } = await import("./index.js");
 
-    const rawDir = join(tmpdir(), `index-test-main-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
-    testDir = rawDir;
+    const rawDir = trackDir(join(tmpdir(), `index-test-main-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`));
     mkdirSync(rawDir, { recursive: true });
     createArticleDir(rawDir, "100001", "Test", { processed: true });
 

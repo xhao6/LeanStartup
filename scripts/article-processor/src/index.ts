@@ -250,7 +250,7 @@ async function main(): Promise<void> {
   const program = new Command();
   program
     .name("article-processor")
-    .description("Process raw articles with LLM extraction, scoring, and review")
+    .description("Process raw articles with LLM extraction, scoring, and review. Use --clean-only to backfill cleaned articles on already-processed entries.")
     .option("--id <ids...>", "Process specific article IDs (e.g., --id 100001 100002)")
     .option("--raw-dir <dir>", "Raw articles directory", DEFAULT_RAW_DIR)
     .option("--output-dir <dir>", "Output directory", DEFAULT_OUTPUT_DIR)
