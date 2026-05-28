@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  @font-face { font-family:'Noto Serif SC'; src:url('{{fontSerif}}') format('woff2'); font-weight:700; }
+  @font-face { font-family:'Noto Sans SC'; src:url('{{fontSans}}') format('woff2'); font-weight:400; }
+  @font-face { font-family:'Noto Sans SC'; src:url('{{fontSans}}') format('woff2'); font-weight:600; }
+  @font-face { font-family:'Roboto Mono'; src:url('{{fontMono}}') format('woff2'); font-weight:700; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:1080px; background:#FFFFFF; padding-bottom:120px;
+    font-family:'Noto Sans SC',sans-serif; color:#1A1A2E;
+  }
+
+  .banner {
+    background:#2D2D3F; color:#FFFFFF; padding:32px 48px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .banner-title { font-family:'Noto Serif SC',serif; font-size:48px; font-weight:700; }
+  .banner-sub { font-size:24px; opacity:0.85; }
+
+  .content { padding:40px 48px; }
+
+  .empty-state { text-align:center; padding:120px 0; color:#595959; }
+  .empty-state p { font-size:24px; margin-bottom:16px; }
+  .empty-sub { font-size:20px; color:#9B9A97; }
+
+  .day-group { margin-bottom:48px; }
+  .day-group:last-child { margin-bottom:0; }
+
+  .day-header {
+    padding:16px 0 14px; border-bottom:2px solid #EBE7E0; margin-bottom:16px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .day-label { font-size:26px; font-weight:600; }
+
+  .case-row {
+    display:flex; align-items:center; gap:16px; padding:16px 18px;
+    border-radius:8px;
+  }
+  .case-row.row-even { background:#FAFAFA; }
+  .case-row.row-odd { background:#FFFFFF; }
+
+  .case-rank {
+    width:44px; height:44px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; flex-shrink:0;
+    font-family:'Roboto Mono',monospace; font-size:22px; font-weight:700; color:#FFF;
+  }
+  .rank-gold { background:linear-gradient(135deg,#FBBF24,#F97316); }
+  .rank-silver { background:linear-gradient(135deg,#94A3B8,#64748B); }
+  .rank-bronze { background:linear-gradient(135deg,#D4A574,#B8956C); }
+
+  .case-title { flex:1; font-size:24px; line-height:1.4; }
+
+  .case-score {
+    font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700;
+    color:#F5A623; white-space:nowrap;
+  }
+
+  .mini-tag { padding:4px 10px; border-radius:9999px; font-size:18px; font-weight:600; flex-shrink:0; }
+  .mini-income-high { background:#FEF3C7; color:#92400E; }
+  .mini-income-mid { background:#F3F4F6; color:#4B5563; }
+  .mini-income-low { color:#6B7280; }
+  .mini-cost-zero { background:#DCFCE7; color:#166534; }
+  .mini-cost-other { background:#F3F4F6; color:#374151; }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="banner-title">精益副业案例库</div>
+  <div class="banner-sub">近 3 日精选榜单</div>
+</div>
+<div class="content">
+{{#if hasDays}}
+{{#each days}}<div class="day-group">
+  <div class="day-header">
+    <div class="day-label">{{dayLabel}}</div>
+  </div>
+  {{#each cases}}<div class="case-row row-{{rowClass}}">
+    <div class="case-rank {{rankClass}}">{{rank}}</div>
+    <div class="case-title">{{title}}</div>
+    <div class="case-score">★{{score_total}}</div>
+    <span class="mini-tag {{incomeClass}}">{{expected_revenue}}</span>
+    <span class="mini-tag {{costClass}}">{{cost}}</span>
+  </div>{{/each}}
+</div>{{/each}}
+{{else}}
+<div class="empty-state">
+  <p>每日更新精选案例</p>
+  <p class="empty-sub">更多副业实操，敬请关注精益副业案例库</p>
+</div>
+{{/if}}
+</div>
+</body>
+</html>
