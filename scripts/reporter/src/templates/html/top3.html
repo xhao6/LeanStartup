@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1440">
+<style>
+  @font-face { font-family:'Noto Serif SC'; src:url('{{fontSerif}}') format('woff2'); font-weight:700; }
+  @font-face { font-family:'Noto Sans SC'; src:url('{{fontSans}}') format('woff2'); font-weight:400; }
+  @font-face { font-family:'Noto Sans SC'; src:url('{{fontSans}}') format('woff2'); font-weight:600; }
+  @font-face { font-family:'Roboto Mono'; src:url('{{fontMono}}') format('woff2'); font-weight:700; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:1080px; height:1440px; background:#FFFFFF;
+    font-family:'Noto Sans SC',sans-serif; color:#1A1A2E;
+  }
+
+  .banner {
+    background:#2D2D3F; color:#FFFFFF; padding:32px 48px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .banner-title { font-family:'Noto Serif SC',serif; font-size:48px; font-weight:700; }
+  .banner-date { font-size:24px; opacity:0.85; }
+
+  .content { padding:40px 48px 120px; }
+
+  .card {
+    background:#FFFFFF; border:1px solid #EBE7E0; border-radius:16px;
+    margin-bottom:24px; padding:28px; display:flex; gap:24px;
+    position:relative;
+  }
+  .card:last-child { margin-bottom:0; }
+  .card::after {
+    content:''; position:absolute; bottom:-12px; left:10%; right:10%;
+    height:1px;
+    background:linear-gradient(90deg,transparent,#EBE7E0 20%,#EBE7E0 80%,transparent);
+  }
+  .card:last-child::after { display:none; }
+
+  .card-left { flex:0 0 45%; display:flex; flex-direction:column; gap:12px; }
+  .card-right { flex:1; display:flex; flex-direction:column; gap:12px; align-items:flex-end; }
+
+  .rank-badge {
+    width:56px; height:56px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .rank-1 { background:linear-gradient(135deg,#FBBF24,#F97316); }
+  .rank-2 { background:linear-gradient(135deg,#94A3B8,#64748B); }
+  .rank-3 { background:linear-gradient(135deg,#D4A574,#B8956C); }
+  .rank-num { font-family:'Roboto Mono',monospace; font-size:28px; font-weight:700; color:#FFF; }
+
+  .card-title {
+    font-family:'Noto Serif SC',serif; font-size:32px; font-weight:700;
+    line-height:1.3; display:-webkit-box; -webkit-line-clamp:2;
+    -webkit-box-orient:vertical; overflow:hidden;
+  }
+
+  .card-summary { font-size:24px; color:#635D59; line-height:1.5; }
+
+  .card-source { font-size:20px; color:#595959; }
+
+  .score-badge {
+    background:linear-gradient(135deg,#F5A623,#FF8C00);
+    color:#FFF; border-radius:20px; padding:8px 16px;
+    font-family:'Roboto Mono',monospace; font-size:68px; font-weight:700;
+    line-height:1;
+  }
+  .score-label { font-size:21px; color:#595959; margin-top:4px; }
+
+  .decision-row {
+    display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;
+  }
+  .decision-tag {
+    padding:6px 14px; border-radius:9999px; font-size:20px; font-weight:600;
+  }
+  .tag-cost-zero { background:#DCFCE7; color:#166534; }
+  .tag-cost { background:#F3F4F6; color:#374151; }
+  .tag-income-high { background:#FEF3C7; color:#92400E; font-weight:700; }
+  .tag-income-mid { background:#F3F4F6; color:#4B5563; }
+  .tag-income-low { color:#6B7280; }
+  .tag-cycle { background:#DBEAFE; color:#1E40AF; }
+  .tag-suit { background:#FCE7F3; color:#9D174D; }
+
+  .tags-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .tag {
+    padding:4px 12px; border-radius:9999px; font-size:18px; font-weight:600;
+  }
+  .tag-0 { background:#E8D5C4; color:#5D4E37; }
+  .tag-1 { background:#D4E2D4; color:#3D5C3D; }
+  .tag-2 { background:#D5D4E2; color:#4A4D6E; }
+  .tag-3 { background:#E2D4D5; color:#6E4A4D; }
+  .tag-4 { background:#DFDBD0; color:#5C5A4F; }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="banner-title">精益副业案例库</div>
+  <div class="banner-date">{{date}} · 今日 Top 3</div>
+</div>
+<div class="content">
+{{#each cases}}
+<div class="card">
+  <div class="card-left">
+    <div class="rank-badge rank-{{rank}}">
+      <span class="rank-num">{{rank}}</span>
+    </div>
+    <div class="card-title">{{title}}</div>
+    <div class="card-summary">{{summary}}</div>
+    <div class="card-source">—— {{source_account}}</div>
+  </div>
+  <div class="card-right">
+    <div class="score-badge">{{score_total}}</div>
+    <div class="score-label">AI 综合评分</div>
+    <div class="decision-row">
+      <span class="decision-tag {{costClass}}">{{cost}}</span>
+      <span class="decision-tag {{incomeClass}}">{{expected_revenue}}</span>
+      <span class="decision-tag tag-cycle">{{cycle}}</span>
+      <span class="decision-tag tag-suit">{{suitable_for}}</span>
+    </div>
+    <div class="tags-row">
+      {{#each tags}}<span class="tag tag-{{tagIndex}}">{{text}}</span>{{/each}}
+    </div>
+  </div>
+</div>
+{{/each}}
+</div>
+</body>
+</html>
