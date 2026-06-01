@@ -436,6 +436,32 @@ tcb framework deploy
 - [云开发 JS SDK](https://docs.cloudbase.net/api-reference/webv3/initialization)
 - [CloudBase AI ToolKit](https://github.com/TencentCloudBase/CloudBase-AI-ToolKit)
 
+## 相关工具
+
+### 每日报告生成器 (`scripts/reporter/`)
+
+自动从 CloudBase 数据库读取每日精选案例，生成小红书风格海报和文案。
+
+```bash
+# 生成今日海报（top3 + case-detail + last3days）
+cd scripts/reporter && pnpm start daily
+
+# 生成指定日期的海报
+cd scripts/reporter && pnpm start daily 2026-06-01
+
+# 生成小红书笔记文案（配合海报发布）
+cd scripts/reporter && pnpm copywrite daily
+
+# 生成指定日期的文案
+cd scripts/reporter && pnpm copywrite daily 2026-06-01
+```
+
+**海报输出**：`scripts/reporter/output/{date}/`（top3.jpg、case-detail-*.jpg、last3days.jpg）
+
+**文案输出**：`scripts/reporter/output/{date}/xhs-copy.txt`（纯文本，可直接发布）
+
+需要配置 `.env` 中的 CloudBase 和 MiniMax 密钥。
+
 ## 贡献指南
 
 欢迎提交 Issue 和 Pull Request 来改进这个模板！
