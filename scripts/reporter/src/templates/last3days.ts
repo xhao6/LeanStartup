@@ -23,22 +23,6 @@ function getRankClass(rank: number): string {
   return ""
 }
 
-function parseIncomeAmount(rev: string): number {
-  const match = rev.match(/(\d+)/)
-  return match ? parseInt(match[1], 10) : 0
-}
-
-function getIncomeClass(rev: string): string {
-  const amount = parseIncomeAmount(rev)
-  if (amount >= 3000) return "mini-income-high"
-  if (amount >= 1000) return "mini-income-mid"
-  return "mini-income-low"
-}
-
-function getCostClass(cost: string): string {
-  return (cost.includes("零成本") || cost.includes("0")) ? "mini-cost-zero" : "mini-cost-other"
-}
-
 export function renderLast3Days(ctx: Last3DaysContext): string {
   const template = readFileSync(TEMPLATE_PATH, "utf-8")
 
@@ -51,9 +35,7 @@ export function renderLast3Days(ctx: Last3DaysContext): string {
       ...c,
       rank: ci + 1,
       rankClass: getRankClass(ci + 1),
-      incomeClass: getIncomeClass(c.expected_revenue),
-      costClass: getCostClass(c.cost),
-      rowClass: ci % 2 === 0 ? "even" : "odd",
+      tags: c.tags.map((t: string, i: number) => ({ text: t, tagIndex: i % 5 })),
     })),
   }))
 
