@@ -4,7 +4,7 @@ import { fetchCasesByIds } from "../data/case.js"
 import type { CaseRecord } from "../types.js"
 import { execFile } from "node:child_process"
 import { promisify } from "node:util"
-import { writeFileSync } from "node:fs"
+import { writeFileSync, mkdirSync } from "node:fs"
 import { resolve, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 import { config } from "../config.js"
@@ -149,6 +149,7 @@ export async function generateXhsCopy(date: string): Promise<string> {
   const outputDir = resolve(config.OUTPUT_DIR, date)
   const outputPath = resolve(outputDir, "xhs-copy.txt")
 
+  mkdirSync(outputDir, { recursive: true })
   writeFileSync(outputPath, textBlock.text, "utf-8")
   return outputPath
 }
