@@ -10,138 +10,201 @@
 
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    width:1080px; background:#FFFFFF;
-    font-family:'Noto Sans SC',sans-serif; color:#1A1A2E; padding-bottom:120px;
+    width:1080px; background:#F8F6F1; padding-bottom:60px;
+    font-family:'Noto Sans SC',sans-serif; color:#1C1917;
+    position:relative;
   }
 
-  .banner {
-    background:#2D2D3F; color:#FFFFFF; padding:32px 48px;
-    display:flex; justify-content:space-between; align-items:center;
+  .header {
+    padding:32px 48px 0;
+    display:flex; justify-content:space-between; align-items:flex-start;
   }
-  .banner-title { font-family:'Noto Serif SC',serif; font-size:48px; font-weight:700; }
-  .banner-sub { font-size:24px; opacity:0.85; }
+  .header-brand {
+    font-family:'Noto Sans SC',sans-serif; font-size:18px; font-weight:600;
+    color:#78716C; letter-spacing:2px;
+  }
+  .header-brand em {
+    font-family:'Noto Serif SC',serif; font-style:normal; font-weight:700;
+    color:#E11D48; font-size:20px;
+  }
+  .header-sub {
+    font-family:'Noto Sans SC',sans-serif; font-size:14px; font-weight:500;
+    color:#A8A29E; letter-spacing:1px;
+  }
 
-  .content { padding:40px 48px; }
+  .content { padding:24px 48px 0; }
 
-  .header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:16px; }
-  .header-left { flex:1; }
-  .title { font-family:'Noto Serif SC',serif; font-size:32px; font-weight:700; line-height:1.3; }
-  .source { font-size:24px; color:#595959; margin-top:8px; }
+  .hero-card {
+    background:#FFFFFF; border-radius:16px; padding:28px 32px;
+    box-shadow:0 2px 12px rgba(28,25,23,0.04);
+    margin-bottom:20px;
+  }
+  .hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+  .hero-left { flex:1; }
+  .case-title { font-family:'Noto Serif SC',serif; font-size:30px; font-weight:700; line-height:1.3; color:#1C1917; }
 
   .score-badge {
-    background:linear-gradient(135deg,#F5A623,#FF8C00); color:#FFF;
-    border-radius:20px; padding:10px 18px;
-    font-family:'Roboto Mono',monospace; font-size:68px; font-weight:700; line-height:1;
     flex-shrink:0;
+    display:inline-flex; align-items:center; gap:4px;
+    padding:6px 16px 6px 12px;
+    background:linear-gradient(135deg,#CA8A04,#E5A812);
+    color:#FFF; border-radius:9999px;
+    font-family:'Roboto Mono',monospace; font-size:32px; font-weight:700;
+    box-shadow:0 2px 8px rgba(202,138,4,0.15);
+  }
+  .score-badge::before { content:'★'; font-size:18px; opacity:0.95; }
+
+  .tag-strip {
+    display:flex; gap:6px; flex-wrap:wrap; margin-top:14px; padding-top:14px;
+    border-top:1px solid #ECEAE5;
+  }
+  .tag {
+    padding:3px 10px; border-radius:9999px;
+    font-size:14px; font-weight:600; line-height:1.4;
+  }
+  .tag-0 { background:#FFE0E6; color:#D6336C; }
+  .tag-1 { background:#D1FAE5; color:#059669; }
+  .tag-2 { background:#E9D8FD; color:#7C3AED; }
+  .tag-3 { background:#FEF3C7; color:#D97706; }
+  .tag-4 { background:#DBEAFE; color:#2563EB; }
+
+  .positioning-line { font-size:17px; color:#78716C; margin-top:14px; font-style:italic; line-height:1.5; }
+
+  .section-card {
+    background:#FFFFFF; border-radius:16px; padding:24px 28px;
+    box-shadow:0 2px 12px rgba(28,25,23,0.04);
+    margin-bottom:16px;
+  }
+  .card-row {
+    display:flex; gap:16px; margin-bottom:16px;
+  }
+  .card-row .section-card {
+    flex:1; margin-bottom:0;
+  }
+  .section-title {
+    font-family:'Noto Serif SC',serif; font-size:22px; font-weight:700;
+    color:#1C1917; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title::before {
+    content:''; display:inline-block; width:3px; height:20px;
+    background:#E11D48; border-radius:2px;
   }
 
-  .decision-strip {
-    display:flex; gap:12px; margin-bottom:24px; padding:14px 0;
-    border-top:1px solid #EBE7E0; border-bottom:1px solid #EBE7E0;
-  }
-  .decision-item { padding:6px 14px; border-radius:9999px; font-size:22px; font-weight:600; }
-  .dc-zerocost { background:#DCFCE7; color:#166534; }
-  .dc-revenue-high { background:#FEF3C7; color:#92400E; font-weight:700; }
-  .dc-revenue-mid { background:#F3F4F6; color:#4B5563; }
-  .dc-revenue-low { color:#6B7280; }
-  .dc-cycle { background:#DBEAFE; color:#1E40AF; }
-  .dc-suit { background:#FCE7F3; color:#9D174D; }
-
-  .positioning-line { font-size:20px; color:#595959; margin-bottom:24px; font-style:italic; }
-
-  .dimensions { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
-  .dim-row { display:flex; align-items:center; gap:14px; }
-  .dim-label { width:80px; font-size:20px; color:#595959; }
-  .dim-bar { flex:1; height:14px; background:#EBE7E0; border-radius:7px; overflow:hidden; }
-  .dim-fill { height:100%; border-radius:7px; }
-  .dim-fill-fea { background:#E94560; }
-  .dim-fill-pro { background:#F5A623; }
+  .dims { display:flex; flex-direction:column; gap:8px; }
+  .dim-row { display:flex; align-items:center; gap:12px; }
+  .dim-label { width:70px; font-size:15px; color:#78716C; flex-shrink:0; }
+  .dim-bar { flex:1; height:10px; background:#ECEAE5; border-radius:5px; overflow:hidden; }
+  .dim-fill { height:100%; border-radius:5px; }
+  .dim-fill-fea { background:#E11D48; }
+  .dim-fill-pro { background:#CA8A04; }
   .dim-fill-tim { background:#059669; }
   .dim-fill-det { background:#2563EB; }
-  .dim-fill-fit { background:#7C3AED; }
-  .dim-score { font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700; width:50px; text-align:right; }
+  .dim-fill-fit { background:#CA8A04; }
+  .dim-score { font-family:'Roboto Mono',monospace; font-size:16px; font-weight:700; width:44px; text-align:right; color:#1C1917; }
 
-  .section { margin-bottom:28px; }
-  .section-title { font-size:24px; font-weight:600; margin-bottom:16px; color:#1A1A2E; }
+  .story { font-size:17px; line-height:1.8; color:#635D59; }
 
-  .story { font-size:24px; line-height:1.8; color:#635D59; min-height:120px; }
+  .step-list { display:flex; flex-direction:column; gap:10px; }
+  .step-item { display:flex; gap:12px; align-items:flex-start; }
+  .step-num {
+    flex-shrink:0; width:30px; height:30px; background:#E11D48; color:#FFF;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Roboto Mono',monospace; font-size:15px; font-weight:700;
+    margin-top:1px;
+  }
+  .step-text { font-size:17px; line-height:1.6; color:#1C1917; padding-top:4px; }
 
-  .step-list { display:flex; flex-direction:column; gap:12px; }
-  .step-item { display:flex; gap:14px; align-items:flex-start; font-size:24px; }
-  .step-num { flex-shrink:0; width:36px; height:36px; background:#E94560; color:#FFF; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700; }
-  .step-text { line-height:1.6; padding-top:4px; }
+  .tools-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .tools-more { font-size:14px; color:#A8A29E; margin-top:8px; text-align:center; letter-spacing:1px; }
+  .tool-card {
+    background:#FAFAF8; border:1px solid #ECEAE5; border-radius:12px;
+    padding:14px 16px; transition:all 0.2s;
+  }
+  .tool-card:hover { border-color:#D6D3D1; background:#F8F6F1; }
+  .tool-name { font-size:17px; font-weight:600; color:#1C1917; margin-bottom:4px; }
+  .tool-desc { font-size:14px; color:#78716C; line-height:1.4; }
 
-  .view-more { font-size:20px; color:#2563EB; margin-top:10px; }
+  .risk-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+  .risk-tag {
+    padding:3px 10px; border-radius:9999px; font-size:14px; font-weight:600;
+    background:#FCE7F3; color:#9D174D;
+  }
 
-  .tools-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .tool-card { background:#FAFAFA; border:1px solid #EBE7E0; border-radius:14px; padding:18px 20px; }
-  .tool-name { font-size:22px; font-weight:600; margin-bottom:6px; }
-  .tool-desc { font-size:20px; color:#635D59; }
-
-  .risk-tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-  .risk-tag { padding:6px 14px; border-radius:9999px; font-size:20px; font-weight:600; background:#FCE7F3; color:#9D174D; }
-
-  .bottom-strip { display:flex; gap:12px; padding:0 48px 20px; }
+  .footer {
+    text-align:center; padding:24px 48px 0;
+  }
+  .footer-divider { width:32px; height:2px; background:#CA8A04; margin:0 auto 8px; border-radius:2px; }
+  .footer-brand {
+    font-family:'Noto Serif SC',serif; font-size:13px; font-weight:700;
+    color:#A8A29E; letter-spacing:4px;
+  }
 </style>
 </head>
 <body>
-<div class="banner">
-  <div class="banner-title">精益副业案例库</div>
-  <div class="banner-sub">案例深度解析</div>
+<div class="header">
+  <div class="header-brand"><em>MindDock</em>超级个体知识库</div>
+  <div class="header-sub">案例深度解析</div>
 </div>
 <div class="content">
-  <div class="header-row">
-    <div class="header-left">
-      <div class="title">{{title}}</div>
-      <div class="source">{{source_account}}</div>
+  <div class="hero-card">
+    <div class="hero-top">
+      <div class="hero-left">
+        <div class="case-title">{{title}}</div>
+      </div>
+      <div class="score-badge">{{score_total}}</div>
     </div>
-    <div class="score-badge">{{score_total}}</div>
+
+    <div class="tag-strip">
+      {{#each tags}}<span class="tag tag-{{tagIndex}}">{{text}}</span>{{/each}}
+    </div>
   </div>
 
-  <div class="decision-strip">
-    <span class="decision-item {{costClass}}">{{cost}}</span>
-    <span class="decision-item {{incomeClass}}">{{expected_revenue}}</span>
-    <span class="decision-item dc-cycle">{{cycle}}</span>
-    <span class="decision-item dc-suit">{{suitable_for}}</span>
+  <div class="card-row">
+    <div class="section-card">
+      <div class="section-title">案例摘要</div>
+      <div class="story" style="font-size:16px;">{{positioning}}</div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">AI 评分</div>
+      <div class="dims">
+        {{#each dimensions}}<div class="dim-row">
+          <span class="dim-label">{{label}}</span>
+          <div class="dim-bar"><div class="dim-fill dim-fill-{{key}}" style="width:{{pct}}%"></div></div>
+          <span class="dim-score">{{score}}/{{max}}</span>
+        </div>{{/each}}
+      </div>
+    </div>
   </div>
 
-  <div class="positioning-line">{{positioning}}</div>
-
-  <div class="dimensions">
-    {{#each dimensions}}<div class="dim-row">
-      <span class="dim-label">{{label}}</span>
-      <div class="dim-bar"><div class="dim-fill dim-fill-{{key}}" style="width:{{pct}}%"></div></div>
-      <span class="dim-score">{{score}}/{{max}}</span>
-    </div>{{/each}}
-  </div>
-
-  <div class="section">
+  <div class="section-card">
     <div class="section-title">案例故事</div>
     <div class="story">{{case_story}}</div>
   </div>
 
-  <div class="section">
-    <div class="section-title">操作步骤</div>
-    <div class="step-list">
-      {{#each steps}}<div class="step-item">
-        <div class="step-num">{{num}}</div>
-        <div class="step-text">{{text}}</div>
-      </div>{{/each}}
+  <div class="card-row">
+    <div class="section-card">
+      <div class="section-title">操作步骤</div>
+      <div class="step-list">
+        {{#each steps}}<div class="step-item">
+          <div class="step-num">{{num}}</div>
+          <div class="step-text">{{text}}</div>
+        </div>{{/each}}
+      </div>
     </div>
-    {{#if showViewMore}}<div class="view-more">{{viewMoreText}}</div>{{/if}}
+    {{#if hasTools}}<div class="section-card">
+      <div class="section-title">所需工具</div>
+      <div class="tools-grid">
+        {{#each tools}}<div class="tool-card">
+          <div class="tool-name">{{name}}</div>
+          <div class="tool-desc">{{desc}}</div>
+        </div>{{/each}}
+      </div>
+      {{#if hasMoreTools}}<div class="tools-more">+ 查看更多工具</div>{{/if}}
+    </div>{{/if}}
   </div>
 
-  {{#if hasTools}}<div class="section">
-    <div class="section-title">所需工具</div>
-    <div class="tools-grid">
-      {{#each tools}}<div class="tool-card">
-        <div class="tool-name">{{name}}</div>
-        <div class="tool-desc">{{desc}}</div>
-      </div>{{/each}}
-    </div>
-  </div>{{/if}}
-
-  {{#if hasPitfalls}}<div class="section">
+  {{#if hasPitfalls}}<div class="section-card">
     <div class="section-title">避坑指南</div>
     <div class="story">{{pitfalls}}</div>
     {{#if hasRiskTags}}<div class="risk-tags">
@@ -150,11 +213,9 @@
   </div>{{/if}}
 </div>
 
-<div class="bottom-strip">
-  <span class="decision-item {{costClass}}">{{cost}}</span>
-  <span class="decision-item {{incomeClass}}">{{expected_revenue}}</span>
-  <span class="decision-item dc-cycle">{{cycle}}</span>
-  <span class="decision-item dc-suit">{{suitable_for}}</span>
+<div class="footer">
+  <div class="footer-divider"></div>
+  <div class="footer-brand">MindDock超级个体知识库</div>
 </div>
 </body>
 </html>

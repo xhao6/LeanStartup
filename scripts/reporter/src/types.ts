@@ -55,7 +55,6 @@ export interface Top3Case {
 
 export interface CaseDetailContext {
   title: string
-  source_account: string
   score_total: number
   score_feasibility: number
   score_profit: number
@@ -68,6 +67,7 @@ export interface CaseDetailContext {
   tools: Array<{ name: string; desc: string }>
   pitfalls: string
   risk_tags: string[]
+  tags: string[]
   cost: string
   expected_revenue: string
   cycle: string

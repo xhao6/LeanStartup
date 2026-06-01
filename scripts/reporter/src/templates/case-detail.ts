@@ -16,22 +16,9 @@ const DIM_META = [
   { key: "fit", label: "适合度", max: 1 },
 ]
 
-function getIncomeClass(rev: string): string {
-  const match = rev.match(/(\d+)/)
-  const amount = match ? parseInt(match[1], 10) : 0
-  if (amount >= 3000) return "dc-revenue-high"
-  if (amount >= 1000) return "dc-revenue-mid"
-  return "dc-revenue-low"
-}
-
-function getCostClass(cost: string): string {
-  return (cost.includes("零成本") || cost.includes("0")) ? "dc-zerocost" : "decision-item"
-}
-
 export function caseRecordToContext(record: CaseRecord): CaseDetailContext {
   return {
     title: record.title,
-    source_account: record.source_account ?? "",
     score_total: record.score_total,
     score_feasibility: record.score_feasibility,
     score_profit: record.score_profit,
@@ -46,6 +33,7 @@ export function caseRecordToContext(record: CaseRecord): CaseDetailContext {
     ),
     pitfalls: record.pitfalls ?? "",
     risk_tags: record.risk_tags ?? [],
+    tags: record.tags ?? [],
     cost: record.cost ?? "未标注",
     expected_revenue: record.expected_revenue ?? "未标注",
     cycle: record.cycle ?? "未标注",
@@ -70,9 +58,11 @@ export function renderCaseDetail(ctx: CaseDetailContext): string {
     pct: Math.round((scores[i] / maxes[i]) * 100),
   }))
 
-  const showViewMore = ctx.steps.length > 5
-  const displaySteps = (showViewMore ? ctx.steps.slice(0, 5) : ctx.steps)
-    .map((text: string, i: number) => ({ num: i + 1, text }))
+  const allSteps = ctx.steps.map((text: string, i: number) => ({ num: i + 1, text }))
+
+  const toolLimit = 6
+  const displayTools = ctx.tools.slice(0, toolLimit)
+  const hasMoreTools = ctx.tools.length > toolLimit
 
   const positioning = ctx.summary || `利用信息差，${ctx.cost}启动的副业实操`
 
@@ -81,22 +71,15 @@ export function renderCaseDetail(ctx: CaseDetailContext): string {
     fontSans: fontBase("NotoSansSC-Regular.woff2"),
     fontMono: fontBase("RobotoMono-Bold.woff2"),
     title: ctx.title,
-    source_account: ctx.source_account,
     score_total: ctx.score_total,
-    cost: ctx.cost,
-    expected_revenue: ctx.expected_revenue,
-    cycle: ctx.cycle,
-    suitable_for: ctx.suitable_for,
-    costClass: getCostClass(ctx.cost),
-    incomeClass: getIncomeClass(ctx.expected_revenue),
+    tags: ctx.tags.map((t, i) => ({ text: t, tagIndex: i % 5 })),
     positioning,
     dimensions,
     case_story: ctx.case_story,
-    steps: displaySteps,
-    showViewMore,
-    viewMoreText: `▸ 查看全部 ${ctx.steps.length} 步`,
+    steps: allSteps,
     hasTools: ctx.tools.length > 0,
-    tools: ctx.tools,
+    tools: displayTools,
+    hasMoreTools,
     hasPitfalls: !!(ctx.pitfalls || ctx.risk_tags.length > 0),
     pitfalls: ctx.pitfalls,
     hasRiskTags: ctx.risk_tags.length > 0,
