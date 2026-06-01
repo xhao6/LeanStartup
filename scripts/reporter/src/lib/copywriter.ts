@@ -60,7 +60,7 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 
 ## 标题规则
 - 参考爆款数据中出现的标题模式（数字型、情绪型、疑问型、悬念型）
-- 每个标题不超过20字
+- 每个标题严格控制在20个字以内（含标点符号和英文字母）
 - 生成6个不同风格的推荐标题
 
 ## 正文规则
@@ -73,10 +73,11 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 ## 格式约束（必须严格遵守）
 - 纯文本，不使用任何Markdown语法
 - 不包含投入、周期、收入等商业数据
-- 标签以#开头，空格分隔
+- 标签内容保留，但不要输出"推荐标签"这个标题，直接输出标签行
+- 标签数量控制在8个以内
 - 爆款公式来源中列出参考的笔记时，使用纯文本格式
 
-## 输出格式
+## 输出格式（必须严格遵循以下结构，每段之间空一行）
 推荐标题
 
 1. 标题1
@@ -90,9 +91,7 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 
 [正文]
 
-推荐标签
-
-#标签1 #标签2 ...
+#标签1 #标签2 #标签3 #标签4 #标签5 #标签6 #标签7 #标签8
 
 爆款公式来源
 
@@ -102,10 +101,10 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 
 ## 自检清单
 输出前检查：
-- 是否包含6个推荐标题？
-- 正文是否完整可发布？
-- 标签是否5-10个？
-- 爆款公式来源是否包含规律简述和参考笔记？`
+- 推荐标题后有6个标题且每个不超过20字？
+- 正文内容后面有标签行（不带"推荐标签"标题）？
+- 标签数量不超过8个？
+- 爆款公式来源包含规律简述和参考笔记？`
 
 export async function generateXhsCopy(date: string): Promise<string> {
   const db = getDatabase()
@@ -139,6 +138,7 @@ export async function generateXhsCopy(date: string): Promise<string> {
   const response = await client.messages.create({
     model: MINIMAX_MODEL,
     max_tokens: 4096,
+    temperature: 0.3,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userPrompt }],
   })
@@ -150,6 +150,37 @@ export async function generateXhsCopy(date: string): Promise<string> {
   const outputPath = resolve(outputDir, "xhs-copy.txt")
 
   mkdirSync(outputDir, { recursive: true })
-  writeFileSync(outputPath, textBlock.text, "utf-8")
+
+  let output = textBlock.text
+
+  // Post-process: truncate titles to 20 characters, limit tags to 8
+  const lines = output.split("\n")
+  let inTitles = false
+  let inTags = false
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim()
+    if (trimmed === "推荐标题") { inTitles = true; inTags = false; continue }
+    if (trimmed === "正文内容") { inTitles = false; inTags = false; continue }
+    if (trimmed === "爆款公式来源") { inTitles = false; inTags = false; continue }
+    if (inTitles && /^\d+\.\s/.test(trimmed)) {
+      const match = trimmed.match(/^\d+\.\s+(.*)/)
+      if (match) {
+        let title = match[1]
+        if ([...title].length > 20) {
+          title = [...title].slice(0, 20).join("").trimEnd()
+          lines[i] = trimmed.replace(match[1], title)
+        }
+      }
+    }
+    if (trimmed.startsWith("#") && !inTitles) {
+      const tags = trimmed.split(/\s+/).filter(t => t.startsWith("#"))
+      if (tags.length > 8) {
+        lines[i] = tags.slice(0, 8).join(" ")
+      }
+    }
+  }
+  output = lines.join("\n")
+
+  writeFileSync(outputPath, output, "utf-8")
   return outputPath
 }
