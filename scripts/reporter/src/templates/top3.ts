@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs"
-import { resolve, dirname } from "node:path"
+import { resolve, dirname, extname } from "node:path"
 import { fileURLToPath } from "node:url"
 import { renderTemplate } from "./engine.js"
 import { config } from "../config.js"
@@ -8,31 +8,22 @@ import type { Top3Context, Top3Case } from "../types.js"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TEMPLATE_PATH = resolve(__dirname, "html", "top3.html")
 
-function parseIncomeAmount(rev: string): number {
-  const match = rev.match(/(\d+)/)
-  return match ? parseInt(match[1], 10) : 0
+const MIME_TYPES: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
 }
 
-function getIncomeTier(rev: string): string {
-  const amount = parseIncomeAmount(rev)
-  if (amount >= 3000) return "high"
-  if (amount >= 1000) return "mid"
-  return "low"
+function imageToDataUri(filePath: string): string {
+  const data = readFileSync(filePath)
+  const ext = extname(filePath).toLowerCase()
+  const mime = MIME_TYPES[ext] ?? "image/png"
+  return `data:${mime};base64,${data.toString("base64")}`
 }
 
-function getCostClass(cost: string): string {
-  if (cost.includes("零成本") || cost.includes("0")) return "tag-cost-zero"
-  return "tag-cost"
-}
-
-function getIncomeClass(rev: string): string {
-  const tier = getIncomeTier(rev)
-  if (tier === "high") return "tag-income-high"
-  if (tier === "mid") return "tag-income-mid"
-  return "tag-income-low"
-}
-
-export function renderTop3(ctx: Top3Context): string {
+export function renderTop3(ctx: Top3Context, coverPath?: string): string {
   const template = readFileSync(TEMPLATE_PATH, "utf-8")
 
   const fontBase = (name: string) =>
@@ -40,10 +31,18 @@ export function renderTop3(ctx: Top3Context): string {
 
   const cases = ctx.cases.map((c) => ({
     ...c,
-    costClass: getCostClass(c.cost),
-    incomeClass: getIncomeClass(c.expected_revenue),
+    rankPad: String(c.rank).padStart(2, "0"),
     tags: c.tags.map((t, i) => ({ text: t, tagIndex: i % 5 })),
   }))
+
+  let coverDataUri = ""
+  if (coverPath) {
+    try {
+      coverDataUri = imageToDataUri(coverPath)
+    } catch {
+      console.warn(`Warning: could not load cover image at ${coverPath}`)
+    }
+  }
 
   return renderTemplate(template, {
     fontSerif: fontBase("NotoSerifSC-Bold.woff2"),
@@ -51,5 +50,6 @@ export function renderTop3(ctx: Top3Context): string {
     fontMono: fontBase("RobotoMono-Bold.woff2"),
     date: ctx.date,
     cases,
+    coverPath: coverDataUri,
   })
 }

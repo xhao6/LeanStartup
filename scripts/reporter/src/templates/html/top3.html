@@ -10,119 +10,265 @@
   @font-face { font-family:'Roboto Mono'; src:url('{{fontMono}}') format('woff2'); font-weight:700; }
 
   * { margin:0; padding:0; box-sizing:border-box; }
+
   body {
-    width:1080px; height:1440px; background:#FFFFFF;
-    font-family:'Noto Sans SC',sans-serif; color:#1A1A2E;
+    width:1080px; height:1440px;
+    background:#F8F6F1;
+    background-image:
+      radial-gradient(ellipse 600px 300px at 20% 20%, rgba(225,29,72,0.03) 0%, transparent 100%),
+      radial-gradient(ellipse 400px 400px at 80% 80%, rgba(202,138,4,0.03) 0%, transparent 100%);
+    font-family:'Noto Sans SC',sans-serif; color:#1C1917;
+    display:flex; flex-direction:column;
+    position:relative; overflow:hidden;
   }
 
-  .banner {
-    background:#2D2D3F; color:#FFFFFF; padding:32px 48px;
-    display:flex; justify-content:space-between; align-items:center;
+  /* ===== Background decorative elements ===== */
+  body::before {
+    content:'03'; position:absolute; right:24px; top:400px;
+    font-family:'Noto Serif SC',serif; font-size:360px; font-weight:700;
+    color:#EDE9E2; line-height:1; pointer-events:none;
+    z-index:0; letter-spacing:-20px;
   }
-  .banner-title { font-family:'Noto Serif SC',serif; font-size:48px; font-weight:700; }
-  .banner-date { font-size:24px; opacity:0.85; }
+  body::after {
+    content:'MIND'; position:absolute; left:-20px; bottom:160px;
+    font-family:'Roboto Mono',monospace; font-size:120px; font-weight:700;
+    color:#EDE9E2; line-height:1; pointer-events:none;
+    z-index:0; letter-spacing:8px; opacity:0.5;
+  }
+  .corner-accent {
+    position:absolute; z-index:1;
+    top:0; right:0;
+    width:0; height:0;
+    border-style:solid;
+    border-width:0 80px 80px 0;
+    border-color:transparent #E11D48 transparent transparent;
+    opacity:0.08;
+    pointer-events:none;
+  }
 
-  .content { padding:40px 48px 120px; }
+  /* ===== Header ===== */
+  .header {
+    position:relative; z-index:1;
+    padding:32px 56px 0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    flex-shrink:0;
+  }
+  .header-brand {
+    font-family:'Noto Sans SC',sans-serif; font-size:18px; font-weight:600;
+    color:#78716C; letter-spacing:2px;
+  }
+  .header-brand em {
+    font-family:'Noto Serif SC',serif; font-style:normal; font-weight:700;
+    color:#E11D48; font-size:20px;
+  }
+  .header-date {
+    font-family:'Noto Sans SC',sans-serif; font-size:14px; font-weight:500;
+    color:#A8A29E; letter-spacing:1px;
+  }
 
-  .card {
-    background:#FFFFFF; border:1px solid #EBE7E0; border-radius:16px;
-    margin-bottom:24px; padding:28px; display:flex; gap:24px;
+  /* ===== Hero ===== */
+  .hero {
+    position:relative; z-index:1;
+    flex-shrink:0; padding:20px 56px 0;
+  }
+  .hero-title {
+    font-family:'Noto Serif SC',serif; font-size:76px; font-weight:700;
+    color:#1C1917; line-height:1.08; letter-spacing:2px;
+  }
+  .hero-title .accent {
+    color:#E11D48;
     position:relative;
   }
-  .card:last-child { margin-bottom:0; }
-  .card::after {
-    content:''; position:absolute; bottom:-12px; left:10%; right:10%;
-    height:1px;
-    background:linear-gradient(90deg,transparent,#EBE7E0 20%,#EBE7E0 80%,transparent);
+  .hero-title .accent::after {
+    content:''; position:absolute; left:0; right:4px; bottom:6px;
+    height:5px; background:#E11D48; opacity:0.15; border-radius:2px;
   }
-  .card:last-child::after { display:none; }
-
-  .card-left { flex:0 0 45%; display:flex; flex-direction:column; gap:12px; }
-  .card-right { flex:1; display:flex; flex-direction:column; gap:12px; align-items:flex-end; }
-
-  .rank-badge {
-    width:56px; height:56px; border-radius:50%; display:flex;
-    align-items:center; justify-content:center; flex-shrink:0;
+  .hero-sub {
+    font-family:'Noto Sans SC',sans-serif; font-size:20px; font-weight:400;
+    color:#A8A29E; margin-top:12px; letter-spacing:6px;
   }
-  .rank-1 { background:linear-gradient(135deg,#FBBF24,#F97316); }
-  .rank-2 { background:linear-gradient(135deg,#94A3B8,#64748B); }
-  .rank-3 { background:linear-gradient(135deg,#D4A574,#B8956C); }
-  .rank-num { font-family:'Roboto Mono',monospace; font-size:28px; font-weight:700; color:#FFF; }
 
-  .card-title {
-    font-family:'Noto Serif SC',serif; font-size:32px; font-weight:700;
-    line-height:1.3; display:-webkit-box; -webkit-line-clamp:2;
+  /* ===== Decorative divider ===== */
+  .divider {
+    position:relative; z-index:1;
+    margin:12px 56px 0;
+    display:flex; align-items:center; gap:10px;
+    flex-shrink:0;
+  }
+  .divider-line { flex:1; height:1px; background:#E7E5E4; }
+  .divider-dot { width:5px; height:5px; border-radius:50%; background:#CA8A04; flex-shrink:0; }
+
+  /* ===== Cover image ===== */
+  {{#if coverPath}}
+  .cover-wrap {
+    position:relative; z-index:1;
+    width:80%; margin:10px auto 0; flex-shrink:0;
+    padding:8px;
+    background:#FFFFFF;
+    border-radius:16px;
+    box-shadow:0 4px 20px rgba(28,25,23,0.06), 0 1px 3px rgba(28,25,23,0.04);
+  }
+  .cover-wrap img {
+    width:100%; height:auto; display:block;
+    border-radius:8px;
+  }
+  {{/if}}
+
+  /* ===== Content ===== */
+  .content {
+    position:relative; z-index:1;
+    flex-shrink:0; padding:10px 56px 0;
+  }
+
+  .case {
+    display:flex; align-items:flex-start; gap:16px;
+    padding:11px 0;
+    border-bottom:1px solid #ECEAE5;
+    transition:all 0.2s;
+  }
+  .case:last-child { border-bottom:none; }
+  .case:first-child { position:relative; }
+  .case:first-child .case-rank::before {
+    content:''; position:absolute; left:-8px; top:-2px; bottom:-2px;
+    width:3px; background:linear-gradient(180deg,#CA8A04,#E5A812);
+    border-radius:2px; opacity:0.5;
+  }
+  .case:hover {
+    padding-left:10px; margin-left:-10px;
+    padding-right:10px; margin-right:-10px;
+    background:rgba(232,229,228,0.4); border-radius:8px;
+    border-color:transparent;
+  }
+  .case:last-child:hover { border-bottom-color:transparent; }
+
+  .case-rank {
+    flex-shrink:0; width:56px; text-align:center;
+    padding-top:2px;
+  }
+  .rank-num {
+    font-family:'Noto Serif SC',serif; font-size:42px; font-weight:700; line-height:1;
+  }
+  .rank-num-1 { color:#CA8A04; }
+  .rank-num-2 { color:#94A3B8; }
+  .rank-num-3 { color:#C4956A; }
+
+  .case-body { flex:1; min-width:0; }
+  .case-top {
+    display:flex; align-items:flex-start; gap:8px;
+  }
+  .case-title {
+    font-family:'Noto Serif SC',serif; font-size:26px; font-weight:700;
+    line-height:1.35; color:#1C1917; flex:1;
+    display:-webkit-box; -webkit-line-clamp:2;
     -webkit-box-orient:vertical; overflow:hidden;
   }
-
-  .card-summary { font-size:24px; color:#635D59; line-height:1.5; }
-
-  .card-source { font-size:20px; color:#595959; }
-
-  .score-badge {
-    background:linear-gradient(135deg,#F5A623,#FF8C00);
-    color:#FFF; border-radius:20px; padding:8px 16px;
-    font-family:'Roboto Mono',monospace; font-size:68px; font-weight:700;
-    line-height:1;
+  .case-score {
+    flex-shrink:0;
+    display:inline-flex; align-items:center; gap:2px;
+    padding:3px 11px 3px 8px;
+    background:linear-gradient(135deg,#CA8A04,#E5A812);
+    color:#FFF; border-radius:9999px;
+    font-family:'Roboto Mono',monospace; font-size:16px; font-weight:700;
+    box-shadow:0 1px 4px rgba(202,138,4,0.2);
+    margin-top:3px;
   }
-  .score-label { font-size:21px; color:#595959; margin-top:4px; }
-
-  .decision-row {
-    display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;
+  .case-score::before { content:'★'; font-size:11px; opacity:0.95; }
+  .case-summary {
+    font-size:16px; color:#78716C; line-height:1.45; margin-top:4px;
+    display:-webkit-box; -webkit-line-clamp:2;
+    -webkit-box-orient:vertical; overflow:hidden;
   }
-  .decision-tag {
-    padding:6px 14px; border-radius:9999px; font-size:20px; font-weight:600;
+  .case-tags {
+    display:flex; gap:5px; flex-wrap:wrap; margin-top:4px;
   }
-  .tag-cost-zero { background:#DCFCE7; color:#166534; }
-  .tag-cost { background:#F3F4F6; color:#374151; }
-  .tag-income-high { background:#FEF3C7; color:#92400E; font-weight:700; }
-  .tag-income-mid { background:#F3F4F6; color:#4B5563; }
-  .tag-income-low { color:#6B7280; }
-  .tag-cycle { background:#DBEAFE; color:#1E40AF; }
-  .tag-suit { background:#FCE7F3; color:#9D174D; }
-
-  .tags-row { display:flex; gap:8px; flex-wrap:wrap; }
   .tag {
-    padding:4px 12px; border-radius:9999px; font-size:18px; font-weight:600;
+    padding:2px 8px; border-radius:9999px;
+    font-size:12px; font-weight:600; line-height:1.4;
   }
   .tag-0 { background:#E8D5C4; color:#5D4E37; }
   .tag-1 { background:#D4E2D4; color:#3D5C3D; }
   .tag-2 { background:#D5D4E2; color:#4A4D6E; }
   .tag-3 { background:#E2D4D5; color:#6E4A4D; }
   .tag-4 { background:#DFDBD0; color:#5C5A4F; }
+
+  /* ===== Footer ===== */
+  .spacer {
+    flex:1; position:relative; z-index:1;
+  }
+  .footer {
+    position:relative; z-index:1;
+    flex-shrink:0; padding:12px 56px 32px;
+    text-align:center;
+  }
+  .footer-ornament {
+    font-size:16px; color:#D6D3D1; margin-bottom:6px;
+    letter-spacing:6px;
+  }
+  .footer-divider {
+    width:40px; height:2px; background:#CA8A04; margin:0 auto 7px;
+    border-radius:2px;
+  }
+  .footer-brand {
+    font-family:'Noto Serif SC',serif; font-size:13px; font-weight:700;
+    color:#A8A29E; letter-spacing:4px;
+  }
+  .footer-hint {
+    font-size:11px; color:#D6D3D1; margin-top:2px;
+    letter-spacing:2px;
+  }
 </style>
 </head>
 <body>
-<div class="banner">
-  <div class="banner-title">精益副业案例库</div>
-  <div class="banner-date">{{date}} · 今日 Top 3</div>
+<div class="corner-accent"></div>
+
+<div class="header">
+  <div class="header-brand"><em>MindDock</em>超级个体知识库</div>
+  <div class="header-date">{{date}}</div>
 </div>
+
+<div class="hero">
+  <div class="hero-title">今日<span class="accent">搞钱</span>案例精选</div>
+  <div class="hero-sub">把时间花在值得的事上</div>
+</div>
+
+<div class="divider">
+  <span class="divider-line"></span>
+  <span class="divider-dot"></span>
+  <span class="divider-line"></span>
+</div>
+
+{{#if coverPath}}
+<div class="cover-wrap">
+  <img src="{{coverPath}}" alt="cover">
+</div>
+{{/if}}
+
 <div class="content">
 {{#each cases}}
-<div class="card">
-  <div class="card-left">
-    <div class="rank-badge rank-{{rank}}">
-      <span class="rank-num">{{rank}}</span>
-    </div>
-    <div class="card-title">{{title}}</div>
-    <div class="card-summary">{{summary}}</div>
-    <div class="card-source">—— {{source_account}}</div>
+<div class="case">
+  <div class="case-rank">
+    <span class="rank-num rank-num-{{rank}}">{{rankPad}}</span>
   </div>
-  <div class="card-right">
-    <div class="score-badge">{{score_total}}</div>
-    <div class="score-label">AI 综合评分</div>
-    <div class="decision-row">
-      <span class="decision-tag {{costClass}}">{{cost}}</span>
-      <span class="decision-tag {{incomeClass}}">{{expected_revenue}}</span>
-      <span class="decision-tag tag-cycle">{{cycle}}</span>
-      <span class="decision-tag tag-suit">{{suitable_for}}</span>
+  <div class="case-body">
+    <div class="case-top">
+      <div class="case-title">{{title}}</div>
+      <span class="case-score">{{score_total}}</span>
     </div>
-    <div class="tags-row">
+    <div class="case-summary">{{summary}}</div>
+    <div class="case-tags">
       {{#each tags}}<span class="tag tag-{{tagIndex}}">{{text}}</span>{{/each}}
     </div>
   </div>
 </div>
 {{/each}}
+</div>
+
+<div class="spacer"></div>
+<div class="footer">
+  <div class="footer-ornament">✦ ✦ ✦</div>
+  <div class="footer-divider"></div>
+  <div class="footer-brand">MindDock超级个体知识库</div>
+  <div class="footer-hint">← 查看更多精选案例</div>
 </div>
 </body>
 </html>
