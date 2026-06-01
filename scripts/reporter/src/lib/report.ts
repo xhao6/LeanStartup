@@ -11,7 +11,7 @@ import type { Top3Context, Last3DaysContext, Top3Case, DayGroup, ScreenshotResul
 
 export interface ReportResults {
   top3?: ScreenshotResult
-  caseDetail?: ScreenshotResult
+  caseDetails: ScreenshotResult[]
   last3Days?: ScreenshotResult
 }
 
@@ -48,7 +48,7 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
   const browser = await pool.get()
   const page = await browser.newPage()
 
-  const results: ReportResults = {}
+  const results: ReportResults = { caseDetails: [] }
 
   try {
     // HTML-1: Today's Top 3
@@ -59,11 +59,12 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
     const top3Html = renderTop3(top3Ctx)
     results.top3 = await screenshotToFile(page, top3Html, "top3")
 
-    // HTML-2: Case detail (first case)
-    if (orderedCases.length > 0) {
-      const detailCtx = caseRecordToContext(orderedCases[0])
+    // HTML-2: Case details for all cases
+    for (let i = 0; i < orderedCases.length; i++) {
+      const detailCtx = caseRecordToContext(orderedCases[i])
       const detailHtml = renderCaseDetail(detailCtx)
-      results.caseDetail = await screenshotToFile(page, detailHtml, "case-detail")
+      const result = await screenshotToFile(page, detailHtml, `case-detail-${i + 1}`)
+      results.caseDetails.push(result)
     }
 
     // HTML-3: Last 3 days

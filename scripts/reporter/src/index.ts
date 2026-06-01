@@ -45,9 +45,9 @@ async function main() {
         const date = caseId || new Date().toISOString().slice(0, 10)
         console.log(`Generating daily report for ${date}...`)
         const results = await generateDailyReport(date)
-        console.log(`  top3:        ${results.top3?.path ?? "skipped"}`)
-        console.log(`  case-detail: ${results.caseDetail?.path ?? "skipped"}`)
-        console.log(`  last3days:   ${results.last3Days?.path ?? "skipped"}`)
+        console.log(`  top3:            ${results.top3?.path ?? "skipped"}`)
+        results.caseDetails.forEach((d, i) => console.log(`  case-detail-${i + 1}: ${d.path}`))
+        console.log(`  last3days:       ${results.last3Days?.path ?? "skipped"}`)
         break
       }
       case "single": {
@@ -71,9 +71,9 @@ async function main() {
         const today = new Date().toISOString().slice(0, 10)
         console.log(`Generating all reports for ${today}...`)
         const results = await generateDailyReport(today)
-        console.log(`  top3:        ${results.top3?.path ?? "skipped"}`)
-        console.log(`  case-detail: ${results.caseDetail?.path ?? "skipped"}`)
-        console.log(`  last3days:   ${results.last3Days?.path ?? "skipped"}`)
+        console.log(`  top3:            ${results.top3?.path ?? "skipped"}`)
+        results.caseDetails.forEach((d, i) => console.log(`  case-detail-${i + 1}: ${d.path}`))
+        console.log(`  last3days:       ${results.last3Days?.path ?? "skipped"}`)
         break
       }
     }
