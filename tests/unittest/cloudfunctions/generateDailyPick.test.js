@@ -124,8 +124,8 @@ describe('generateDailyPick (DI)', () => {
     expect(result.data.case_ids[0]).toBe('200') // 最高分排第一
   })
 
-  // 3. 新案例不足 → 经典回顾补充
-  it('新案例不足 → 经典回顾补充', async () => {
+  // 3. 新案例不足 → 渐进放宽冷却期
+  it('新案例不足 → 渐进放宽冷却期', async () => {
     const deps = createMockDeps()
     deps.collection._getResults.push(
       { data: [] },    // today check
@@ -213,7 +213,7 @@ describe('generateDailyPick (DI)', () => {
       expect(result.code).toBe('NO_CASES')
     })
 
-    it('有案例但全部30天内已用过 → 经典回顾补充', async () => {
+    it('有案例但全部14天冷却期内 → 渐进放宽冷却期', async () => {
       const deps = createMockDeps()
       deps.collection._getResults.push(
         { data: [] },
@@ -312,6 +312,55 @@ describe('generateDailyPick (DI)', () => {
 
       const result = await doGenerateDailyPick({}, deps)
       expect(result.success).toBe(true)
+      expect(result.data.case_ids).toHaveLength(3)
+    })
+
+    it('有充足候选池时冷却期内案例被排除', async () => {
+      const deps = createMockDeps()
+      deps.collection._getResults.push(
+        { data: [] },                      // today check
+        { data: [{ case_ids: ['200'] }] }, // 14-day cooling
+        {
+          data: [
+            makeCase(200, 9, { tags: ['A'] }),
+            makeCase(201, 8, { tags: ['B'] }),
+            makeCase(202, 7, { tags: ['C'] }),
+            makeCase(203, 6, { tags: ['D'] }),
+            makeCase(204, 5, { tags: ['E'] }),
+            makeCase(205, 4, { tags: ['F'] })
+          ]
+        },
+        { data: [] }
+      )
+
+      const result = await doGenerateDailyPick({}, deps)
+
+      expect(result.success).toBe(true)
+      // 6 published >= 5, 不会触发放宽 → 200 在冷却期，不应出现
+      expect(result.data.case_ids).toHaveLength(3)
+      expect(result.data.case_ids).not.toContain('200')
+    })
+
+    it('候选池 < 5 时放宽到全部 published（含冷却期内案例）', async () => {
+      const deps = createMockDeps()
+      deps.collection._getResults.push(
+        { data: [] },                      // today check
+        { data: [{ case_ids: ['200'] }] }, // 14-day cooling
+        {
+          data: [
+            makeCase(200, 9, { tags: ['A'] }),
+            makeCase(201, 8, { tags: ['B'] }),
+            makeCase(202, 7, { tags: ['C'] })
+          ]
+        },
+        { data: [] }
+      )
+
+      const result = await doGenerateDailyPick({}, deps)
+
+      expect(result.success).toBe(true)
+      // 3 published < 5, 触发放宽 → 200 回到候选池
+      expect(result.data.case_ids).toContain('200')
       expect(result.data.case_ids).toHaveLength(3)
     })
   })

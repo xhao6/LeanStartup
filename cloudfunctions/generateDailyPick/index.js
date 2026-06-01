@@ -38,20 +38,20 @@ async function doGenerateDailyPick(_event, deps) {
       return success({ date: today, case_ids: todayPick[0].case_ids, skipped: true })
     }
 
-    // 2. 获取最近 30 天已用的 case_ids（30 天去重限制）
-    const thirtyDaysAgo = deps.getDaysAgoDate(30)
+    // 2. 获取最近 14 天冷却期内已用的 case_ids
+    const coolingCutoff = deps.getDaysAgoDate(14)
     const { data: recentPicks } = await deps.collection('DailyPick')
-      .where({ date: cmd.gte(thirtyDaysAgo) })
+      .where({ date: cmd.gte(coolingCutoff) })
       .field('case_ids')
       .limit(100)
       .get()
 
-    const recentlyUsedIds = new Set()
+    const coolingIds = new Set()
     if (recentPicks) {
       for (const pick of recentPicks) {
         if (pick.case_ids) {
           for (const id of pick.case_ids) {
-            recentlyUsedIds.add(id)
+            coolingIds.add(String(id))
           }
         }
       }
@@ -94,9 +94,13 @@ async function doGenerateDailyPick(_event, deps) {
       console.error('[generateDailyPick] analytics query failed:', analyticsErr.message)
     }
 
-    // 5. 过滤已用 + 分数区间过滤
-    const freshCases = publishedCases.filter(c => !recentlyUsedIds.has(String(c.id)))
-    const candidates = filterByScoreRange(freshCases)
+    // 5. 过滤已用 + 分数区间过滤（放宽逻辑：不足 5 个则忽略冷却期）
+    let freshCases = publishedCases.filter(c => !coolingIds.has(String(c.id)))
+    let candidates = filterByScoreRange(freshCases)
+    if (candidates.length < 5) {
+      freshCases = publishedCases.slice()
+      candidates = filterByScoreRange(freshCases)
+    }
 
     // 6. 计算加权评分
     for (const c of candidates) {
@@ -112,22 +116,7 @@ async function doGenerateDailyPick(_event, deps) {
 
     // 7. 选择 3 个（标签分散 + 随机）
     const selected = selectDailyCases(candidates, 3)
-    let selectedIds = selected.map(c => c.id)
-
-    // 8. 不足 3 个 → 经典回顾补充
-    if (selectedIds.length < 3) {
-      const needCount = 3 - selectedIds.length
-      const alreadySelectedIds = new Set(selectedIds)
-      const classicCases = publishedCases
-        .filter(c => recentlyUsedIds.has(String(c.id)) && !alreadySelectedIds.has(c.id))
-        .sort((a, b) => b.score_total - a.score_total)
-
-      const classicIds = classicCases
-        .slice(0, needCount)
-        .map(c => c.id)
-
-      selectedIds = selectedIds.concat(classicIds)
-    }
+    const selectedIds = selected.map(c => c.id)
 
     if (selectedIds.length === 0) {
       logEntry.type = 'cron_error'
@@ -136,7 +125,7 @@ async function doGenerateDailyPick(_event, deps) {
       return error('无可选案例', 'NO_CASES')
     }
 
-    // 9. 写入 DailyPick
+    // 8. 写入 DailyPick
     const dailyPick = {
       date: today,
       case_ids: selectedIds,
@@ -144,7 +133,7 @@ async function doGenerateDailyPick(_event, deps) {
     }
     await deps.collection('DailyPick').add(dailyPick)
 
-    // 10. 异步推送订阅消息（不 await，fire-and-forget）
+    // 9. 异步推送订阅消息（不 await，fire-and-forget）
     try {
       const templateId = process.env.PUSH_TEMPLATE_ID
       if (templateId) {
@@ -164,7 +153,7 @@ async function doGenerateDailyPick(_event, deps) {
       console.error('[generateDailyPick] push error:', pushErr.message)
     }
 
-    // 11. 记录日志
+    // 10. 记录日志
     logEntry.detail = `生成成功: date=${today} case_ids=${selectedIds.join(',')}`
     await deps.collection('SystemLog').add(logEntry)
 
