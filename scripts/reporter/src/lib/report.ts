@@ -56,7 +56,7 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
       date: pick.date,
       cases: orderedCases.map((c, i) => buildTop3Case(c, i + 1)),
     }
-    const top3Html = renderTop3(top3Ctx, "/Users/xhao/Downloads/104385_00_2x.webp")
+    const top3Html = renderTop3(top3Ctx)
     results.top3 = await screenshotToFile(page, top3Html, "top3")
 
     // HTML-2: Case detail (first case)
