@@ -6,7 +6,10 @@ import { renderCaseDetail, caseRecordToContext } from "../templates/case-detail.
 import { renderLast3Days } from "../templates/last3days.js"
 import { BrowserPool } from "../browser/pool.js"
 import { screenshotToFile } from "../browser/screenshot.js"
-import { ensureOutputDir } from "../config.js"
+import { ensureOutputDir, config } from "../config.js"
+import { resolve, dirname } from "node:path"
+import { existsSync } from "node:fs"
+import { fileURLToPath } from "node:url"
 import type { Top3Context, Last3DaysContext, Top3Case, DayGroup, ScreenshotResult, CaseRecord } from "../types.js"
 
 export interface ReportResults {
@@ -51,19 +54,33 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
   const results: ReportResults = { caseDetails: [] }
 
   try {
+    // Find cover image for top3
+    const __dirname = dirname(fileURLToPath(import.meta.url))
+    const repoRoot = resolve(__dirname, "..", "..", "..", "..")
+    const coverPaths = [
+      process.env["COVER_IMAGE"] || "",
+      resolve(repoRoot, "resources", "cover.jpg"),
+      resolve(repoRoot, "resources", "cover.webp"),
+      resolve(repoRoot, "resources", "cover.png"),
+    ]
+    let coverPath: string | undefined
+    for (const p of coverPaths) {
+      if (p && existsSync(p)) { coverPath = p; break }
+    }
+
     // HTML-1: Today's Top 3
     const top3Ctx: Top3Context = {
       date: pick.date,
       cases: orderedCases.map((c, i) => buildTop3Case(c, i + 1)),
     }
-    const top3Html = renderTop3(top3Ctx)
-    results.top3 = await screenshotToFile(page, top3Html, "top3")
+    const top3Html = renderTop3(top3Ctx, coverPath)
+    results.top3 = await screenshotToFile(page, top3Html, "top3", date)
 
     // HTML-2: Case details for all cases
     for (let i = 0; i < orderedCases.length; i++) {
       const detailCtx = caseRecordToContext(orderedCases[i])
       const detailHtml = renderCaseDetail(detailCtx)
-      const result = await screenshotToFile(page, detailHtml, `case-detail-${i + 1}`)
+      const result = await screenshotToFile(page, detailHtml, `case-detail-${i + 1}`, date)
       results.caseDetails.push(result)
     }
 
@@ -86,7 +103,7 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
       }
       const last3Ctx: Last3DaysContext = { days: dayGroups }
       const last3Html = renderLast3Days(last3Ctx)
-      results.last3Days = await screenshotToFile(page, last3Html, "last3days")
+      results.last3Days = await screenshotToFile(page, last3Html, "last3days", date)
     }
   } finally {
     await page.close()
@@ -109,7 +126,8 @@ export async function generateCaseDetailReport(caseId: string): Promise<Screensh
   try {
     const ctx = caseRecordToContext(record)
     const html = renderCaseDetail(ctx)
-    return await screenshotToFile(page, html, `case-detail-${caseId}`)
+    const today = new Date().toISOString().slice(0, 10)
+    return await screenshotToFile(page, html, `case-detail-${caseId}`, today)
   } finally {
     await page.close()
   }

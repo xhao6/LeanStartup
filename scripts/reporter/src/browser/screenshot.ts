@@ -1,5 +1,6 @@
 import type { Page } from "puppeteer"
 import sharp from "sharp"
+import fs from "node:fs"
 import { writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { config } from "../config.js"
@@ -13,6 +14,7 @@ export async function screenshotToFile(
   page: Page,
   html: string,
   filename: string,
+  subdir?: string,
 ): Promise<ScreenshotResult> {
   await page.setDefaultNavigationTimeout(120_000)
   await page.setContent(html, {
@@ -42,7 +44,9 @@ export async function screenshotToFile(
     clip: { x: 0, y: 0, width: VIEWPORT_WIDTH, height: captureHeight },
   })
 
-  const outPath = resolve(config.OUTPUT_DIR, `${filename}.jpg`)
+  const outDir = subdir ? resolve(config.OUTPUT_DIR, subdir) : config.OUTPUT_DIR
+  fs.mkdirSync(outDir, { recursive: true })
+  const outPath = resolve(outDir, `${filename}.jpg`)
   let jpegBuffer: Buffer
 
   try {

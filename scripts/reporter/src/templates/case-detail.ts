@@ -60,7 +60,7 @@ export function renderCaseDetail(ctx: CaseDetailContext): string {
 
   const allSteps = ctx.steps.map((text: string, i: number) => ({ num: i + 1, text }))
 
-  const toolLimit = 6
+  const toolLimit = 8
   const displayTools = ctx.tools.slice(0, toolLimit)
   const hasMoreTools = ctx.tools.length > toolLimit
 
