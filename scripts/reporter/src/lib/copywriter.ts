@@ -71,7 +71,8 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 - 保持口语化、亲切感、代入感
 
 ## 格式约束（必须严格遵守）
-- 纯文本，不使用任何Markdown语法
+- 纯文本，禁止使用任何Markdown语法（包括加粗、斜体、代码标记、删除线、引用等）
+- 正文中的小标题请用纯文字加冒号的方式，如"第一招："而非"**第1招**"
 - 不包含投入、周期、收入等商业数据
 - 标签内容保留，但不要输出"推荐标签"这个标题，直接输出标签行
 - 标签数量控制在8个以内
@@ -99,12 +100,13 @@ const SYSTEM_PROMPT = `你是一个小红书爆款文案写手。你的任务是
 参考的爆款笔记
 1. 标题 - 作者 - 收藏X 点赞X
 
-## 自检清单
-输出前检查：
+## 自检清单（输出前必须逐条检查，不满足则修正）
+- 是否包含至少4个#标签？如果没有，补上
 - 推荐标题后有6个标题且每个不超过20字？
 - 正文内容后面有标签行（不带"推荐标签"标题）？
 - 标签数量不超过8个？
-- 爆款公式来源包含规律简述和参考笔记？`
+- 爆款公式来源包含规律简述和参考笔记？
+- 是否包含爆款公式来源部分？如果不包含，补上`
 
 export async function generateXhsCopy(date: string): Promise<string> {
   const db = getDatabase()
@@ -153,15 +155,20 @@ export async function generateXhsCopy(date: string): Promise<string> {
 
   let output = textBlock.text
 
-  // Post-process: truncate titles to 20 characters, limit tags to 8
+  // Post-process: strip markdown formatting, truncate titles, limit tags
+  output = output.replace(/\*\*(.*?)\*\*/g, "$1")
+  output = output.replace(/\*(.*?)\*/g, "$1")
+  output = output.replace(/`(.*?)`/g, "$1")
+  output = output.replace(/~~(.*?)~~/g, "$1")
+  output = output.replace(/^> /gm, "")
   const lines = output.split("\n")
   let inTitles = false
-  let inTags = false
+  let hasTags = false
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim()
-    if (trimmed === "推荐标题") { inTitles = true; inTags = false; continue }
-    if (trimmed === "正文内容") { inTitles = false; inTags = false; continue }
-    if (trimmed === "爆款公式来源") { inTitles = false; inTags = false; continue }
+    if (trimmed === "推荐标题") { inTitles = true; continue }
+    if (trimmed === "正文内容") { inTitles = false; continue }
+    if (trimmed === "爆款公式来源") { inTitles = false; continue }
     if (inTitles && /^\d+\.\s/.test(trimmed)) {
       const match = trimmed.match(/^\d+\.\s+(.*)/)
       if (match) {
@@ -172,12 +179,23 @@ export async function generateXhsCopy(date: string): Promise<string> {
         }
       }
     }
-    if (trimmed.startsWith("#") && !inTitles) {
+    if (trimmed.startsWith("#")) {
+      hasTags = true
       const tags = trimmed.split(/\s+/).filter(t => t.startsWith("#"))
       if (tags.length > 8) {
         lines[i] = tags.slice(0, 8).join(" ")
       }
     }
+  }
+  // Fallback: ensure tags line exists
+  if (!hasTags) {
+    const defaultTags = "#副业 #AI副业 #被动收入 #零成本创业 #虚拟产品 #副业项目 #搞钱 #一人公司"
+    lines.push("", defaultTags)
+  }
+  // Ensure 爆款公式来源 exists
+  const hasSource = lines.some(l => l.trim() === "爆款公式来源")
+  if (!hasSource) {
+    lines.push("", "爆款公式来源", "", "参考的爆款规律：结合今日精选案例数据生成的副业方向推荐", "参考的爆款笔记", "1. 基于MindDock超级个体知识库今日精选案例")
   }
   output = lines.join("\n")
 

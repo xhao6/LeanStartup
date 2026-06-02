@@ -74,13 +74,13 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
       cases: orderedCases.map((c, i) => buildTop3Case(c, i + 1)),
     }
     const top3Html = renderTop3(top3Ctx, coverPath)
-    results.top3 = await screenshotToFile(page, top3Html, "top3", date)
+    results.top3 = await screenshotToFile(page, top3Html, "01-top3", date)
 
     // HTML-2: Case details for all cases
     for (let i = 0; i < orderedCases.length; i++) {
       const detailCtx = caseRecordToContext(orderedCases[i])
       const detailHtml = renderCaseDetail(detailCtx)
-      const result = await screenshotToFile(page, detailHtml, `case-detail-${i + 1}`, date)
+      const result = await screenshotToFile(page, detailHtml, `02-case-detail-${i + 1}`, date)
       results.caseDetails.push(result)
     }
 
@@ -103,7 +103,7 @@ export async function generateDailyReport(date: string): Promise<ReportResults> 
       }
       const last3Ctx: Last3DaysContext = { days: dayGroups }
       const last3Html = renderLast3Days(last3Ctx)
-      results.last3Days = await screenshotToFile(page, last3Html, "last3days", date)
+      results.last3Days = await screenshotToFile(page, last3Html, "03-last3days", date)
     }
   } finally {
     await page.close()
