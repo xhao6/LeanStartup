@@ -104,6 +104,10 @@
   .dim-score { font-family:'Roboto Mono',monospace; font-size:16px; font-weight:700; width:44px; text-align:right; color:#1C1917; }
 
   .story { font-size:17px; line-height:1.8; color:#635D59; }
+  .story-two-col {
+    column-count:2; column-gap:28px;
+    column-rule:1px solid #ECEAE5;
+  }
 
   .step-list { display:flex; flex-direction:column; gap:10px; }
   .step-item { display:flex; gap:12px; align-items:flex-start; }
@@ -178,8 +182,8 @@
   </div>
 
   <div class="section-card">
-    <div class="section-title">案例故事</div>
-    <div class="story">{{case_story}}</div>
+    <div class="section-title" style="margin-bottom:12px;">案例故事</div>
+    <div class="story story-two-col">{{case_story}}</div>
   </div>
 
   <div class="card-row">
