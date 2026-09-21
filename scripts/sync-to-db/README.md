@@ -199,7 +199,7 @@ node sync.js --incremental
 在 `.env` 文件中配置：
 
 ```env
-CLOUDBASE_ENV_ID=lean-startup-d2gkuop3af0aed5c0
+CLOUDBASE_ENV_ID=${ENV_ID}
 CLOUDBASE_SECRET_ID=your-secret-id
 CLOUDBASE_SECRET_KEY=your-secret-key
 ```

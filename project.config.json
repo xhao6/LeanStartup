@@ -27,7 +27,7 @@
   "cloudbase": {
     "envList": [
       {
-        "envId": "lean-startup-d2gkuop3af0aed5c0",
+        "envId": "${ENV_ID}",
         "alias": "lean-startup"
       }
     ]

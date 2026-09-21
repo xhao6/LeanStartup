@@ -1,12 +1,29 @@
-# CloudBase UniApp 模板
-
-基于 UniApp 和腾讯云开发（CloudBase）的跨平台应用模板，目前已适配 **H5** 、 **微信小程序** 、 **支付宝小程序** 、 **抖音小程序** 以及 **App (iOS/Android)**，其他端的适配正在开发中。为开发者提供了快速构建全栈跨平台应用的能力。
+# CloudBase UniApp 跨平台应用 · AI 内容创作工具链
 
 [![Powered by CloudBase](https://7463-tcb-advanced-a656fc-1257967285.tcb.qcloud.la/mcp/powered-by-cloudbase-badge.svg)](https://github.com/TencentCloudBase/CloudBase-AI-ToolKit)
 
-> 本项目基于 [**CloudBase AI ToolKit**](https://github.com/TencentCloudBase/CloudBase-AI-ToolKit) 开发，通过AI提示词和 MCP 协议+云开发，让开发更智能、更高效，支持AI生成全栈代码、一键部署至腾讯云开发（免服务器）、智能日志修复。
+基于 **UniApp + Vue 3 + TypeScript + 腾讯云开发（CloudBase）** 的全栈跨平台项目，适配 H5 / 微信小程序 / 支付宝小程序 / 抖音小程序 / App (iOS/Android)。
+
+## 核心功能（实战部分）
+
+**AI 内容创作工具链**（`scripts/`）——面向内容生产的自动化流水线：
+
+| 模块 | 职责 |
+|------|------|
+| `article-discoverer` | 多渠道文章发现（搜狗微信等），关键词驱动选题 |
+| `article-downloader` | 文章抓取与解析 |
+| `article-processor` | 内容清洗 / Markdown 化 / 标签生成 / 爆款公式来源回填 |
+| `reporter` | 产出汇总报告（含 vitest 单测） |
+| `sync-to-db` | 结构化结果同步至云数据库 |
+
+**多端应用**（`src/`）——UniApp + CloudBase 登录体系（手机/邮箱/密码/微信静默登录）+ 云函数 + 云数据库 + 云存储 + 静态托管。
+
+**工程化**：分层架构（api / components / composables / pages / services / store）+ **三层测试**（`tests/unittest` · `tests/api` · `tests/e2e`）+ TypeScript 严格检查 + ESLint/Prettier。
+
+> 本项目由 CloudBase AI ToolKit 引导搭建，应用层与工具链为本项目实战开发部分。
 
 ## 项目特点
+
 
 - 🚀 基于 UniApp 构建，一套代码多端运行
 - ⚡ 使用 Vue 3 Composition API 构建现代化 UI

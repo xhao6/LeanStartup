@@ -70,7 +70,7 @@ manageFunctions({
 ### 后端云函数配置
 
 **CloudBase 环境**
-- 环境ID: `lean-startup-d2gkuop3af0aed5c0`
+- 环境ID: `${ENV_ID}`
 - 环境别名: lean-startup
 - 区域: ap-shanghai
 
